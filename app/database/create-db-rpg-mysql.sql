@@ -296,16 +296,16 @@ DROP TABLE IF EXISTS `RPG`.`truque_personagem` ;
 
 CREATE TABLE IF NOT EXISTS `RPG`.`truque_personagem` (
   `id_truque_personagem` INT NOT NULL AUTO_INCREMENT,
-  `truque_id_truque` INT NOT NULL,
-  `personagem_id_personagem` INT NOT NULL,
+  `id_truque` INT NOT NULL,
+  `id_personagem` INT NOT NULL,
   PRIMARY KEY (`id_truque_personagem`),
   CONSTRAINT `fk_truque_personagem_truque1`
-    FOREIGN KEY (`truque_id_truque`)
+    FOREIGN KEY (`id_truque`)
     REFERENCES `RPG`.`truque` (`id_truque`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_truque_personagem_personagem1`
-    FOREIGN KEY (`personagem_id_personagem`)
+    FOREIGN KEY (`id_personagem`)
     REFERENCES `RPG`.`personagem` (`id_personagem`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

@@ -7,10 +7,8 @@ class Usuario:
         self._id=id
         self._nome=nome
         self._email=email
-        if senha is not None:
-            self._senha=criptografar(senha)
-        else:
-            self._senha=None
+        self._senha=criptografar(senha)
+        self.personagens=[]
         self._data_nascimento = data_nascimento
         
     @property
@@ -118,6 +116,21 @@ class Usuario:
                     self._id=myresult[0]
                     self._nome=myresult[1]
                     self._data_nascimento=myresult[4]
+                    return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False 
+        
+    def carregar_personagens_banco(self):
+        try:
+            mycursor = mydb.cursor()
+            if self._email and self._senha:
+                mycursor.execute("SELECT id_personagem,nome_personagem FROM personagem ps WHERE id_usuario=%s and ",(self._id))
+                myresult = mycursor.fetchall()  
+                if myresult:
+                    for row in result:
+                        self.personagens.append({'id_personagem':row[0],'nome_personagem':row[1]})
                     return True
             return False
         except EOFError as e:
