@@ -1,12 +1,11 @@
-from database import mydb
-from src import User
-print(attributes.loc[1]+attributes.loc[17])
+from database import mydb,attributes
+from src import Usuario
 
-
-class Character(User):
-    def __init__(self, id_user):
-        super().__init__(id=id_user)
-        self._id = id_user
+class Personagem(Usuario):
+    def __init__(self, id_usuario,id_personagem):
+        super().__init__(id=id_usuario)
+        self._id_personagem = id_personagem
+        self.nome_personagem=None
         self.nivel = None
         self.classe = []
         self._salvaguardas = []
@@ -37,48 +36,137 @@ class Character(User):
         self._deslocamento = None
         self.vida = None
         self.iniciativa = None
-        
+#-----------------------------------------------HABILIDADES----------------------------------------------- 
     @magia.setter
-    def magia(self,value):
+    def set_magia(self,value):
         self.magias.append(value)
         
     @property
-    def magia(self,value=None):
+    def magia(self,value):
         return self.magias[value]
-
-#-----------------------------------------------GERAL-----------------------------------------------        
+    
+    @property
+    def magias(self):
+        return self.magias
+    
+    def adicionar_magia_banco(self,id_magia):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = "INSERT INTO magias_personagem(id_personagem,id_magia) VALUES(%s,%s);"
+                mycursor.execute(query, (self._id_personagem,id_magia))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False
+        
+    def carregar_magias_do_banco(self):
+        try:
+            if self._id:
+                mycursor = mydb.cursor()
+                query = "SELECT "
+                mycursor.execute(query, (self._id,))
+                result = mycursor.fetchall()
+                self.magias = [row[0] for row in result]
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+    
+    @truque.setter
+    def set_truque(self,value):
+        self.truques.append(value)
+        
+    @property
+    def truque(self,value):
+        return self.truques[value]
+    
+    @property
+    def truques(self):
+        return self.truques
+#-----------------------------------------------GERAL-----------------------------------------------   
+    @nome_personagem.setter
+    def set_nome_personagem(self,value):
+        self.nome_personagem=value
+        
+    @property
+    def nome_personagem(self):
+        return self.nome_personagem
+    
+    @set_classe.setter
+    def set_classe(self,value):
+        self.classe.append(value)
+    
+    @property
+    def classe(self):
+        return self.classe
+         
     @xp.setter
-    def xp(self,value):
+    def set_xp(self,value):
         self.xp=value
+    
+    @property
+    def xp(self):
+        return self.xp
         
     @raca.setter
-    def raca(self,value):
+    def set_raca(self,value):
         self._raca=value
         
+    @property
+    def raca(self):
+        return self._raca
+        
     @bonus_proficiencia.setter
-    def bonus_proficiencia(self,value):
+    def set_bonus_proficiencia(self,value):
         self._bonus_proficiencia=value
         
+    @property
+    def bonus_proficiencia(self):
+        return self._bonus_proficiencia
+        
     @deslocamento.setter
-    def deslocamento(self,value):
+    def set_deslocamento(self,value):
         self._deslocamento=value
         
+    @property
+    def deslocamento(self):
+        return self._deslocamento
+        
     @iniciativa.setter
-    def iniciativa(self,value):
+    def set_iniciativa(self,value):
         self.iniciativa=value
+        
+    @property
+    def iniciativa(self):
+        return self.iniciativa
     
     @vida.setter
-    def vida(self,value):
+    def set_vida(self,value):
         self.vida=value
+        
+    @property
+    def vida(self):
+        return self.vida
     
     @inspiracao.setter
-    def inspiracao(self,value):
+    def set_inspiracao(self,value):
         self.inspiracao=value
+        
+    @property
+    def inspiracao(self):
+        return self.inspiracao
     
     @ca.setter
-    def ca(self,value):
+    def set_ca(self,value):
         self._ca=value
-        
+    
+    @property
+    def ca(self):
+        return self._ca        
 #-----------------------------------------------STATUS-----------------------------------------------
     @set_forca.setter
     def set_forca(self,value):
@@ -163,10 +251,58 @@ class Character(User):
     @property
     def bonus_carisma(self):
         return attributes.loc[self.status['carisma']]
+#-----------------------------------------------CARACTERISTICAS----------------------------------------------- 
+    @set_idade.setter
+    def set_idade(self,value):
+        self.caracteristicas['idade']=value
+    
+    @property
+    def idade(self):
+        self.caracteristicas['idade']
+    
+    @set_altura.setter
+    def set_altura(self,value):
+        self.caracteristicas['altura']=value
+        
+    @property
+    def altura(self):
+        return self.caracteristicas['altura']
+    
+    @set_peso.setter
+    def set_peso(self,value):
+        self.caracteristicas['peso']=value
+    
+    @property
+    def peso(self):
+        return self.caracteristicas['peso']
+    
+    @set_cor_olhos.settet
+    def set_cor_olhos(self,value):
+        self.caracteristicas['cor dos olhos']=value
+        
+    @property
+    def cor_olhos(self):
+        return self.caracteristicas['cor dos olhos']
+    
+    @set_cor_pele.setter
+    def set_cor_pele(self,value):
+        self.caracteristicas['cor da pele']=value
+    
+    @property
+    def cor_pele(self):
+        return self.caracteristicas['cor da pele']
+    
+    @set_cor_cabelo.setter
+    def set_cor_cabelo(self,value):
+        self.caracteristicas['cor do cabelo']=value
+    
+    @property
+    def cor_cabelo(self):
+        return self.caracteristicas['cor do cabelo']    
 #-----------------------------------------------SALVAGUARDAS-----------------------------------------------
     @salvaguardas.setter
     def set_salvaguardas(self, value):
-        self._salvaguardas = value
+        self._salvaguardas.append(value)
         
     @property
     def savalguardas(self):
@@ -210,7 +346,7 @@ class Character(User):
 #-----------------------------------------------PERICIAS-----------------------------------------------
     @pericias.setter
     def set_pericias(self,value):
-        self._pericias=value
+        self._pericias.append(value)
         
     @property
     def pericias(self):

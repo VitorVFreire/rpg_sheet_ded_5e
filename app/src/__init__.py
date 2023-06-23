@@ -1,2 +1,2 @@
-from .character import Character
-from .user import User
+from .personagem import Personagem
+from .usuario import Usuario

@@ -2,43 +2,43 @@ from database import mydb
 from tools import criptografar
 import datetime
 
-class User:
-    def __init__(self,id=None,name=None,email=None,password=None,datebirth=None):
+class Usuario:
+    def __init__(self,id=None,nome=None,email=None,senha=None,data_nascimento=None):
         self._id=id
-        self._name=name
+        self._nome=nome
         self._email=email
-        if password is not None:
-            self._password=criptografar(password)
+        if senha is not None:
+            self._senha=criptografar(senha)
         else:
-            self._password=None
-        self._datebirth = datebirth
+            self._senha=None
+        self._data_nascimento = data_nascimento
         
     @property
     def id(self):
         if self._id is None:
-            self._id=self.get_user()['id_user']
+            self._id=self.get_usuario()['id_usuario']
         return self._id
     
     @property
-    def name(self):
-        if self._name is None:
-            self._name=self.get_user()['name']
-        return self._name
+    def nome(self):
+        if self._nome is None:
+            self._nome=self.get_usuario()['nome']
+        return self._nome
     
     @property
     def email(self):
         if self._email is None:
-            self._email=self.get_user()['email']
+            self._email=self.get_usuario()['email']
         return self._email
     
     @property
     def years(self):
-        if self._datebirth is None:
-            self._datebirth = self.get_user()['datebirth']
-        if self._datebirth:
+        if self._data_nascimento is None:
+            self._data_nascimento = self.get_usuario()['data_nascimento']
+        if self._data_nascimento:
             today = datetime.date.today()
-            datebirth_str = self._datebirth.strftime('%Y-%m-%d')
-            dif = today - datetime.datetime.strptime(datebirth_str, '%Y-%m-%d').date()
+            data_nascimento_str = self._data_nascimento.strftime('%Y-%m-%d')
+            dif = today - datetime.datetime.strptime(data_nascimento_str, '%Y-%m-%d').date()
             return dif.days // 365
         return None
             
@@ -46,13 +46,13 @@ class User:
         try:
             if self._id:
                 mycursor = mydb.cursor()
-                mycursor.execute('DELETE from user WHERE id_user=%s', (self._id,))
+                mycursor.execute('DELETE from usuario WHERE id_usuario=%s', (self._id,))
                 mydb.commit()
                 mydb.close()
                 return True
             elif self._email:
                 mycursor = mydb.cursor()
-                mycursor.execute('DELETE from user WHERE email=%s', (self._email,))
+                mycursor.execute('DELETE from usuario WHERE email=%s', (self._email,))
                 mydb.commit()
                 mydb.close()
                 return True
@@ -63,9 +63,9 @@ class User:
     
     def create(self):
         try:
-            if self._name and self._email and self._password and self._datebirth:
+            if self._nome and self._email and self._senha and self._data_nascimento:
                 mycursor = mydb.cursor()
-                mycursor.execute('INSERT INTO user (name,email,password,datebirth) values(%s,%s,%s,%s)',(self._name,self._email,self._password,self._datebirth))
+                mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento) values(%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento))
                 mydb.commit()
                 self._id=mycursor.lastrowid    
                 return True
@@ -78,7 +78,7 @@ class User:
         try:
             if self._id:
                 mycursor = mydb.cursor()
-                query = f"UPDATE user SET {column} = %s WHERE id_user = %s"
+                query = f"UPDATE usuario SET {column} = %s WHERE id_usuario = %s"
                 mycursor.execute(query, (value, self._id))
                 mydb.commit()
                 return True
@@ -87,37 +87,37 @@ class User:
             print(e)
             return False
         
-    def get_user(self):
+    def get_usuario(self):
         try:
             mycursor = mydb.cursor()
             result = {}
             if self._id:
-                mycursor.execute("SELECT * FROM user WHERE id_user=%s", (self._id,))
+                mycursor.execute("SELECT * FROM usuario WHERE id_usuario=%s", (self._id,))
                 myresult = mycursor.fetchone()
             elif self._email:
-                mycursor.execute("SELECT * FROM user WHERE email=%s", (self._email,))
+                mycursor.execute("SELECT * FROM usuario WHERE email=%s", (self._email,))
                 myresult = mycursor.fetchone()
             
             if myresult:
-                column_names = [column[0] for column in mycursor.description]
-                indexed_result = [(column_names[i], field) for i, field in enumerate(myresult)]
-                for column_name, field in indexed_result:
-                    result[column_name] = field
+                column_nomes = [column[0] for column in mycursor.description]
+                indexed_result = [(column_nomes[i], field) for i, field in enumerate(myresult)]
+                for column_nome, field in indexed_result:
+                    result[column_nome] = field
                 return result
             return None
         except:
             return None
     
-    def valid_user(self):
+    def valid_usuario(self):
         try:
             mycursor = mydb.cursor()
-            if self._email and self._password:
-                mycursor.execute("SELECT * FROM user WHERE email=%s and password=%s",(self._email,self._password))
+            if self._email and self._senha:
+                mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
                 myresult = mycursor.fetchone()  
                 if myresult:
                     self._id=myresult[0]
-                    self._name=myresult[1]
-                    self._datebirth=myresult[4]
+                    self._nome=myresult[1]
+                    self._data_nascimento=myresult[4]
                     return True
             return False
         except EOFError as e:
