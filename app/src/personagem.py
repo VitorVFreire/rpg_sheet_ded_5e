@@ -86,20 +86,20 @@ class Personagem(Usuario):
                 result = mycursor.fetchone()
                 if result:
                     for row in result:
-                        self.set_classe({'id_classe_personagem':row[2],'id_classe':row[0],'nome_classe':row[1]})
+                        self.classe({'id_classe_personagem':row[2],'id_classe':row[0],'nome_classe':row[1]})
                     return True
             return False
         except Exception as e:
             print(e)
             return False
         
-    @set_classe.setter
-    def set_classe(self,value):
-        self._classe.append(value)
-    
     @property
     def classe(self):
         return self._classe
+
+    @classe.setter
+    def classe(self, value):
+        self._classe.append(value)
         
     def carregar_personagem_banco(self):
         try:
@@ -112,22 +112,22 @@ class Personagem(Usuario):
                 result = mycursor.fetchone()
                 if result:
                     for row in result:
-                        self.set_nome_personagem=row[0]
-                        self.set_raca=row[1]
+                        self.nome_personagem=row[0]
+                        self.raca=row[1]
                     return True
             return False
         except Exception as e:
             print(e)
             return False
         
-    @nome_personagem.setter
-    def set_nome_personagem(self,value):
-        self._nome_personagem=value
-        
     @property
     def nome_personagem(self):
         return self._nome_personagem
-    
+        
+    @nome_personagem.setter
+    def nome_personagem(self,value):
+        self._nome_personagem=value
+        
     def update_personagem_banco(self,chave,valor):
         try:
             possibilidades_chave=['id_raca','nome_personagem']
@@ -143,14 +143,14 @@ class Personagem(Usuario):
         except Exception as e:
             print(e)
             return False
-    
-    @raca.setter
-    def set_raca(self,value):
-        self._raca=value
         
     @property
     def raca(self):
         return self._raca
+    
+    @raca.setter
+    def raca(self,value):
+        self._raca=value
 #-----------------------------------------------EQUIPAMENTOS-----------------------------------------------
 
 #-----------------------------------------------STATUS_BASE-----------------------------------------------   
@@ -180,18 +180,18 @@ class Personagem(Usuario):
                 result = mycursor.fetchone()
                 if result:
                     for row in result:
-                        self.set_vida=row[0]
-                        self.set_xp=row[1]
-                        self.set_nivel=row[2]
-                        self.set_alinhamento=row[3] 
-                        self.set_antecendente=row[4] 
-                        self.set_faccao=row[5]  
-                        self.set_inspiracao=row[6]
+                        self.vida=row[0]
+                        self.xp=row[1]
+                        self.nivel=row[2]
+                        self.alinhamento=row[3] 
+                        self.antecendente=row[4] 
+                        self.faccao=row[5]  
+                        self.inspiracao=row[6]
                         self.set_ca=row[7]
-                        self.set_iniciativa[8]
-                        self.set_deslocamento=row[9]
-                        self.set_vida_atual=row[10]
-                        self.set_vida_temporaria=row[11]     
+                        self.iniciativa[8]
+                        self.deslocamento=row[9]
+                        self.vida_atual=row[10]
+                        self.vida_temporaria=row[11]     
                     return True
             return False
         except Exception as e:
@@ -215,101 +215,101 @@ class Personagem(Usuario):
             print(e)
             return False
     
-    @nivel.setter
-    def set_nivel(self,value):
-        self._nivel=value
-        
     @property
     def nivel(self):
         return self._nivel
     
-    @alinhamento.setter
-    def set_alinhamento(self,value):
-        self._alinhamento=value
-        
+    @nivel.setter
+    def nivel(self,value):
+        self._nivel=value
+    
     @property
     def alinhamento(self):
         return self._alinhamento
     
-    @faccao.setter
-    def set_faccao(self,value):
-        self._faccao=value
+    @alinhamento.setter
+    def alinhamento(self,value):
+        self._alinhamento=value
         
     @property
     def faccao(self):
-        return self._faccao
-    
-    @antecendente.setter
-    def set_antecendente(self,value):
-        self._antecendente=value
+        return self._faccao        
+         
+    @faccao.setter
+    def faccao(self,value):
+        self._faccao=value
         
     @property
     def antecendente(self):
-        return self._antecendente
+        return self._antecendente        
          
-    @xp.setter
-    def set_xp(self,value):
-        self._xp=value
+    @antecendente.setter
+    def antecendente(self,value):
+        self._antecendente=value
     
     @property
     def xp(self):
         return self._xp
-        
-    @deslocamento.setter
-    def set_deslocamento(self,value):
-        self._deslocamento=value
-        
+                
+    @xp.setter
+    def xp(self,value):
+        self._xp=value
+           
     @property
     def deslocamento(self):
         return self._deslocamento
-        
-    @iniciativa.setter
-    def set_iniciativa(self,value):
-        self._iniciativa=value
+    
+    @deslocamento.setter
+    def deslocamento(self,value):
+        self._deslocamento=value
         
     @property
     def iniciativa(self):
         return self._iniciativa
     
-    @vida.setter
-    def set_vida(self,value):
-        self._vida=value
-        
+    @iniciativa.setter
+    def iniciativa(self,value):
+        self._iniciativa=value
+    
     @property
     def vida(self):
         return self._vida
     
-    @vida_atual.setter
-    def set_vida_atual(self,value):
-        self._vida_atual=value
+    @vida.setter
+    def vida(self,value):
+        self._vida=value
         
     @property
     def vida_atual(self):
         return self._vida_atual
     
-    @vida_temporaria.setter
-    def set_vida_temporaria(self,value):
-        self._vida_temporaria=value
-        
+    @vida_atual.setter
+    def vida_atual(self,value):
+        self._vida_atual=value
+       
     @property
     def vida_temporaria(self):
         return self._vida_temporaria
     
-    @inspiracao.setter
-    def set_inspiracao(self,value):
-        self._inspiracao=value
+    @vida_temporaria.setter
+    def vida_temporaria(self,value):
+        self._vida_temporaria=value
         
     @property
     def inspiracao(self):
         return self._inspiracao
     
-    @ca.setter
-    def set_ca(self,value):
-        self._ca=value
+    @inspiracao.setter
+    def inspiracao(self,value):
+        self._inspiracao=value
     
     @property
     def ca(self):
-        return self._ca   
+        return self._ca
+    
+    @ca.setter
+    def ca(self,value):
+        self._ca=value   
 #-----------------------------------------------HABILIDADES----------------------------------------------- 
     def adicionar_feitico_banco(self,id_feitico):
         try:
@@ -344,7 +344,7 @@ class Personagem(Usuario):
                             'tipo_feitico': row[2],
                             'tipo_dano':row[3]
                         }
-                        self._feitico(feitico)               
+                        self.feitico(feitico)               
                     return True
             return False
         except Exception as e:
@@ -365,10 +365,6 @@ class Personagem(Usuario):
         except pymysql.Error as e:
             print(e)
             return False
-    
-    @feitico.setter
-    def set_feitico(self,value):
-        self._feitico.append(value)
         
     @property
     def feitico(self,value):
@@ -376,7 +372,11 @@ class Personagem(Usuario):
     
     @property
     def feiticos(self):
-        return self._feitico        
+        return self._feitico  
+    
+    @feitico.setter
+    def feitico(self,value):
+        self._feitico.append(value)      
 #-----------------------------------------------ATRIBUTOS-----------------------------------------------
     def adicionar_atributos_banco(self,forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia):
         try:
@@ -400,13 +400,13 @@ class Personagem(Usuario):
                 mycursor.execute(query, (self._id_personagem))
                 result = mycursor.fetchone() 
                 for row in result:
-                    self.set_forca=row[0]
-                    self.set_destreza=row[1]
-                    self.set_constituicao=row[2]
-                    self.set_inteligencia=row[3]
-                    self.set_sabedoria=row[4]
-                    self.set_carisma=row[5]
-                    self.set_bonus_proficiencia=row[6]
+                    self.set_forca(row[0])
+                    self.set_destreza(row[1])
+                    self.set_constituicao(row[2])
+                    self.set_inteligencia(row[3])
+                    self.set_sabedoria(row[4])
+                    self.set_carisma(row[5])
+                    self.bonus_proficiencia(row[6])
                 return True
             return False
         except Exception as e:
@@ -430,18 +430,14 @@ class Personagem(Usuario):
             print(e)
             return False
         
-    @bonus_proficiencia.setter
-    def set_bonus_proficiencia(self,value):
-        self._bonus_proficiencia=value
-        
     @property
     def bonus_proficiencia(self):
         return self._bonus_proficiencia
     
-    @set_forca.setter
-    def set_forca(self,value):
-        self._atributos['forca']=value
-        
+    @bonus_proficiencia.setter
+    def bonus_proficiencia(self,value):
+        self._bonus_proficiencia=value
+    
     @property
     def forca(self):
         if self._atributos['forca'] is None:
@@ -451,10 +447,9 @@ class Personagem(Usuario):
     @property
     def bonus_forca(self):
         return attributes.loc[self._atributos['forca']]
-        
-    @set_destreza.setter
-    def set_destreza(self,value):
-        self._atributos['destreza']=value
+    
+    def set_forca(self, value):
+        self._atributos['forca'] = value
         
     @property
     def destreza(self):
@@ -465,11 +460,10 @@ class Personagem(Usuario):
     @property
     def bonus_destreza(self):
         return attributes.loc[self._atributos['destreza']]
-        
-    @set_constituicao.setter
-    def set_constituicao(self,value):
-        self._atributos['constituicao']=value
-        
+    
+    def set_destreza(self,value):
+        self._atributos['destreza']=value
+    
     @property
     def constituicao(self):
         if self._atributos['constituicao'] is None:
@@ -479,11 +473,10 @@ class Personagem(Usuario):
     @property
     def bonus_constituicao(self):
         return attributes.loc[self._atributos['constituicao']]
-        
-    @set_inteligencia.setter
-    def set_inteligencia(self,value):
-        self._atributos['inteligencia']=value
-        
+           
+    def set_constituicao(self,value):
+        self._atributos['constituicao']=value
+    
     @property
     def inteligencia(self):
         if self._atributos['inteligencia'] is None:
@@ -493,11 +486,10 @@ class Personagem(Usuario):
     @property
     def bonus_inteligencia(self):
         return attributes.loc[self._atributos['inteligencia']]
-        
-    @set_sabedoria.setter
-    def set_sabedoria(self,value):
-        self._atributos['sabedoria']=value
-        
+    
+    def set_inteligencia(self,value):
+        self._atributos['inteligencia']=value
+    
     @property
     def sabedoria(self):
         if self._atributos['sabedoria'] is None:
@@ -507,10 +499,9 @@ class Personagem(Usuario):
     @property
     def bonus_sabedoria(self):
         return attributes.loc[self._atributos['sabedoria']]
-        
-    @set_carisma.setter
-    def set_carisma(self,value):
-        self._atributos['carisma']=value
+     
+    def set_sabedoria(self,value):
+        self._atributos['sabedoria']=value
     
     @property
     def carisma(self):
@@ -521,6 +512,9 @@ class Personagem(Usuario):
     @property
     def bonus_carisma(self):
         return attributes.loc[self._atributos['carisma']]
+    
+    def set_carisma(self,value):
+        self._atributos['carisma']=value
 #-----------------------------------------------CARACTERISTICAS----------------------------------------------- 
     def adicionar_caracteristicas_banco(self,idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem):
         try:
@@ -575,7 +569,6 @@ class Personagem(Usuario):
             print(e)
             return False
     
-    @set_idade.setter
     def set_idade(self,value):
         self._caracteristicas['idade']=value
     
@@ -583,7 +576,6 @@ class Personagem(Usuario):
     def idade(self):
         self._caracteristicas['idade']
     
-    @set_altura.setter
     def set_altura(self,value):
         self._caracteristicas['altura']=value
         
@@ -591,7 +583,6 @@ class Personagem(Usuario):
     def altura(self):
         return self._caracteristicas['altura']
     
-    @set_peso.setter
     def set_peso(self,value):
         self._caracteristicas['peso']=value
     
@@ -599,7 +590,6 @@ class Personagem(Usuario):
     def peso(self):
         return self._caracteristicas['peso']
     
-    @set_cor_olhos.settet
     def set_cor_olhos(self,value):
         self._caracteristicas['cor dos olhos']=value
         
@@ -607,7 +597,6 @@ class Personagem(Usuario):
     def cor_olhos(self):
         return self._caracteristicas['cor dos olhos']
     
-    @set_cor_pele.setter
     def set_cor_pele(self,value):
         self._caracteristicas['cor da pele']=value
     
@@ -615,7 +604,6 @@ class Personagem(Usuario):
     def cor_pele(self):
         return self._caracteristicas['cor da pele']
     
-    @set_cor_cabelo.setter
     def set_cor_cabelo(self,value):
         self._caracteristicas['cor do cabelo']=value
     
@@ -623,7 +611,6 @@ class Personagem(Usuario):
     def cor_cabelo(self):
         return self._caracteristicas['cor do cabelo']  
     
-    @set_imagem_personagem.setter
     def set_imagem_personagem(self,value):
         self._caracteristicas['imagem_personagem']=value
         
@@ -652,7 +639,7 @@ class Personagem(Usuario):
                 mycursor.execute(query, (self._id_personagem))
                 result = mycursor.fetchall() 
                 for row in result:
-                    self.set_salvaguardas({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[0]})
+                    self.salvaguardas({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[0]})
                 return True
             return False
         except Exception as e:
@@ -673,15 +660,15 @@ class Personagem(Usuario):
         except pymysql.Error as e:
             print(e)
             return False
-    
-    @salvaguardas.setter
-    def set_salvaguardas(self, value):
-        self._salvaguardas.append(value)
         
     @property
-    def savalguardas(self):
+    def salvaguardas(self):
         return self._salvaguardas
-    
+
+    @salvaguardas.setter
+    def salvaguardas(self, value):
+        self._salvaguardas.append(value)
+
     @property
     def resistencia_forca(self):
         if any(d.get('nome_salvaguarda') == 'forca' for d in self._salvaguardas):
