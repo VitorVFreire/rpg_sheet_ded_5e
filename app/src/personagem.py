@@ -5,16 +5,14 @@ class Personagem(Usuario):
     def __init__(self, id_usuario,id_personagem):
         super().__init__(id=id_usuario)
         self._id_personagem = id_personagem
-        self.nome_personagem=None
-        self.nivel = None
-        self.classe = []
+        self._nome_personagem=None
+        self._classe = []
+        self._raca = None
         self._salvaguardas = []
-        self._pericias=[]
-        self.truques = []
-        self.magias = []
-        self.armas=[]
-        self.equipamentos=[]
-        self.caracteristicas = {
+        self._feitico = []
+        self._armas=[]
+        self._equipamentos=[]
+        self._caracteristicas = {
             'idade': None,
             'altura': None,
             'peso': None,
@@ -23,7 +21,9 @@ class Personagem(Usuario):
             'cor do cabelo': None,
             'imagem_personagem':None
         }
-        self.atributos = {
+        self._pericias=[]
+        self._bonus_proficiencia = None
+        self._atributos = {
             'forca': None,
             'destreza': None,
             'contituicao': None,
@@ -31,33 +31,27 @@ class Personagem(Usuario):
             'sabedoria': None,
             'carisma': None
         }
-        self.xp = None
-        self._raca = None
-        self.inspiracao = None
-        self._bonus_proficiencia = None
+        self._alinhamento = None
+        self._antecendente = None
         self._ca = None
         self._deslocamento = None
-        self.vida = None
-        self.iniciativa = None
-#-----------------------------------------------HABILIDADES----------------------------------------------- 
-    @magia.setter
-    def set_magia(self,value):
-        self.magias.append(value)
-        
-    @property
-    def magia(self,value):
-        return self.magias[value]
-    
-    @property
-    def magias(self):
-        return self.magias
-    
-    def adicionar_magia_banco(self,id_magia):
+        self._faccao = None
+        self._inspiracao = None
+        self._iniciativa = None
+        self._nivel = None
+        self._vida = None
+        self._vida_atual = None
+        self._vida_temporaria = None
+        self._xp = None
+#-----------------------------------------------BASE----------------------------------------------- 
+    def adicionar_classe_banco(self,id_classe):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "INSERT INTO magia_personagem(id_personagem,id_magia) VALUES(%s,%s);"
-                mycursor.execute(query, (self._id_personagem,id_magia))
+                query = """INSERT INTO classe_personagem
+                (id_personagem,id_classe) 
+                VALUES(%s,%s);"""
+                mycursor.execute(query, (self._id_personagem,id_classe))
                 mydb.commit()
                 return True
             return False
@@ -65,99 +59,59 @@ class Personagem(Usuario):
             print(e)
             return False
         
-    def carregar_magias_do_banco(self):
+    def carregar_classe_do_banco(self):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = """SELECT mp.id_magia, mg.nome_magia, td.nome_tipo FROM magia_personagem mp 
-                JOIN magia mg ON mp.id_magia = mg.id 
-                JOIN tipo_dano td ON mg.id_tipo_dano = td.id_tipo_dano WHERE mp.id_personagem = %s"""
+                query = """SELECT cp.id_classe, cl.nome_classe
+                FROM classe_personagem cp, classe cl
+                WHERE cp.id_personagem = %s and cp.id_classe=cl.id_classe;"""
                 mycursor.execute(query, (self._id_personagem))
-                result = mycursor.fetchall()
-                for row in result:
-                    magia = {
-                        'id_magia': row[0],
-                        'nome_magia': row[1],
-                        'tipo_dano': row[2]
-                    }
-                    self.set_magia(magia)                
-                return True
+                result = mycursor.fetchone()
+                if result:
+                    for row in result:
+                        self.set_classe({'id_classe':row[0],'nome_classe':row[1]})
+                    return True
             return False
         except Exception as e:
             print(e)
             return False
-    
-    @truque.setter
-    def set_truque(self,value):
-        self.truques.append(value)
         
-    @property
-    def truque(self,value):
-        return self.truques[value]
-    
-    @property
-    def truques(self):
-        return self.truques
-    
-    def adicionar_truque_banco(self,id_truque):
+    def carregar_personagem_banco(self):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "INSERT INTO truque_personagem(id_personagem,id_magia) VALUES(%s,%s);"
-                mycursor.execute(query, (self._id_personagem,id_truque))
-                mydb.commit()
-                return True
-            return False
-        except EOFError as e:
-            print(e)
-            return False
-    
-    def carregar_truques_do_banco(self):
-        try:
-            if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """SELECT tq.id_truque, tq.nome_truque, td.nome_tipo FROM truque_personagem tp 
-                JOIN truque tq ON tp.id_truque = tq.id_truque 
-                JOIN tipo_dano td ON tq.id_tipo_dano = td.id_tipo_dano WHERE tp.id_personagem = %s"""
-                mycursor.execute(query, (self._id_personagem))
-                result = mycursor.fetchall()
-                for row in result:
-                    truque = {
-                        'id_truque': row[0],
-                        'nome_truque': row[1],
-                        'tipo_dano': row[2]
-                    }
-                self.set_truque(truque) 
-                return True
+                query = """SELECT pr.nome_personagem,rc.nome_raca
+                FROM personagem pr,raca rc
+                WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
+                mycursor.execute(query, (self._id))
+                result = mycursor.fetchone()
+                if result:
+                    for row in result:
+                        self.set_nome_personagem=row[0]
+                        self.set_raca=row[1]
+                    return True
             return False
         except Exception as e:
             print(e)
             return False
-#-----------------------------------------------GERAL-----------------------------------------------   
+        
     @nome_personagem.setter
     def set_nome_personagem(self,value):
-        self.nome_personagem=value
+        self._nome_personagem=value
         
     @property
     def nome_personagem(self):
-        return self.nome_personagem
+        return self._nome_personagem
     
     @set_classe.setter
     def set_classe(self,value):
-        self.classe.append(value)
+        self._classe.append(value)
     
     @property
     def classe(self):
-        return self.classe
-         
-    @xp.setter
-    def set_xp(self,value):
-        self.xp=value
+        return self._classe
     
-    @property
-    def xp(self):
-        return self.xp
-        
     @raca.setter
     def set_raca(self,value):
         self._raca=value
@@ -165,14 +119,90 @@ class Personagem(Usuario):
     @property
     def raca(self):
         return self._raca
+#-----------------------------------------------STATUS_BASE-----------------------------------------------   
+    def adicionar_status_base_banco(self,vida=0,xp=0,nivel=0,alinhamento=None,antecendente=None,faccao=None,inspiracao=0,ca=0,iniciativa=0,deslocamento=0,vida_atual=0,vida_temporaria=0):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """INSERT INTO status_base
+                (id_personagem,vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria) 
+                VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
+                mycursor.execute(query, (self._id_personagem,vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False
         
-    @bonus_proficiencia.setter
-    def set_bonus_proficiencia(self,value):
-        self._bonus_proficiencia=value
+    def carregar_status_base_do_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """SELECT vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria
+                FROM status_base
+                WHERE id_personagem = %s;"""
+                mycursor.execute(query, (self._id_personagem))
+                result = mycursor.fetchone()
+                if result:
+                    for row in result:
+                        self.set_vida=row[0]
+                        self.set_xp=row[1]
+                        self.set_nivel=row[2]
+                        self.set_alinhamento=row[3] 
+                        self.set_antecendente=row[4] 
+                        self.set_faccao=row[5]  
+                        self.set_inspiracao=row[6]
+                        self.set_ca=row[7]
+                        self.set_iniciativa[8]
+                        self.set_deslocamento=row[9]
+                        self.set_vida_atual=row[10]
+                        self.set_vida_temporaria=row[11]     
+                    return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+    
+    @nivel.setter
+    def set_nivel(self,value):
+        self._nivel=value
         
     @property
-    def bonus_proficiencia(self):
-        return self._bonus_proficiencia
+    def nivel(self):
+        return self._nivel
+    
+    @alinhamento.setter
+    def set_alinhamento(self,value):
+        self._alinhamento=value
+        
+    @property
+    def alinhamento(self):
+        return self._alinhamento
+    
+    @faccao.setter
+    def set_faccao(self,value):
+        self._faccao=value
+        
+    @property
+    def faccao(self):
+        return self._faccao
+    
+    @antecendente.setter
+    def set_antecendente(self,value):
+        self._antecendente=value
+        
+    @property
+    def antecendente(self):
+        return self._antecendente
+         
+    @xp.setter
+    def set_xp(self,value):
+        self._xp=value
+    
+    @property
+    def xp(self):
+        return self._xp
         
     @deslocamento.setter
     def set_deslocamento(self,value):
@@ -184,27 +214,43 @@ class Personagem(Usuario):
         
     @iniciativa.setter
     def set_iniciativa(self,value):
-        self.iniciativa=value
+        self._iniciativa=value
         
     @property
     def iniciativa(self):
-        return self.iniciativa
+        return self._iniciativa
     
     @vida.setter
     def set_vida(self,value):
-        self.vida=value
+        self._vida=value
         
     @property
     def vida(self):
-        return self.vida
+        return self._vida
+    
+    @vida_atual.setter
+    def set_vida_atual(self,value):
+        self._vida_atual=value
+        
+    @property
+    def vida_atual(self):
+        return self._vida_atual
+    
+    @vida_temporaria.setter
+    def set_vida_temporaria(self,value):
+        self._vida_temporaria=value
+        
+    @property
+    def vida_temporaria(self):
+        return self._vida_temporaria
     
     @inspiracao.setter
     def set_inspiracao(self,value):
-        self.inspiracao=value
+        self._inspiracao=value
         
     @property
     def inspiracao(self):
-        return self.inspiracao
+        return self._inspiracao
     
     @ca.setter
     def set_ca(self,value):
@@ -212,7 +258,58 @@ class Personagem(Usuario):
     
     @property
     def ca(self):
-        return self._ca        
+        return self._ca   
+#-----------------------------------------------HABILIDADES----------------------------------------------- 
+    def adicionar_feitico_banco(self,id_feitico):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = "INSERT INTO feitico_personagem(id_personagem,id_feitico) VALUES(%s,%s);"
+                mycursor.execute(query, (self._id_personagem,id_feitico))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False
+        
+    def carregar_feitico_do_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """SELECT fp.id_feitico, ft.nome_feitico, ft.tipo_feitico, td.nome_tipo
+                FROM feitico_personagem fp
+                JOIN feitico ft ON fp.id_feitico = ft.id_feitico
+                JOIN tipo_dano td ON ft.id_tipo_dano = td.id_tipo_dano
+                WHERE fp.id_personagem = %s;"""
+                mycursor.execute(query, (self._id_personagem))
+                result = mycursor.fetchall()
+                if result:
+                    for row in result:
+                        feitico = {
+                            'id_feitico': row[0],
+                            'nome_feitico': row[1],
+                            'tipo_feitico': row[2],
+                            'tipo_dano':row[3]
+                        }
+                        self._feitico(feitico)               
+                    return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+    
+    @feitico.setter
+    def set_feitico(self,value):
+        self._feitico.append(value)
+        
+    @property
+    def feitico(self,value):
+        return self._feitico[value]
+    
+    @property
+    def feiticos(self):
+        return self._feitico        
 #-----------------------------------------------ATRIBUTOS-----------------------------------------------
     def adicionar_atributos_banco(self,forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia):
         try:
@@ -231,106 +328,115 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "SELECT * FROM atributos WHERE id_personagem = %s"
+                query = """SELECT forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia 
+                FROM atributos WHERE id_personagem = %s"""
                 mycursor.execute(query, (self._id_personagem))
                 result = mycursor.fetchone() 
                 for row in result:
-                    self.set_forca=row[2]
-                    self.set_destreza=row[3]
-                    self.set_constituicao=row[4]
-                    self.set_inteligencia=row[5]
-                    self.set_sabedoria=row[6]
-                    self.set_carisma=row[7]
-                    self.set_bonus_proficiencia=row[8]
+                    self.set_forca=row[0]
+                    self.set_destreza=row[1]
+                    self.set_constituicao=row[2]
+                    self.set_inteligencia=row[3]
+                    self.set_sabedoria=row[4]
+                    self.set_carisma=row[5]
+                    self.set_bonus_proficiencia=row[6]
                 return True
             return False
         except Exception as e:
             print(e)
             return False
+        
+    @bonus_proficiencia.setter
+    def set_bonus_proficiencia(self,value):
+        self._bonus_proficiencia=value
+        
+    @property
+    def bonus_proficiencia(self):
+        return self._bonus_proficiencia
     
     @set_forca.setter
     def set_forca(self,value):
-        self.atributos['forca']=value
+        self._atributos['forca']=value
         
     @property
     def forca(self):
-        if self.atributos['forca'] is None:
+        if self._atributos['forca'] is None:
             return 0
-        return self.atributos['forca']
+        return self._atributos['forca']
     
     @property
     def bonus_forca(self):
-        return attributes.loc[self.atributos['forca']]
+        return attributes.loc[self._atributos['forca']]
         
     @set_destreza.setter
     def set_destreza(self,value):
-        self.atributos['destreza']=value
+        self._atributos['destreza']=value
         
     @property
     def destreza(self):
-        if self.atributos['destreza'] is None:
+        if self._atributos['destreza'] is None:
             return 0
-        return self.atributos['destreza']
+        return self._atributos['destreza']
     
     @property
     def bonus_destreza(self):
-        return attributes.loc[self.atributos['destreza']]
+        return attributes.loc[self._atributos['destreza']]
         
     @set_constituicao.setter
     def set_constituicao(self,value):
-        self.atributos['constituicao']=value
+        self._atributos['constituicao']=value
         
     @property
     def constituicao(self):
-        if self.atributos['constituicao'] is None:
+        if self._atributos['constituicao'] is None:
             return 0
-        return self.atributos['constituicao']
+        return self._atributos['constituicao']
     
     @property
     def bonus_constituicao(self):
-        return attributes.loc[self.atributos['constituicao']]
+        return attributes.loc[self._atributos['constituicao']]
         
     @set_inteligencia.setter
     def set_inteligencia(self,value):
-        self.atributos['inteligencia']=value
+        self._atributos['inteligencia']=value
         
     @property
     def inteligencia(self):
-        if self.atributos['inteligencia'] is None:
+        if self._atributos['inteligencia'] is None:
             return 0
-        return self.atributos['inteligencia']
+        return self._atributos['inteligencia']
     
     @property
     def bonus_inteligencia(self):
-        return attributes.loc[self.atributos['inteligencia']]
+        return attributes.loc[self._atributos['inteligencia']]
         
     @set_sabedoria.setter
     def set_sabedoria(self,value):
-        self.atributos['sabedoria']=value
+        self._atributos['sabedoria']=value
         
     @property
     def sabedoria(self):
-        if self.atributos['sabedoria'] is None:
+        if self._atributos['sabedoria'] is None:
             return 0
-        return self.atributos['sabedoria']
+        return self._atributos['sabedoria']
     
     @property
     def bonus_sabedoria(self):
-        return attributes.loc[self.atributos['sabedoria']]
+        return attributes.loc[self._atributos['sabedoria']]
         
     @set_carisma.setter
     def set_carisma(self,value):
-        self.atributos['carisma']=value
+        self._atributos['carisma']=value
     
     @property
     def carisma(self):
-        if self.atributos['carisma'] is None:
+        if self._atributos['carisma'] is None:
             return 0
-        return self.atributos['carisma']
+        return self._atributos['carisma']
     
     @property
     def bonus_carisma(self):
-        return attributes.loc[self.atributos['carisma']]
+        return attributes.loc[self._atributos['carisma']]
 #-----------------------------------------------CARACTERISTICAS----------------------------------------------- 
     def adicionar_caracteristicas_banco(self,idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem):
         try:
@@ -351,17 +457,17 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "SELECT * FROM caracteristicas_personagem WHERE id_personagem = %s"
+                query = "SELECT idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem FROM caracteristicas_personagem WHERE id_personagem = %s"
                 mycursor.execute(query, (self._id_personagem))
                 result = mycursor.fetchone() 
                 for row in result:
-                    self.set_idade=row[2]
-                    self.set_cor_olhos=row[3]
-                    self.set_cor_pele=row[4]
-                    self.set_cor_cabelo=row[5]
-                    self.set_peso=row[6]
-                    self.set_altura=row[7]
-                    self.set_imagem_personagem=row[8]
+                    self.set_idade=row[0]
+                    self.set_cor_olhos=row[1]
+                    self.set_cor_pele=row[2]
+                    self.set_cor_cabelo=row[3]
+                    self.set_peso=row[4]
+                    self.set_altura=row[5]
+                    self.set_imagem_personagem=row[6]
                 return True
             return False
         except Exception as e:
@@ -370,60 +476,88 @@ class Personagem(Usuario):
     
     @set_idade.setter
     def set_idade(self,value):
-        self.caracteristicas['idade']=value
+        self._caracteristicas['idade']=value
     
     @property
     def idade(self):
-        self.caracteristicas['idade']
+        self._caracteristicas['idade']
     
     @set_altura.setter
     def set_altura(self,value):
-        self.caracteristicas['altura']=value
+        self._caracteristicas['altura']=value
         
     @property
     def altura(self):
-        return self.caracteristicas['altura']
+        return self._caracteristicas['altura']
     
     @set_peso.setter
     def set_peso(self,value):
-        self.caracteristicas['peso']=value
+        self._caracteristicas['peso']=value
     
     @property
     def peso(self):
-        return self.caracteristicas['peso']
+        return self._caracteristicas['peso']
     
     @set_cor_olhos.settet
     def set_cor_olhos(self,value):
-        self.caracteristicas['cor dos olhos']=value
+        self._caracteristicas['cor dos olhos']=value
         
     @property
     def cor_olhos(self):
-        return self.caracteristicas['cor dos olhos']
+        return self._caracteristicas['cor dos olhos']
     
     @set_cor_pele.setter
     def set_cor_pele(self,value):
-        self.caracteristicas['cor da pele']=value
+        self._caracteristicas['cor da pele']=value
     
     @property
     def cor_pele(self):
-        return self.caracteristicas['cor da pele']
+        return self._caracteristicas['cor da pele']
     
     @set_cor_cabelo.setter
     def set_cor_cabelo(self,value):
-        self.caracteristicas['cor do cabelo']=value
+        self._caracteristicas['cor do cabelo']=value
     
     @property
     def cor_cabelo(self):
-        return self.caracteristicas['cor do cabelo']  
+        return self._caracteristicas['cor do cabelo']  
     
     @set_imagem_personagem.setter
     def set_imagem_personagem(self,value):
-        self.caracteristicas['imagem_personagem']=value
+        self._caracteristicas['imagem_personagem']=value
         
     @property
     def imagem_personagem(self):
-        return self.caracteristicas['imagem_personagem']
+        return self._caracteristicas['imagem_personagem']
 #-----------------------------------------------SALVAGUARDAS-----------------------------------------------
+    def adicionar_salvaguardas_banco(self,id_salvaguarda):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = "INSERT INTO salvaguarda_personagem(id_personagem,id_salvaguarda) VALUES(%s,%s);"
+                mycursor.execute(query, (self._id_personagem,id_salvaguarda))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False
+    
+    def carregar_salvaguardas_do_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = "SELECT sp.id_salvaguarda,sp.nome_salvaguarda FROM salvaguarda_personagem sp,salvaguarda sl WHERE sp.id_personagem = %s and sl.id_salvaguarda=sp.id_salvaguarda"
+                mycursor.execute(query, (self._id_personagem))
+                result = mycursor.fetchall() 
+                for row in result:
+                    self.set_salvaguardas({'id_salvaguarda':row[0],'nome_salvaguarda':row[0]})
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+    
     @salvaguardas.setter
     def set_salvaguardas(self, value):
         self._salvaguardas.append(value)
@@ -434,39 +568,39 @@ class Personagem(Usuario):
     
     @property
     def resistencia_forca(self):
-        if 'forca' in self._salvaguardas:
-            return self.atributos['forca']+self._bonus_proficiencia
-        return self.atributos['forca']
+        if any(d.get('nome_salvaguarda') == 'forca' for d in self._salvaguardas):
+            return self._atributos['forca']+self._bonus_proficiencia
+        return self._atributos['forca']
     
     @property
     def resistencia_destreza(self):
-        if 'destreza' in self._salvaguardas:
-            return self.atributos['destreza']+self._bonus_proficiencia
-        return self.atributos['destreza']
+        if any(d.get('nome_salvaguarda') == 'destreza' for d in self._salvaguardas):
+            return self._atributos['destreza']+self._bonus_proficiencia
+        return self._atributos['destreza']
     
     @property
     def resistencia_constituicao(self):
-        if 'constituicao' in self._salvaguardas:
-            return self.atributos['constituicao']+self._bonus_proficiencia
-        return self.atributos['constituicao']
+        if any(d.get('nome_salvaguarda') == 'constituicao' for d in self._salvaguardas):
+            return self._atributos['constituicao']+self._bonus_proficiencia
+        return self._atributos['constituicao']
     
     @property
     def resistencia_inteligencia(self):
-        if 'inteligencia' in self._salvaguardas:
-            return self.atributos['inteligencia']+self._bonus_proficiencia
-        return self.atributos['inteligencia']
+        if any(d.get('nome_salvaguarda') == 'inteligencia' for d in self._salvaguardas):
+            return self._atributos['inteligencia']+self._bonus_proficiencia
+        return self._atributos['inteligencia']
     
     @property
     def resistencia_sabedoria(self):
-        if 'sabedoria' in self._salvaguardas:
-            return self.atributos['sabedoria']+self._bonus_proficiencia
-        return self.atributos['sabedoria']
+        if any(d.get('nome_salvaguarda') == 'sabedoria' for d in self._salvaguardas):
+            return self._atributos['sabedoria']+self._bonus_proficiencia
+        return self._atributos['sabedoria']
     
     @property
     def resistencia_carisma(self):
-        if 'carisma' in self._salvaguardas:
-            return self.atributos['carisma']+self._bonus_proficiencia
-        return self.atributos['carisma']
+        if any(d.get('nome_salvaguarda') == 'carisma' for d in self._salvaguardas):
+            return self._atributos['carisma']+self._bonus_proficiencia
+        return self._atributos['carisma']
 #-----------------------------------------------PERICIAS-----------------------------------------------
     def adicionar_pericias_banco(self,id_pericia):
         try:
@@ -507,107 +641,107 @@ class Personagem(Usuario):
     @property
     def acrobacia(self):
         if any(d.get('nome_pericia') == 'destreza' for d in self._pericias):
-            return self.atributos['destreza'] + self._bonus_proficiencia
-        return self.atributos['destreza']
+            return self._atributos['destreza'] + self._bonus_proficiencia
+        return self._atributos['destreza']
 
     @property
     def arcanismo(self):
         if any(d.get('nome_pericia') == 'inteligencia' for d in self._pericias):
-            return self.atributos['inteligencia'] + self._bonus_proficiencia
-        return self.atributos['inteligencia']
+            return self._atributos['inteligencia'] + self._bonus_proficiencia
+        return self._atributos['inteligencia']
 
     @property
     def atletismo(self):
         if any(d.get('nome_pericia') == 'forca' for d in self._pericias):
-            return self.atributos['forca'] + self._bonus_proficiencia
-        return self.atributos['forca']
+            return self._atributos['forca'] + self._bonus_proficiencia
+        return self._atributos['forca']
 
     @property
     def atuacao(self):
         if any(d.get('nome_pericia') == 'carisma' for d in self._pericias):
-            return self.atributos['carisma'] + self._bonus_proficiencia
-        return self.atributos['carisma']
+            return self._atributos['carisma'] + self._bonus_proficiencia
+        return self._atributos['carisma']
 
     @property
     def enganacao(self):
         if any(d.get('nome_pericia') == 'carisma' for d in self._pericias):
-            return self.atributos['carisma'] + self._bonus_proficiencia
-        return self.atributos['carisma']
+            return self._atributos['carisma'] + self._bonus_proficiencia
+        return self._atributos['carisma']
 
     @property
     def furtividade(self):
         if any(d.get('nome_pericia') == 'destreza' for d in self._pericias):
-            return self.atributos['destreza'] + self._bonus_proficiencia
-        return self.atributos['destreza']
+            return self._atributos['destreza'] + self._bonus_proficiencia
+        return self._atributos['destreza']
 
     @property
     def historia(self):
         if any(d.get('nome_pericia') == 'inteligencia' for d in self._pericias):
-            return self.atributos['inteligencia'] + self._bonus_proficiencia
-        return self.atributos['inteligencia']
+            return self._atributos['inteligencia'] + self._bonus_proficiencia
+        return self._atributos['inteligencia']
 
     @property
     def intimidacao(self):
         if any(d.get('nome_pericia') == 'carisma' for d in self._pericias):
-            return self.atributos['carisma'] + self._bonus_proficiencia
-        return self.atributos['carisma']
+            return self._atributos['carisma'] + self._bonus_proficiencia
+        return self._atributos['carisma']
 
     @property
     def intuicao(self):
         if any(d.get('nome_pericia') == 'sabedoria' for d in self._pericias):
-            return self.atributos['sabedoria'] + self._bonus_proficiencia
-        return self.atributos['sabedoria']
+            return self._atributos['sabedoria'] + self._bonus_proficiencia
+        return self._atributos['sabedoria']
 
     @property
     def investigacao(self):
         if any(d.get('nome_pericia') == 'inteligencia' for d in self._pericias):
-            return self.atributos['inteligencia'] + self._bonus_proficiencia
-        return self.atributos['inteligencia']
+            return self._atributos['inteligencia'] + self._bonus_proficiencia
+        return self._atributos['inteligencia']
 
     @property
     def lidar_com_animais(self):
         if any(d.get('nome_pericia') == 'sabedoria' for d in self._pericias):
-            return self.atributos['sabedoria'] + self._bonus_proficiencia
-        return self.atributos['sabedoria']
+            return self._atributos['sabedoria'] + self._bonus_proficiencia
+        return self._atributos['sabedoria']
 
     @property
     def medicina(self):
         if any(d.get('nome_pericia') == 'sabedoria' for d in self._pericias):
-            return self.atributos['sabedoria'] + self._bonus_proficiencia
-        return self.atributos['sabedoria']
+            return self._atributos['sabedoria'] + self._bonus_proficiencia
+        return self._atributos['sabedoria']
 
     @property
     def natureza(self):
         if any(d.get('nome_pericia') == 'inteligencia' for d in self._pericias):
-            return self.atributos['inteligencia'] + self._bonus_proficiencia
-        return self.atributos['inteligencia']
+            return self._atributos['inteligencia'] + self._bonus_proficiencia
+        return self._atributos['inteligencia']
 
     @property
     def percepcao(self):
         if any(d.get('nome_pericia') == 'sabedoria' for d in self._pericias):
-            return self.atributos['sabedoria'] + self._bonus_proficiencia
-        return self.atributos['sabedoria']
+            return self._atributos['sabedoria'] + self._bonus_proficiencia
+        return self._atributos['sabedoria']
 
     @property
     def persuasao(self):
         if any(d.get('nome_pericia') == 'carisma' for d in self._pericias):
-            return self.atributos['carisma'] + self._bonus_proficiencia
-        return self.atributos['carisma']
+            return self._atributos['carisma'] + self._bonus_proficiencia
+        return self._atributos['carisma']
 
     @property
     def prestidigitacao(self):
         if any(d.get('nome_pericia') == 'destreza' for d in self._pericias):
-            return self.atributos['destreza'] + self._bonus_proficiencia
-        return self.atributos['destreza']
+            return self._atributos['destreza'] + self._bonus_proficiencia
+        return self._atributos['destreza']
 
     @property
     def religiao(self):
         if any(d.get('nome_pericia') == 'inteligencia' for d in self._pericias):
-            return self.atributos['inteligencia'] + self._bonus_proficiencia
-        return self.atributos['inteligencia']
+            return self._atributos['inteligencia'] + self._bonus_proficiencia
+        return self._atributos['inteligencia']
 
     @property
     def sobrevivencia(self):
         if any(d.get('nome_pericia') == 'sabedoria' for d in self._pericias):
-            return self.atributos['sabedoria'] + self._bonus_proficiencia
-        return self.atributos['sabedoria']
+            return self._atributos['sabedoria'] + self._bonus_proficiencia
+        return self._atributos['sabedoria']
