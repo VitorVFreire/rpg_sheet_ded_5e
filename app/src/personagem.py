@@ -129,7 +129,8 @@ class Personagem(Usuario):
     
     def update_personagem_banco(self,chave,valor):
         try:
-            if self._id_personagem:
+            possibilidades_chave=['id_raca','nome_personagem']
+            if self._id_personagem and chave in possibilidades_chave:
                 mycursor = mydb.cursor()
                 query = f"""UPDATE personagem
                 SET {chave}=%s
@@ -196,12 +197,14 @@ class Personagem(Usuario):
         
     def update_status_base_banco(self,chave,valor):
         try:
-            if self._id_personagem:
+            possibilidades_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
+            if self._id_personagem and chave in possibilidades_chave:
                 mycursor = mydb.cursor()
                 query = f"""UPDATE status_base
                 SET {chave}=%s
                 WHERE id_personagem=%s;"""
-                mycursor.execute(query, (valor,self._id_personagem))
+                parametros=(valor,self._id_personagem)
+                mycursor.execute(query, parametros)
                 mydb.commit()
                 return True
             return False
@@ -409,12 +412,14 @@ class Personagem(Usuario):
     
     def update_atributos_banco(self,chave,valor):
         try:
-            if self._id_personagem:
+            possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
+            if self._id_personagem and chave in possibilidade_chave:
                 mycursor = mydb.cursor()
                 query = f"""UPDATE atributos
                 SET {chave}=%s
                 WHERE id_personagem=%s;"""
-                mycursor.execute(query, (valor,self._id_personagem))
+                parametros=(valor,self._id_personagem)
+                mycursor.execute(query, parametros)
                 mydb.commit()
                 return True
             return False
@@ -552,12 +557,14 @@ class Personagem(Usuario):
         
     def update_caracteristicas_banco(self,chave,valor):
         try:
-            if self._id_personagem:
+            possibilidade_chave=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
+            if self._id_personagem and chave in possibilidade_chave:
                 mycursor = mydb.cursor()
                 query = f"""UPDATE caracteristicas_personagem
                 SET {chave}=%s
                 WHERE id_personagem=%s;"""
-                mycursor.execute(query, (valor,self._id_personagem))
+                parametros=(valor,self._id_personagem)
+                mycursor.execute(query, parametros)
                 mydb.commit()
                 return True
             return False
