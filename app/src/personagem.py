@@ -1,5 +1,6 @@
 from database import mydb,attributes
 from src import Usuario
+import pymysql
 
 class Personagem(Usuario):
     def __init__(self, id_usuario,id_personagem):
@@ -55,7 +56,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
         
@@ -70,7 +71,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
         
@@ -150,6 +151,8 @@ class Personagem(Usuario):
     @property
     def raca(self):
         return self._raca
+#-----------------------------------------------EQUIPAMENTOS-----------------------------------------------
+
 #-----------------------------------------------STATUS_BASE-----------------------------------------------   
     def adicionar_status_base_banco(self,vida=0,xp=0,nivel=0,alinhamento=None,antecendente=None,faccao=None,inspiracao=0,ca=0,iniciativa=0,deslocamento=0,vida_atual=0,vida_temporaria=0):
         try:
@@ -208,7 +211,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -317,7 +320,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
         
@@ -359,7 +362,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -384,7 +387,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -423,7 +426,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
         
@@ -530,7 +533,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -568,7 +571,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -637,7 +640,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -667,7 +670,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -724,7 +727,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
     
@@ -757,7 +760,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except pymysql.Error as e:
             print(e)
             return False
 
