@@ -8,7 +8,7 @@ class Usuario:
         self._nome=nome
         self._email=email
         self._senha=criptografar(senha)
-        self.personagens=[]
+        self._personagens=[]
         self._data_nascimento = data_nascimento
         
     @property
@@ -130,7 +130,7 @@ class Usuario:
                 myresult = mycursor.fetchall()  
                 if myresult:
                     for row in result:
-                        self.personagens.append({'id_personagem':row[0],'nome_personagem':row[1]})
+                        self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1]})
                     return True
             return False
         except EOFError as e:

@@ -59,23 +59,46 @@ class Personagem(Usuario):
             print(e)
             return False
         
+    def update_classe_banco(self,id_classe,id_classe_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """UPDATE classe_personagem
+                SET id_classe=%s
+                WHERE id_classe_personagem=%s"""
+                mycursor.execute(query, (id_classe,id_classe_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False
+        
     def carregar_classe_do_banco(self):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = """SELECT cp.id_classe, cl.nome_classe
+                query = """SELECT cp.id_classe, cl.nome_classe,cp.id_classe_personagem
                 FROM classe_personagem cp, classe cl
                 WHERE cp.id_personagem = %s and cp.id_classe=cl.id_classe;"""
                 mycursor.execute(query, (self._id_personagem))
                 result = mycursor.fetchone()
                 if result:
                     for row in result:
-                        self.set_classe({'id_classe':row[0],'nome_classe':row[1]})
+                        self.set_classe({'id_classe_personagem':row[2],'id_classe':row[0],'nome_classe':row[1]})
                     return True
             return False
         except Exception as e:
             print(e)
             return False
+        
+    @set_classe.setter
+    def set_classe(self,value):
+        self._classe.append(value)
+    
+    @property
+    def classe(self):
+        return self._classe
         
     def carregar_personagem_banco(self):
         try:
@@ -104,13 +127,20 @@ class Personagem(Usuario):
     def nome_personagem(self):
         return self._nome_personagem
     
-    @set_classe.setter
-    def set_classe(self,value):
-        self._classe.append(value)
-    
-    @property
-    def classe(self):
-        return self._classe
+    def update_personagem_banco(self,chave,valor):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = f"""UPDATE personagem
+                SET {chave}=%s
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (valor,self._id_personagem))
+                mydb.commit()
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
     
     @raca.setter
     def set_raca(self,value):
@@ -131,7 +161,7 @@ class Personagem(Usuario):
                 mydb.commit()
                 return True
             return False
-        except EOFError as e:
+        except Exception as e:
             print(e)
             return False
         
@@ -161,6 +191,21 @@ class Personagem(Usuario):
                     return True
             return False
         except Exception as e:
+            print(e)
+            return False
+        
+    def update_status_base_banco(self,chave,valor):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = f"""UPDATE status_base
+                SET {chave}=%s
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (valor,self._id_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
             print(e)
             return False
     
@@ -277,7 +322,7 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = """SELECT fp.id_feitico, ft.nome_feitico, ft.tipo_feitico, td.nome_tipo
+                query = """SELECT fp.id_feitico, ft.nome_feitico, ft.tipo_feitico, td.nome_tipo,fp.id_feitico_personagem
                 FROM feitico_personagem fp
                 JOIN feitico ft ON fp.id_feitico = ft.id_feitico
                 JOIN tipo_dano td ON ft.id_tipo_dano = td.id_tipo_dano
@@ -287,6 +332,7 @@ class Personagem(Usuario):
                 if result:
                     for row in result:
                         feitico = {
+                            'id_feitico_personagem':row[4],
                             'id_feitico': row[0],
                             'nome_feitico': row[1],
                             'tipo_feitico': row[2],
@@ -296,6 +342,21 @@ class Personagem(Usuario):
                     return True
             return False
         except Exception as e:
+            print(e)
+            return False
+        
+    def update_feitico_banco(self,novo_feitico,id_feitico_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """UPDATE feitico_personagem
+                SET id_feitico=%s
+                WHERE id_feitico_personagem=%s;"""
+                mycursor.execute(query, (novo_feitico,id_feitico_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
             print(e)
             return False
     
@@ -343,6 +404,21 @@ class Personagem(Usuario):
                 return True
             return False
         except Exception as e:
+            print(e)
+            return False
+    
+    def update_atributos_banco(self,chave,valor):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = f"""UPDATE atributos
+                SET {chave}=%s
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (valor,self._id_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
             print(e)
             return False
         
@@ -473,6 +549,21 @@ class Personagem(Usuario):
         except Exception as e:
             print(e)
             return False
+        
+    def update_caracteristicas_banco(self,chave,valor):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = f"""UPDATE caracteristicas_personagem
+                SET {chave}=%s
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (valor,self._id_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
+            print(e)
+            return False
     
     @set_idade.setter
     def set_idade(self,value):
@@ -547,14 +638,29 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "SELECT sp.id_salvaguarda,sp.nome_salvaguarda FROM salvaguarda_personagem sp,salvaguarda sl WHERE sp.id_personagem = %s and sl.id_salvaguarda=sp.id_salvaguarda"
+                query = "SELECT sp.id_salvaguarda,sp.nome_salvaguarda,sp.id_salvaguarda_personagem FROM salvaguarda_personagem sp,salvaguarda sl WHERE sp.id_personagem = %s and sl.id_salvaguarda=sp.id_salvaguarda"
                 mycursor.execute(query, (self._id_personagem))
                 result = mycursor.fetchall() 
                 for row in result:
-                    self.set_salvaguardas({'id_salvaguarda':row[0],'nome_salvaguarda':row[0]})
+                    self.set_salvaguardas({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[0]})
                 return True
             return False
         except Exception as e:
+            print(e)
+            return False
+        
+    def update_salvaguardas_banco(self,id_salvaguarda,id_salvaguarda_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """UPDATE salvaguarda_personagem
+                SET id_salvaguarda=%s
+                WHERE id_salvaguarda_personagem=%s;"""
+                mycursor.execute(query, (id_salvaguarda,id_salvaguarda_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
             print(e)
             return False
     
@@ -619,14 +725,32 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "SELECT pp.id_pericia, pc.nome_pericia, pc.status_uso FROM pericia_personagem pp JOIN pericia pc ON pp.id_pericia = pc.id_pericia WHERE pp.id_personagem = %s;"
+                query = """SELECT pp.id_pericia, pc.nome_pericia, pc.status_uso,pp.id_pericia_personagem 
+                FROM pericia_personagem pp 
+                JOIN pericia pc ON pp.id_pericia = pc.id_pericia 
+                WHERE pp.id_personagem = %s;"""
                 mycursor.execute(query, (self._id_personagem,))
                 result = mycursor.fetchall() 
                 for row in result:
-                    self.set_pericias({'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
+                    self.set_pericias({'id_pericia_personagem':row[3],'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
                 return True
             return False
         except Exception as e:
+            print(e)
+            return False
+        
+    def update_pericias_banco(self,id_pericia,id_pericia_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """UPDATE pericia_personagem
+                SET id_pericia=%s
+                WHERE id_pericia_personagem=%s;"""
+                mycursor.execute(query, (id_pericia,id_pericia_personagem))
+                mydb.commit()
+                return True
+            return False
+        except EOFError as e:
             print(e)
             return False
 
