@@ -18,7 +18,7 @@ Pip (gerenciador de pacotes do Python): https://pip.pypa.io/en/stable/installing
 #### Como executar o projeto
 ##### Clone o repositório para sua máquina local:
 ```
-git clone https://github.com/VIVF0/rpg_sheet_ded_5e
+git clone https://github.com/VIVF0/rpg_sheet_ded_5e.git
 ```
 ##### Navegue até o diretório do projeto:
 ```
