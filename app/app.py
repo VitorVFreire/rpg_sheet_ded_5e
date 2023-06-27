@@ -1,5 +1,9 @@
-from src import Personagem
-from src import Usuario
+from flask import Flask
 
-usuario0=Usuario(nome='Vitor',email='vitor@vitor',senha='123',data_nascimento='2003/10/28')
-print(usuario0.valid_usuario())
+app = Flask(__name__)
+app.secret_key = 'rpg_sheet'
+
+from routes import *
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,0 +1,9 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    Login 
+    <form method="POST" action="{{ url_for('login') }}">
+        <input placeholder="email" type="email" class="form-control" name="email" required/>
+        <input placeholder="senha" type="password" class="form-control" name="senha" required/>
+        <button type="submit" id="btn-entrar" class="btn-entrar">Entrar</button>
+    </form>
+{% endblock %}

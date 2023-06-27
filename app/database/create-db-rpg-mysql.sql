@@ -18,6 +18,7 @@ DROP SCHEMA IF EXISTS `RPG` ;
 CREATE SCHEMA IF NOT EXISTS `RPG` DEFAULT CHARACTER SET utf8 ;
 SHOW WARNINGS;
 USE `RPG` ;
+SELECT * FROM usuario;
 
 -- -----------------------------------------------------
 -- Table `RPG`.`usuario`
