@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request,redirect, session, flash, url_for
+from flask import Flask, render_template, request,redirect, session, flash, url_for,jsonify
 
 from app import app
-from src import Usuario
+from src import Usuario,Personagem
 
 @app.route('/')
 def index():
@@ -17,3 +17,4 @@ def cadastro_login():
     if usuario.valid_usuario():
         return render_template('index.html',titulo='home',msg='logado')
     return redirect(url_for('login'))
+

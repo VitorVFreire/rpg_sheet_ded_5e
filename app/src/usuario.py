@@ -40,7 +40,7 @@ class Usuario:
             return dif.days // 365
         return None
             
-    def delete(self):
+    def delete_usuario(self):
         try:
             if self._id:
                 mycursor = mydb.cursor()
@@ -59,7 +59,7 @@ class Usuario:
             print(e)
             return False   
     
-    def create(self):
+    def create_usuario(self):
         try:
             if self._nome and self._email and self._senha and self._data_nascimento:
                 mycursor = mydb.cursor()
@@ -72,12 +72,15 @@ class Usuario:
                 return False
         return False
     
-    def update(self, column, value):
+    def update_usuario(self, chave, valor):
         try:
-            if self._id:
+            possiveis_chave=['nome','email','senha','data_nascimento']
+            if self._id and chave in possiveis_chave:
+                if chave=='senha':
+                    valor=criptografar(valor)
                 mycursor = mydb.cursor()
-                query = f"UPDATE usuario SET {column} = %s WHERE id_usuario = %s"
-                mycursor.execute(query, (value, self._id))
+                query = f"UPDATE usuario SET {chave} = %s WHERE id_usuario = %s"
+                mycursor.execute(query, (valor, self._id))
                 mydb.commit()
                 return True
             return False

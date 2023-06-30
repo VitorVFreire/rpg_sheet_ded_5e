@@ -59,6 +59,21 @@ class Personagem(Usuario):
         except pymysql.Error as e:
             print(e)
             return False
+    
+    def adicionar_personagem_banco(self,id_raca,nome_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """INSERT INTO personagem
+                (id_usuario,id_raca,nome_personagem) 
+                VALUES(%s,%s,%s);"""
+                mycursor.execute(query, (self._id,id_raca,nome_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
         
     def update_classe_banco(self,id_classe,id_classe_personagem):
         try:
