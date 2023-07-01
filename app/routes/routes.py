@@ -12,18 +12,17 @@ def index():
 def login():
     if session.get('id_usuario'):
         return render_template('index.html',titulo='home')
-    return render_template('login.html',titulo='login')
+    return render_template('login.html',titulo='login',msg='Erro no Login')
 
 @app.route('/logout')
 def logout():
     session['id_usuario'] = None
-    return redirect(url_for('index'))
+    return render_template('index.html',titulo='home',msg='Logout')
 
 @app.post('/login')
 def cadastro_login():
     usuario=Usuario(email=request.form.get('email'),senha=request.form.get('senha'))
     if usuario.valid_usuario():
         session['id_usuario']=usuario.id
-        return render_template('index.html',titulo='home',msg='logado')
+        return render_template('index.html',titulo='home',msg='Logado')
     return redirect(url_for('login'))
-

@@ -1,5 +1,26 @@
-from flask import Flask, request, session, jsonify
-from src import Usuario,Personagem
+from flask import Flask, request, session, jsonify, render_template, url_for, redirect
+from flask_session import Session
+
+from app import app
+from src import Usuario, Personagem
+
+@app.route('/insert/usuario',methods=['POST'])
+def create_usuario():
+    try:
+        email=request.form.get('email')
+        senha=request.form.get('senha')
+        nome=request.form.get('nome')
+        data_nascimento=request.form.get('data_nascimento')
+        
+        usuario=Usuario(nome=nome,email=email,senha=senha,data_nascimento=data_nascimento)
+        
+        if usuario.create_usuario():
+            session['id_usuario']=usuario.id
+            return render_template('index.html',titulo='home',msg='logado')
+        return render_template('login.html',titulo='login',msg='Erro no Login')
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
 
 @app.route('/insert/classe_personagem',methods=['POST'])
 def insert_classe_personagem():
