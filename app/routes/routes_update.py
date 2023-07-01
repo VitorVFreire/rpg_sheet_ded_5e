@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,redirect, session, flash, url_for,jsonify
+from flask import Flask, request, session, jsonify
 from src import Usuario,Personagem
 
 @app.route('/update/nome_personagem',methods=['POST'])
