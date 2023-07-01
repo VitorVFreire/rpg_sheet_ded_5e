@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request,redirect, session, flash, url_for,jsonify
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
 from flask_session import Session
 
 from app import app
-from src import Usuario,Personagem
+from src import Usuario, Personagem
 
 @app.route('/')
 def index():

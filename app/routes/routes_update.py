@@ -2,7 +2,7 @@ from flask import Flask, request, session, jsonify
 from flask_session import Session
 
 from app import app
-from src import Usuario,Personagem
+from src import Usuario, Personagem
 
 @app.route('/update/nome_personagem',methods=['POST'])
 def update_nome_personagem():

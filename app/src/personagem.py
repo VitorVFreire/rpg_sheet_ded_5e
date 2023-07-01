@@ -1,4 +1,4 @@
-from database import mydb,attributes
+from database import mydb, attributes
 from src import Usuario
 import pymysql
 
@@ -59,6 +59,20 @@ class Personagem(Usuario):
         except pymysql.Error as e:
             print(e)
             return False
+        
+    def delete_classe_banco(self,id_classe_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from classe_personagem
+                WHERE id_classe_personagem=%s;"""
+                mycursor.execute(query, (id_classe_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
     
     def adicionar_personagem_banco(self,id_raca,nome_personagem):
         try:
@@ -68,6 +82,20 @@ class Personagem(Usuario):
                 (id_usuario,id_raca,nome_personagem) 
                 VALUES(%s,%s,%s);"""
                 mycursor.execute(query, (self._id,id_raca,nome_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
+    def delete_personagem_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from personagem
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (self._id_personagem))
                 mydb.commit()
                 return True
             return False
@@ -181,6 +209,20 @@ class Personagem(Usuario):
                 return True
             return False
         except Exception as e:
+            print(e)
+            return False
+        
+    def delete_status_base_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from status_base
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (self._id_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
             print(e)
             return False
         
@@ -339,6 +381,20 @@ class Personagem(Usuario):
             print(e)
             return False
         
+    def delete_feitico_banco(self,id_feitico_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from feitico_personagem
+                WHERE id_feitico_personagem=%s;"""
+                mycursor.execute(query, (id_feitico_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+        
     def carregar_feitico_do_banco(self):
         try:
             if self._id_personagem:
@@ -399,6 +455,20 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = "INSERT INTO atributos(id_personagem,forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);"
                 mycursor.execute(query, (self._id_personagem,forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+        
+    def delete_atributos_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from atributos
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (self._id_personagem))
                 mydb.commit()
                 return True
             return False
@@ -545,6 +615,20 @@ class Personagem(Usuario):
         except pymysql.Error as e:
             print(e)
             return False
+        
+    def delete_caracteristicas_banco(self):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from caracteristicas_personagem
+                WHERE id_personagem=%s;"""
+                mycursor.execute(query, (self._id_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
     
     def carregar_caracteristicas_do_banco(self):
         try:
@@ -646,6 +730,20 @@ class Personagem(Usuario):
             print(e)
             return False
     
+    def delete_salvaguarda_banco(self,id_salvaguarda_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from salvaguarda_personagem
+                WHERE id_salvaguarda_personagem=%s;"""
+                mycursor.execute(query, (id_salvaguarda_personagem))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
     def carregar_salvaguardas_do_banco(self):
         try:
             if self._id_personagem:
@@ -726,6 +824,20 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = "INSERT INTO pericia_personagem(id_personagem,id_pericia) VALUES(%s,%s);"
                 mycursor.execute(query, (self._id_personagem,id_pericia))
+                mydb.commit()
+                return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+        
+    def delete_pericias_banco(self,id_pericia_personagem):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """DELETE from pericia_personagem
+                WHERE id_pericia_personagem=%s;"""
+                mycursor.execute(query, (id_pericia_personagem))
                 mydb.commit()
                 return True
             return False
