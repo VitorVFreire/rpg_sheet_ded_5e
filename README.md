@@ -36,11 +36,11 @@ Pip (Python package manager): https://pip.pypa.io/en/stable/installing/
 ```
 git clone https://github.com/VIVF0/rpg_sheet_ded_5e.git
 ```
-##### Navegue até o diretório do projeto | Install the required dependencies:
+##### Navegue até o diretório do projeto | Navigate to the project directory:
 ```
 cd app
 ```
-##### Instale as dependências do projeto | Run the application:
+##### Instale as dependências do projeto | Install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
