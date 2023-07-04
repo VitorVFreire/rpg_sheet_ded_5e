@@ -49,10 +49,10 @@ def insert_personagem():
         
         personagem.adicionar_personagem_banco(id_raca,nome_personagem)
         
-        return redirect(url_for('index'))
+        return jsonify({'result':True})
     except EOFError as e:
         print(e)
-        return redirect(url_for('index'))
+        return jsonify({'result':False})
     
 @app.route('/insert_status_base',methods=['POST'])
 def insert_status_base():
