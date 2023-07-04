@@ -3,7 +3,7 @@ from src import Usuario
 import pymysql
 
 class Personagem(Usuario):
-    def __init__(self, id_usuario,id_personagem):
+    def __init__(self, id_usuario,id_personagem=None):
         super().__init__(id=id_usuario)
         self._id_personagem = id_personagem
         self._nome_personagem=None
@@ -76,7 +76,7 @@ class Personagem(Usuario):
     
     def adicionar_personagem_banco(self,id_raca,nome_personagem):
         try:
-            if self._id_personagem:
+            if self._id:
                 mycursor = mydb.cursor()
                 query = """INSERT INTO personagem
                 (id_usuario,id_raca,nome_personagem) 

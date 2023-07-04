@@ -1,0 +1,16 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    Personagem
+    <form method="POST" action="{{ url_for('insert_personagem') }}">
+        <select name="id_raca" id="id_raca">
+            {% for raca in racas %}
+                <option value="{{raca['id_raca']}}">{{raca['nome_raca']}}</option>
+            {% endfor %}
+          </select>
+        <input placeholder="Nome Personagem" type="text" class="form-control" name="nome_personagem" required/>
+        <button type="submit" id="btn-entrar" class="btn-entrar">Criar</button>
+    </form>
+
+    <div id="result-container"></div>
+    <!--<script type="text/javascript" src="{{url_for('static', filename='js/create_personagem.js')}}"></script>-->
+{% endblock %}

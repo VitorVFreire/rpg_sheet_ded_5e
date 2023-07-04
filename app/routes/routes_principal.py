@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 from flask_session import Session
 
 from app import app
-from src import Usuario, Personagem
+from src import Usuario, Personagem, Pericia, Raca
 
 @app.route('/')
 def index():
@@ -26,3 +26,8 @@ def cadastro_login():
         session['id_usuario']=usuario.id
         return render_template('index.html',titulo='home',msg='Logado')
     return redirect(url_for('login'))
+
+@app.route('/criar_personagem')
+def criar_personagem():
+    racas=Raca()
+    return render_template('create_personagem.html',titulo='Criar Personagem',racas=racas.racas)

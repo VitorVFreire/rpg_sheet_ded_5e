@@ -4,7 +4,7 @@ from flask_session import Session
 from app import app
 from src import Usuario, Personagem
 
-@app.route('/insert/usuario',methods=['POST'])
+@app.route('/insert_usuario',methods=['POST'])
 def create_usuario():
     try:
         email=request.form.get('email')
@@ -22,7 +22,7 @@ def create_usuario():
         print(e)
         return jsonify({'result':False})
 
-@app.route('/insert/classe_personagem',methods=['POST'])
+@app.route('/insert_classe_personagem',methods=['POST'])
 def insert_classe_personagem():
     try:
         id_usuario=session.get('id_usuario')
@@ -38,23 +38,23 @@ def insert_classe_personagem():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert/personagem',methods=['POST'])
+@app.route('/insert_personagem',methods=['POST'])
 def insert_personagem():
     try:
         id_usuario=session.get('id_usuario')
         personagem=Personagem(id_usuario=id_usuario)
-        
+        print(id_usuario)
         id_raca=request.form.get('id_raca')
         nome_personagem=request.form.get('nome_personagem')
         
         personagem.adicionar_personagem_banco(id_raca,nome_personagem)
         
-        return jsonify({'result':True})
+        return redirect(url_for('index'))
     except EOFError as e:
         print(e)
-        return jsonify({'result':False})
+        return redirect(url_for('index'))
     
-@app.route('/insert/status_base',methods=['POST'])
+@app.route('/insert_status_base',methods=['POST'])
 def insert_status_base():
     try:
         id_usuario=session.get('id_usuario')
@@ -81,7 +81,7 @@ def insert_status_base():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert/feitico_personagem',methods=['POST'])
+@app.route('/insert_feitico_personagem',methods=['POST'])
 def insert_feitico_personagem():
     try:
         id_usuario=session.get('id_usuario')        
@@ -98,7 +98,7 @@ def insert_feitico_personagem():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert/atributos',methods=['POST'])
+@app.route('/insert_atributos',methods=['POST'])
 def insert_atributos():
     try:
         id_usuario=session.get('id_usuario')        
@@ -121,7 +121,7 @@ def insert_atributos():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert/caracteristicas',methods=['POST'])
+@app.route('/insert_caracteristicas',methods=['POST'])
 def insert_caracteristicas():
     try:
         id_usuario=session.get('id_usuario')        
@@ -144,7 +144,7 @@ def insert_caracteristicas():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert/salvaguardas',methods=['POST'])
+@app.route('/insert_salvaguardas',methods=['POST'])
 def insert_salvaguardas():
     try:
         id_usuario=session.get('id_usuario')        
@@ -161,7 +161,7 @@ def insert_salvaguardas():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert/pericias',methods=['POST'])
+@app.route('/insert_pericias',methods=['POST'])
 def insert_pericias():
     try:
         id_usuario=session.get('id_usuario')        
