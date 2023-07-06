@@ -16,8 +16,20 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
+                            <a class="navbar-brand" href="{{url_for('index')}}">
+                                Home
+                            </a>
+                            {% if session.get('id_usuario') %}
+                            <a class="navbar-brand" href="{{url_for('logout')}}">
+                                Logout
+                            </a>
+                            {% else %}
                             <a class="navbar-brand" href="{{url_for('login')}}">
                                 Login
+                            </a>
+                            {% endif %}
+                            <a class="navbar-brand" href="{{url_for('personagens')}}">
+                                Personagens
                             </a>
                         </li>
                     <ul>

@@ -143,7 +143,7 @@ class Usuario:
                     for row in result:
                         self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3]})
                     return True
-            return False
+            return 'Sem Personagens no Banco', False
         except EOFError as e:
             print(e)
             return False 

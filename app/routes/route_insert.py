@@ -1,7 +1,7 @@
 from flask import Flask, request, session, jsonify, render_template, url_for, redirect
 from flask_session import Session
 
-from app import app
+from main import app
 from src import Usuario, Personagem
 
 @app.route('/insert_usuario',methods=['POST'])

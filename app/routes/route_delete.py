@@ -1,11 +1,11 @@
 from flask import Flask, request, session, jsonify, render_template, url_for, redirect
 from flask_session import Session
 
-from app import app
+from main import app
 from src import Usuario, Personagem
 
 @app.route('/delete/usuario',methods=['POST'])
-def insert_delete_usuario():
+def delete_usuario():
     try:
         id_usuario=session.get('id_usuario')
         usuario=Usuario(id_usuario=id_usuario)
@@ -18,7 +18,7 @@ def insert_delete_usuario():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão da conta!')
     
 @app.route('/delete/classe',methods=['POST'])
-def insert_delete_classe():
+def delete_classe():
     try:
         id_usuario=session.get('id_usuario')
         id_classe_personagem=request.form.get('id_classe_personagem')
@@ -33,7 +33,7 @@ def insert_delete_classe():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão da classe!')
     
 @app.route('/delete/status_base',methods=['POST'])
-def insert_delete_status_base():
+def delete_status_base():
     try:
         id_usuario=session.get('id_usuario')
         id_personagem=request.form.get('id_personagem')
@@ -48,7 +48,7 @@ def insert_delete_status_base():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão dos status!')
     
 @app.route('/delete/feitico',methods=['POST'])
-def insert_delete_feitico():
+def delete_feitico():
     try:
         id_usuario=session.get('id_usuario')
         id_feitico_personagem=request.form.get('id_feitico_personagem')
@@ -63,7 +63,7 @@ def insert_delete_feitico():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão do feitiço!')
     
 @app.route('/delete/atributos',methods=['POST'])
-def insert_delete_atributos():
+def delete_atributos():
     try:
         id_usuario=session.get('id_usuario')
         id_personagem=request.form.get('id_personagem')
@@ -78,7 +78,7 @@ def insert_delete_atributos():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão dos atributos!')
     
 @app.route('/delete/caracteristicas',methods=['POST'])
-def insert_delete_caracteristicas():
+def delete_caracteristicas():
     try:
         id_usuario=session.get('id_usuario')
         id_personagem=request.form.get('id_personagem')
@@ -93,7 +93,7 @@ def insert_delete_caracteristicas():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão dos caracteristicas!')
     
 @app.route('/delete/salvaguarda',methods=['POST'])
-def insert_delete_salvaguarda():
+def delete_salvaguarda():
     try:
         id_usuario=session.get('id_usuario')
         id_salvaguarda_personagem=request.form.get('id_salvaguarda_personagem')
@@ -108,7 +108,7 @@ def insert_delete_salvaguarda():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão do salvaguarda!')
     
 @app.route('/delete/pericia',methods=['POST'])
-def insert_delete_pericia():
+def delete_pericia():
     try:
         id_usuario=session.get('id_usuario')
         id_pericia_personagem=request.form.get('id_pericia_personagem')

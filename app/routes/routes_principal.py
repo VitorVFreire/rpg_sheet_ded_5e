@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
 from flask_session import Session
 
-from app import app
+from main import app
 from src import Usuario, Personagem, Pericia, Raca
 
 @app.route('/')

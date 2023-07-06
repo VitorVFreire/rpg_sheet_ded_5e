@@ -3,14 +3,14 @@
     Personagem
     <!--<form method="POST" action="{{ url_for('insert_personagem') }}">-->
     <form id="form">
-        <select name="id_raca" id="id_raca">
+        <select class="form-select" aria-label="Default select example" name="id_raca" id="id_raca">
             {% for raca in racas %}
                 <option value="{{raca['id_raca']}}">{{raca['nome_raca']}}</option>
             {% endfor %}
           </select>
         <input placeholder="Nome Personagem" type="text" class="form-control" name="nome_personagem" id="nome_personagem" required/>
         <br>
-        <button type="submit" id="btn-entrar" class="btn btn-entrar">Criar</button>
+        <button type="submit" id="btn-entrar" class="btn-dark">Criar</button>
     </form>
 
     <div id="result-container"></div>

@@ -1,3 +1,7 @@
-from .database import *
+from .database import mydb
 import pandas as pd
-attributes = pd.read_json("C:/Users/vitor/OneDrive/Área de Trabalho/Programação/RPG_sheet/app/database/attributes.json")
+import os
+import pathlib
+diretorio = pathlib.Path('database')
+caminho_arquivo = diretorio / 'attributes.json'
+attributes = pd.read_json(caminho_arquivo)

@@ -1,6 +1,8 @@
 {% extends "template.html" %}
 {% block conteudo %}
-    {{personagens}}
+    <a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('criar_personagem')}}">
+        Criar Personagem
+    </a>
     {% if personagens %}
         <div class="container text-center">
             {% for personagem in personagens %}
@@ -12,7 +14,7 @@
                     Raça:{{personagem['nome_raca']}}
                 </div>
                 <div class="col">
-                    <a href="{{url_for('personagem',id_personagem=personagem['id_personagem'])}}">Ficha Personagem</a>
+                    <a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('personagem',id_personagem=personagem['id_personagem'])}}">Ficha Personagem</a>
                 </div>
             </div>
             {% endfor %}
