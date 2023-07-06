@@ -1,0 +1,21 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    {{personagens}}
+    {% if personagens %}
+        <div class="container text-center">
+            {% for personagem in personagens %}
+            <div class="row">
+                <div class="col">
+                    Nome:{{personagem['nome_personagem']}}
+                </div>
+                <div class="col">
+                    Raça:{{personagem['nome_raca']}}
+                </div>
+                <div class="col">
+                    <a href="{{url_for('personagem',id_personagem=personagem['id_personagem'])}}">Ficha Personagem</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

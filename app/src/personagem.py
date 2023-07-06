@@ -3,7 +3,7 @@ from src import Usuario
 import pymysql
 
 class Personagem(Usuario):
-    def __init__(self, id_usuario,id_personagem=None):
+    def __init__(self, id_usuario=None,id_personagem=None):
         super().__init__(id=id_usuario)
         self._id_personagem = id_personagem
         self._nome_personagem=None
@@ -138,6 +138,8 @@ class Personagem(Usuario):
         
     @property
     def classe(self):
+        if len(self._classe)<=0:
+            self.carregar_classe_do_banco()
         return self._classe
 
     @classe.setter
@@ -150,13 +152,12 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = """SELECT pr.nome_personagem,rc.nome_raca
                 FROM personagem pr,raca rc
-                WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
-                mycursor.execute(query, (self._id))
+                WHERE pr.id_personagem = %s and pr.id_raca=rc.id_raca;"""
+                mycursor.execute(query, (self._id_personagem,))
                 result = mycursor.fetchone()
                 if result:
-                    for row in result:
-                        self.nome_personagem=row[0]
-                        self.raca=row[1]
+                    self.nome_personagem=result[0]
+                    self.raca=result[1]
                     return True
             return False
         except Exception as e:
@@ -165,6 +166,8 @@ class Personagem(Usuario):
         
     @property
     def nome_personagem(self):
+        if self._nome_personagem is None:
+            self.carregar_personagem_banco()
         return self._nome_personagem
         
     @nome_personagem.setter
@@ -189,6 +192,8 @@ class Personagem(Usuario):
         
     @property
     def raca(self):
+        if self._raca is None:
+            self.carregar_personagem_banco()
         return self._raca
     
     @raca.setter

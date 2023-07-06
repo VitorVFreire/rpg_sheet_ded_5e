@@ -12,6 +12,12 @@ class Usuario:
         self._data_nascimento = data_nascimento
         
     @property
+    def personagens(self):
+        if len(self._personagens)<=0:
+            self.carregar_personagens_banco()
+        return self._personagens
+    
+    @property
     def id(self):
         if self._id is None:
             self._id=self.get_usuario()['id_usuario']
@@ -94,17 +100,16 @@ class Usuario:
             result = {}
             if self._id:
                 mycursor.execute("SELECT * FROM usuario WHERE id_usuario=%s", (self._id,))
-                myresult = mycursor.fetchone()
+                result = mycursor.fetchone()
             elif self._email:
                 mycursor.execute("SELECT * FROM usuario WHERE email=%s", (self._email,))
-                myresult = mycursor.fetchone()
-            
-            if myresult:
+                result = mycursor.fetchone()
+            if result:
                 column_nomes = [column[0] for column in mycursor.description]
-                indexed_result = [(column_nomes[i], field) for i, field in enumerate(myresult)]
-                for column_nome, field in indexed_result:
-                    result[column_nome] = field
-                return result
+                usuario={}
+                for chave, valor in zip(column_nomes,result):
+                    usuario[chave] = valor
+                return usuario
             return None
         except:
             return None
@@ -114,11 +119,11 @@ class Usuario:
             mycursor = mydb.cursor()
             if self._email and self._senha:
                 mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
-                myresult = mycursor.fetchone()  
-                if myresult:
-                    self._id=myresult[0]
-                    self._nome=myresult[1]
-                    self._data_nascimento=myresult[4]
+                result = mycursor.fetchone()  
+                if result:
+                    self._id=result[0]
+                    self._nome=result[1]
+                    self._data_nascimento=result[4]
                     return True
             return False
         except EOFError as e:
@@ -128,12 +133,15 @@ class Usuario:
     def carregar_personagens_banco(self):
         try:
             mycursor = mydb.cursor()
-            if self._email and self._senha:
-                mycursor.execute("SELECT id_personagem,nome_personagem FROM personagem ps WHERE id_usuario=%s and ",(self._id))
-                myresult = mycursor.fetchall()  
-                if myresult:
+            if self._id:
+                query="""SELECT pr.id_personagem,pr.nome_personagem,rc.nome_raca,rc.id_raca
+                FROM personagem pr,raca rc
+                WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
+                mycursor.execute(query,(self._id,))
+                result = mycursor.fetchall()  
+                if result:
                     for row in result:
-                        self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1]})
+                        self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3]})
                     return True
             return False
         except EOFError as e:
