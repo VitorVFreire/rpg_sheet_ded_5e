@@ -1,4 +1,4 @@
-from database import mydb, attributes
+from data import mydb, attributes
 from src import Usuario
 import pymysql
 

@@ -1,4 +1,4 @@
-from database import mydb
+from data import mydb
 import pymysql
 
 class Raca:

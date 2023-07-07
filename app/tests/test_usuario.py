@@ -1,6 +1,6 @@
 import pytest
-from app.database import mydb
-from app.src import Usuario
+from data import mydb
+from src import Usuario
 
 @pytest.fixture(scope="module")
 def usuario_teste():

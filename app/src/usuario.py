@@ -1,5 +1,5 @@
-from database import mydb
 from tools import criptografar
+from data import mydb
 import datetime
 
 class Usuario:
