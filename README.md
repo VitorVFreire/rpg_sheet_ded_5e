@@ -13,7 +13,8 @@ Requisitos de instalação
 Antes de começar, verifique se você tem os seguintes requisitos instalados:
 
 Python 3.11.4: https://www.python.org/downloads/ <br>
-Pip (gerenciador de pacotes do Python): https://pip.pypa.io/en/stable/installing/
+Pip (gerenciador de pacotes do Python): https://pip.pypa.io/en/stable/installing/ <br>
+MySQL: https://dev.mysql.com/downloads/mysql/ 
 
 ## Online Character Sheet for RPG Dungeons & Dragons 5e
 This is a project for an online character sheet for the Dungeons & Dragons 5th Edition (D&D 5e) role-playing game, developed in Python. The online character sheet allows players to create and manage their character sheets digitally, making it easier to access and update information during game sessions.
@@ -29,9 +30,10 @@ Installation Requirements
 Before getting started, make sure you have the following requirements installed:
 
 Python 3.11.4: https://www.python.org/downloads/ <br>
-Pip (Python package manager): https://pip.pypa.io/en/stable/installing/
+Pip (Python package manager): https://pip.pypa.io/en/stable/installing/ <br>
+MySQL: https://dev.mysql.com/downloads/mysql/ 
 
-#### Como executar o projeto | Getting Started
+## Como executar o projeto | Getting Started
 ##### Clone o repositório para sua máquina local | Clone the repository to your local machine:
 ```
 git clone https://github.com/VIVF0/rpg_sheet_ded_5e.git
@@ -44,6 +46,24 @@ cd app
 ```
 pip install -r requirements.txt
 ```
+##### Crie um arquivo .env com USER_BASE e PASSWORD_BASE do seu banco de dados | Create an .env file with USER BASE and PASSWORD BASE from your database:
+```
+USER_BASE = 'your_user'
+PASSWORD_BASE = 'your_password'
+```
+##### Adicione SECRET_KEY para o Flask no arquivo .env | Add SECRET_KEY for Flask in .env file:
+```
+SECRET_KEY = 'your_key'
+```
+##### Execute o arquivo create_db.py para criar o database | Run the create_db.py file to create the database:
+```
+python data/conexao_db.py
+```
+##### Execute o arquivo main.py para rodar o site | Run the main.py file to run the website:
+```
+python main.py
+```
+##### Entre em http://localhost:8085 no seu navegador para usar o Site | Enter http://localhost:8085 in your browser to use the website!
 
 ### Licença | License<br>
 Este projeto está licenciado sob a licença MIT.<br>This project is licensed under the MIT License. <br>Sinta-se à vontade para usar, modificar e distribuir este código.
