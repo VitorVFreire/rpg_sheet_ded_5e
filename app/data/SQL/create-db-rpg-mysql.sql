@@ -19,6 +19,9 @@ CREATE SCHEMA IF NOT EXISTS `RPG` DEFAULT CHARACTER SET utf8 ;
 SHOW WARNINGS;
 USE `RPG` ;
 SELECT * FROM raca;
+SELECT * FROM classe;
+DELETE from classe
+            WHERE id_classe!=9;
 SELECT * FROM usuario;
 -- -----------------------------------------------------
 -- Table `RPG`.`usuario`

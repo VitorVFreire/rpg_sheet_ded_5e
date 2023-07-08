@@ -135,7 +135,8 @@ class Usuario:
                 if result:
                     self._id=result[0]
                     self._nome=result[1]
-                    self._data_nascimento=result[4]
+                    self.__tipo_usuario=result[4]
+                    self._data_nascimento=result[5]
                     return True
             return False
         except EOFError as e:

@@ -7,6 +7,10 @@ class Raca:
         self._nome_raca = nome_raca if nome_raca is not None else []
         
     @property
+    def nome_raca(self):
+        return self._nome_raca
+    
+    @property
     def racas(self):
         if (type(self._id_raca) is list and len(self._id_raca)<=0) or (self._id_raca is None):
             self.carregar_racas()
@@ -31,11 +35,26 @@ class Raca:
             print(e)
             return False
         
+    def carregar_raca(self):
+        try:
+            mycursor = mydb.cursor()
+            query = "SELECT nome_raca FROM raca WHERE id_raca=%s;"
+            mycursor.execute(query,(self._id_raca,))
+            result = mycursor.fetchall() 
+            if result:
+                self._nome_raca=result[0]
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+        
     def insert_raca_banco(self):
         try:
             mycursor = mydb.cursor()
             query = "INSERT INTO raca (nome_raca) VALUES (%s);"
             mycursor.execute(query, (str(self._nome_raca),))
+            self._id_raca=mycursor.lastrowid 
             mydb.commit()
             return True
         except pymysql.Error as e:
@@ -46,18 +65,18 @@ class Raca:
         try:
             mycursor = mydb.cursor()
             query = "DELETE from raca WHERE id_raca=%s;"
-            mycursor.execute(query, (self._id_raca))
+            mycursor.execute(query, (self._id_raca,))
             mydb.commit()
             return True
         except pymysql.Error as e:
             print(e)
             return False
         
-    def update_raca_banco(self):
+    def update_raca_banco(self,valor):
         try:
             mycursor = mydb.cursor()
             query = "UPDATE raca SET nome_raca=%s WHERE id_raca=%s"
-            mycursor.execute(query, (self._nome_raca,self._id_raca))
+            mycursor.execute(query, (valor,self._id_raca))
             mydb.commit()
             return True
         except pymysql.Error as e:

@@ -5,6 +5,10 @@ class Classe:
     def __init__(self, id_classe=None, nome_classe=None):
         self._id_classe = [] if id_classe is None else id_classe
         self._nome_classe = nome_classe if nome_classe is not None else []
+        
+    @property
+    def nome_classe(self):
+        return self._nome_classe
 
     @property
     def classes(self):
@@ -30,12 +34,27 @@ class Classe:
         except Exception as e:
             print(e)
             return False
+    
+    def carregar_classe(self):
+        try:
+            mycursor = mydb.cursor()
+            query = "SELECT nome_classe FROM classe WHERE id_classe=%s;"
+            mycursor.execute(query,(self._id_classe,))
+            result = mycursor.fetchall() 
+            if result:
+                self._nome_classe=result[0]
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
 
     def insert_classe_banco(self):
         try:
             mycursor = mydb.cursor()
             query = "INSERT INTO classe (nome_classe) VALUES (%s);"
             mycursor.execute(query, (str(self._nome_classe),))
+            self._id_classe=mycursor.lastrowid   
             mydb.commit()
             return True
         except pymysql.Error as e:
@@ -47,7 +66,7 @@ class Classe:
             mycursor = mydb.cursor()
             query = """DELETE from classe
             WHERE id_classe=%s;"""
-            mycursor.execute(query, (self._id_classe))
+            mycursor.execute(query, (self._id_classe,))
             mydb.commit()
             return True
         except pymysql.Error as e:
