@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 from flask_session import Session
 
 from main import app
-from src import Usuario, Personagem, Pericia, Raca
+from src import Usuario, Personagem, Pericia, Raca, Classe
 
 @app.route('/')
 def index():
@@ -14,11 +14,6 @@ def login():
         return render_template('index.html',titulo='home')
     return render_template('login.html',titulo='login',msg='Erro no Login')
 
-@app.route('/logout')
-def logout():
-    session['id_usuario'] = None
-    return render_template('index.html',titulo='home',msg='Logout')
-
 @app.post('/login')
 def cadastro_login():
     usuario=Usuario(email=request.form.get('email'),senha=request.form.get('senha'))
@@ -26,6 +21,17 @@ def cadastro_login():
         session['id_usuario']=usuario.id
         return render_template('index.html',titulo='home',msg='Logado')
     return redirect(url_for('login'))
+
+@app.route('/cadastro_usuario')
+def criar_usuario():
+    if session.get('id_usuario'):
+        return render_template('index.html',titulo='home')
+    return render_template('cadastro_usuario.html',titulo='cadastro de usuario')
+
+@app.route('/logout')
+def logout():
+    session['id_usuario'] = None
+    return render_template('index.html',titulo='home',msg='Logout')
 
 @app.route('/criar_personagem')
 def criar_personagem():
@@ -40,4 +46,5 @@ def personagens():
 @app.route('/personagem/<id_personagem>')
 def personagem(id_personagem):
     personagem=Personagem(id_usuario=session.get('id_usuario'),id_personagem=id_personagem)
-    return f"Acessado ficha {personagem.nome_personagem} de {personagem.nome} id:{personagem.id}"
+    classe=Classe()
+    return render_template('ficha_personagem.html', titulo=personagem.nome_personagem, personagem=personagem,classes=classe.classes)

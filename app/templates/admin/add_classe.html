@@ -1,0 +1,10 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<br>
+    <form id="form">
+        <input placeholder="nome da classe" type="text" class="form-control" id="nome_classe" name="nome_classe" required/>
+        <button type="submit" id="btn-cadastrar" class="btn-dark">Cadastrar</button>
+    </form>
+    <div id="result-container"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/admin/criar_classe.js')}}"></script>
+{% endblock %}

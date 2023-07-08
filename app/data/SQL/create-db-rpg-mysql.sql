@@ -18,9 +18,8 @@ DROP SCHEMA IF EXISTS `RPG` ;
 CREATE SCHEMA IF NOT EXISTS `RPG` DEFAULT CHARACTER SET utf8 ;
 SHOW WARNINGS;
 USE `RPG` ;
+SELECT * FROM raca;
 SELECT * FROM usuario;
-SELECT * FROM personagem;
-
 -- -----------------------------------------------------
 -- Table `RPG`.`usuario`
 -- -----------------------------------------------------
@@ -32,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `RPG`.`usuario` (
   `nome` VARCHAR(45) NOT NULL,
   `email` VARCHAR(256) NOT NULL,
   `senha` VARCHAR(200) NOT NULL,
+  `tipo_usuario` VARCHAR(20) NOT NULL,
   `data_nascimento` DATE NULL,
   PRIMARY KEY (`id_usuario`))
 ENGINE = InnoDB;

@@ -2,10 +2,10 @@ from flask import Flask, request, session, jsonify, render_template, url_for, re
 from flask_session import Session
 
 from main import app
-from src import Usuario, Personagem
+from src import Usuario, Personagem, Classe
 
-@app.route('/insert_usuario',methods=['POST'])
-def create_usuario():
+@app.route('/cadastro_usuario',methods=['POST'])
+def cadastro_usuario():
     try:
         email=request.form.get('email')
         senha=request.form.get('senha')
@@ -29,9 +29,10 @@ def insert_classe_personagem():
         id_personagem=request.form.get('id_personagem')
         personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
         
-        id_classe=request.form.get('id_classe')
+        classe=request.form.getlist('classe')
         
-        personagem.adicionar_classe_banco(id_classe)
+        for id_classe in classe:
+            personagem.adicionar_classe_banco(id_classe)
         
         return jsonify({'result':True})
     except EOFError as e:
@@ -43,7 +44,6 @@ def insert_personagem():
     try:
         id_usuario=session.get('id_usuario')
         personagem=Personagem(id_usuario=id_usuario)
-        print(id_usuario)
         id_raca=request.form.get('id_raca')
         nome_personagem=request.form.get('nome_personagem')
         

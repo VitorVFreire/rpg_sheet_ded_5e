@@ -1,0 +1,11 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<br>
+    Criar Nova Raça
+    <form id="form">
+        <input placeholder="nome da raça" type="text" class="form-control" id="nome_raca" name="nome_raca" required/>
+        <button type="submit" id="btn-cadastrar" class="btn-dark">Cadastrar</button>
+    </form>
+    <div id="result-container"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/admin/criar_raca.js')}}"></script>
+{% endblock %}

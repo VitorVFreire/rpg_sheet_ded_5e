@@ -8,9 +8,21 @@ class Usuario:
         self._nome=nome
         self._email=email
         self._senha=criptografar(senha)
-        self._personagens=[]
+        self.__tipo_usuario=None
         self._data_nascimento = data_nascimento
+        self._personagens=[]
         
+    @property
+    def tipo_usuario(self):
+        if self.__tipo_usuario is None:
+            self.__tipo_usuario=self.get_usuario()['tipo_usuario']
+        return self.__tipo_usuario   
+    
+    def usuario_admin(self):
+        if self.__tipo_usuario is None:
+            self.__tipo_usuario=self.get_usuario()['tipo_usuario']
+        return self.__tipo_usuario=='admin'   
+    
     @property
     def personagens(self):
         if len(self._personagens)<=0:
@@ -69,7 +81,7 @@ class Usuario:
         try:
             if self._nome and self._email and self._senha and self._data_nascimento:
                 mycursor = mydb.cursor()
-                mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento) values(%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento))
+                mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
                 mydb.commit()
                 self._id=mycursor.lastrowid    
                 return True
@@ -80,7 +92,7 @@ class Usuario:
     
     def update_usuario(self, chave, valor):
         try:
-            possiveis_chave=['nome','email','senha','data_nascimento']
+            possiveis_chave=['nome','email','senha','data_nascimento','tipo_usuario']
             if self._id and chave in possiveis_chave:
                 if chave=='senha':
                     valor=criptografar(valor)

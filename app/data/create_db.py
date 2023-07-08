@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS RPG.usuario (
   email VARCHAR(256) NOT NULL,
   senha VARCHAR(200) NOT NULL,
   data_nascimento DATE NULL,
+  tipo_usuario VARCHAR(20) NOT NULL,
   PRIMARY KEY (id_usuario)
 ) ENGINE = InnoDB;
 """

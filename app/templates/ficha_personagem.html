@@ -1,0 +1,16 @@
+{% extends "template.html" %}
+{% block conteudo %}
+Nome do Jogador: {{personagem.nome}}
+<br>
+Nome do Personagem: {{personagem.nome_personagem}}<br>
+Raça: {{personagem.raca}}
+
+<ul>
+    {% for classe in classes %}
+        <li>
+            <input type="checkbox" id="classe" name="classe" value="{{classe['id_classe']}}">
+            <label for="classe">{{classe['nome_classe']}}</label><br> 
+        </li>           
+    {% endfor %}
+</ul>
+{% endblock %}
