@@ -1,6 +1,6 @@
 import unittest
 from data import mydb
-from src import Usuario, Personagem, Raca, Pericia, Classe
+from src import Usuario, Personagem, Raca, Pericia, Classe, Salvaguarda
 
 class PersonagemTest(unittest.TestCase):
     @classmethod
@@ -12,6 +12,11 @@ class PersonagemTest(unittest.TestCase):
         # CRIA PERICIA TESTE:
         cls.pericia_teste = Pericia(nome_pericia='acrobacia',status_uso='status_teste')
         cls.pericia_teste.insert_pericia_banco()
+        # CRIA SALVAGUARDA TESTE:
+        cls.salvaguarda_teste = Salvaguarda(nome_salvaguarda='inteligencia')
+        cls.salvaguarda_teste.insert_salvaguarda_banco()
+        cls.salvaguarda_teste_UPDATE = Salvaguarda(nome_salvaguarda='forca')
+        cls.salvaguarda_teste_UPDATE.insert_salvaguarda_banco()
         # CRIA CLASSE TESTE:
         cls.classe_teste = Classe(nome_classe='Classe_Teste')
         cls.classe_teste.insert_classe_banco()
@@ -31,13 +36,21 @@ class PersonagemTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        #DELETA AS CLASSES PRESENTES NO PERSONAGEM:
         for classe in cls.personagem_teste.classe:
             cls.personagem_teste.delete_classe_banco(classe['id_classe_personagem'])
+        for salvaguarda in cls.personagem_teste.salvaguardas:
+            cls.personagem_teste.delete_salvaguarda_banco(salvaguarda['id_salvaguarda_personagem'])    
+        
+        #DELETA A SALVAGUARDA DE TESTE:
+        cls.salvaguarda_teste.delete_salvaguarda_banco()
+        cls.salvaguarda_teste_UPDATE.delete_salvaguarda_banco()
         #DELETA OS ATRIBUTOS DE TESTE:
         cls.personagem_teste.delete_atributos_banco()
         #DELETA A PERICIA DE TESTE:
         cls.personagem_teste.delete_pericias_banco(cls.pericia_teste.id_pericia)
         cls.pericia_teste.delete_pericia_banco() 
+        
         #DELETA CLASSES TESTE:
         cls.classe_teste_UPDATE.delete_classe_banco()
         cls.classe_teste.delete_classe_banco()
@@ -134,8 +147,33 @@ class PersonagemTest(unittest.TestCase):
     def test_adiciona_pericia_acrobacia_personagem(self):
         self.assertTrue(self.personagem_teste.adicionar_pericias_banco(self.pericia_teste.id_pericia))
         self.personagem_teste.carregar_pericias_do_banco()
+        self.assertTrue(any(pericia['id_pericia'] == self.pericia_teste.id_pericia for pericia in self.personagem_teste.pericias))
         if self.personagem_teste.bonus_proficiencia is not None and self.personagem_teste.forca is not None:
             self.assertEqual(self.personagem_teste.acrobacia,(self.personagem_teste.bonus_forca+self.personagem_teste.bonus_proficiencia))
+    
+    def test_atribuicao_salvaguarda(self):
+        # Verificar se a salvaguarda é adicionada ao personagem
+        self.assertEqual(self.salvaguarda_teste.nome_salvaguarda,'inteligencia')
+        self.assertTrue(self.personagem_teste.adicionar_salvaguardas_banco(id_salvaguarda=self.salvaguarda_teste.id_salvaguarda))
+        self.personagem_teste.carregar_salvaguardas_do_banco()
+        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste.id_salvaguarda for salvaguarda in self.personagem_teste.salvaguardas))
+        self.assertEqual(self.personagem_teste.resistencia_inteligencia,(self.personagem_teste.bonus_inteligencia + self.personagem_teste.bonus_proficiencia))
+        
+    def test_update_salvaguarda(self):
+        # Verificar se a salvaguarda é atualizada corretamente no personagem
+        id_salvaguarda_personagem = self.personagem_teste.salvaguardas[0]['id_salvaguarda_personagem']
+        print()
+        self.assertEqual(self.salvaguarda_teste_UPDATE.nome_salvaguarda,'forca')
+        self.personagem_teste.update_salvaguardas_banco(id_salvaguarda_personagem=id_salvaguarda_personagem, id_salvaguarda=self.salvaguarda_teste_UPDATE.id_salvaguarda)
+        self.personagem_teste.carregar_salvaguardas_do_banco()
+        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste_UPDATE.id_salvaguarda for salvaguarda in self.personagem_teste.salvaguardas))
+        self.assertEqual(self.personagem_teste.resistencia_forca,(self.personagem_teste.bonus_forca + self.personagem_teste.bonus_proficiencia))
+        
+    def test_carregar_salvaguardas_usuarios_banco(self):
+        # Carregar as salvaguardas do usuario do banco de dados
+        self.personagem_teste
+        self.assertTrue(self.personagem_teste.carregar_salvaguardas_do_banco())
+        self.assertGreater(len(self.personagem_teste.salvaguardas), 0)
     
 if __name__ == '__main__':
     unittest.main()

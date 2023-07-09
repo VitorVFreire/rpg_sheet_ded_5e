@@ -2,5 +2,5 @@ from .main import app
 from .data import mydb, attributes
 from .routes import *
 from .tools import criptografar
-from .src import Usuario, Pericia, Raca, Personagem, Classe
+from .src import Usuario, Pericia, Raca, Personagem, Classe, Salvaguarda
 from .tests import *

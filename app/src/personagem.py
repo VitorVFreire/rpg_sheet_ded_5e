@@ -760,8 +760,12 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "INSERT INTO salvaguarda_personagem(id_personagem,id_salvaguarda) VALUES(%s,%s);"
-                mycursor.execute(query, (self._id_personagem,id_salvaguarda))
+                query = """
+                    INSERT INTO `RPG`.`salvaguarda_personagem` 
+                    (`id_personagem`, `id_salvaguarda`)
+                    VALUES (%s, %s)
+                """
+                mycursor.execute(query, (self._id_personagem,id_salvaguarda,))
                 mydb.commit()
                 return True
             return False
@@ -775,7 +779,7 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = """DELETE from salvaguarda_personagem
                 WHERE id_salvaguarda_personagem=%s;"""
-                mycursor.execute(query, (id_salvaguarda_personagem))
+                mycursor.execute(query, (id_salvaguarda_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -787,12 +791,15 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = "SELECT sp.id_salvaguarda,sp.nome_salvaguarda,sp.id_salvaguarda_personagem FROM salvaguarda_personagem sp,salvaguarda sl WHERE sp.id_personagem = %s and sl.id_salvaguarda=sp.id_salvaguarda"
-                mycursor.execute(query, (self._id_personagem))
+                query = "SELECT sp.id_salvaguarda,sl.nome_salvaguarda,sp.id_salvaguarda_personagem FROM salvaguarda_personagem sp,salvaguarda sl WHERE sp.id_personagem = %s and sl.id_salvaguarda=sp.id_salvaguarda"
+                mycursor.execute(query, (self._id_personagem,))
                 result = mycursor.fetchall() 
-                for row in result:
-                    self.salvaguardas({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[0]})
-                return True
+                if result:
+                    self._salvaguardas.clear()
+                    for row in result:
+                        self._salvaguardas.append({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[1]})
+                    return True
+                return False
             return False
         except pymysql.Error as e:
             print(e)
@@ -805,7 +812,7 @@ class Personagem(Usuario):
                 query = """UPDATE salvaguarda_personagem
                 SET id_salvaguarda=%s
                 WHERE id_salvaguarda_personagem=%s;"""
-                mycursor.execute(query, (id_salvaguarda,id_salvaguarda_personagem))
+                mycursor.execute(query, (id_salvaguarda,id_salvaguarda_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -824,38 +831,38 @@ class Personagem(Usuario):
     @property
     def resistencia_forca(self):
         if any(d.get('nome_salvaguarda') == 'forca' for d in self._salvaguardas):
-            return self._atributos['forca']+self._bonus_proficiencia
-        return self._atributos['forca']
+            return self.bonus_forca + self._bonus_proficiencia
+        return self.bonus_forca 
     
     @property
     def resistencia_destreza(self):
         if any(d.get('nome_salvaguarda') == 'destreza' for d in self._salvaguardas):
-            return self._atributos['destreza']+self._bonus_proficiencia
-        return self._atributos['destreza']
+            return self.bonus_destreza + self._bonus_proficiencia
+        return self.bonus_destreza 
     
     @property
     def resistencia_constituicao(self):
         if any(d.get('nome_salvaguarda') == 'constituicao' for d in self._salvaguardas):
-            return self._atributos['constituicao']+self._bonus_proficiencia
-        return self._atributos['constituicao']
+            return self.bonus_constituicao + self._bonus_proficiencia
+        return self.bonus_constituicao
     
     @property
     def resistencia_inteligencia(self):
         if any(d.get('nome_salvaguarda') == 'inteligencia' for d in self._salvaguardas):
-            return self._atributos['inteligencia']+self._bonus_proficiencia
-        return self._atributos['inteligencia']
+            return self.bonus_inteligencia + self._bonus_proficiencia
+        return self.bonus_inteligencia
     
     @property
     def resistencia_sabedoria(self):
         if any(d.get('nome_salvaguarda') == 'sabedoria' for d in self._salvaguardas):
-            return self._atributos['sabedoria']+self._bonus_proficiencia
-        return self._atributos['sabedoria']
+            return self.bonus_sabedoria + self._bonus_proficiencia
+        return self.bonus_sabedoria
     
     @property
     def resistencia_carisma(self):
         if any(d.get('nome_salvaguarda') == 'carisma' for d in self._salvaguardas):
-            return self._atributos['carisma']+self._bonus_proficiencia
-        return self._atributos['carisma']
+            return self.bonus_carisma + self._bonus_proficiencia
+        return self.bonus_carisma
 #-----------------------------------------------PERICIAS-----------------------------------------------
     def adicionar_pericias_banco(self,id_pericia):
         try:

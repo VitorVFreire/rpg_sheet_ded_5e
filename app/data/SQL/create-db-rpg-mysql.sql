@@ -20,6 +20,8 @@ SHOW WARNINGS;
 USE `RPG` ;
 DELETE FROM classe_personagem;
 DELETE from classe WHERE id_classe!=9;
+DELETE FROM salvaguarda_personagem;
+DELETE FROM salvaguarda;
 DELETE FROM pericia_personagem;
 DELETE FROM pericia;
 DELETE FROM atributos WHERE id_atributos!=1;
@@ -27,6 +29,8 @@ DELETE FROM personagem WHERE id_personagem!=1;
 DELETE FROM raca WHERE id_raca!=1;
 DELETE FROM usuario WHERE id_usuario!=1;
 
+SELECT * FROM salvaguarda;
+SELECT * from salvaguarda_personagem;
 SELECT * FROM classe_personagem;
 SELECT * FROM atributos;
 SELECT * FROM classe;
