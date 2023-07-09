@@ -18,10 +18,22 @@ DROP SCHEMA IF EXISTS `RPG` ;
 CREATE SCHEMA IF NOT EXISTS `RPG` DEFAULT CHARACTER SET utf8 ;
 SHOW WARNINGS;
 USE `RPG` ;
-SELECT * FROM raca;
+DELETE FROM classe_personagem;
+DELETE from classe WHERE id_classe!=9;
+DELETE FROM pericia_personagem;
+DELETE FROM pericia;
+DELETE FROM atributos WHERE id_atributos!=1;
+DELETE FROM personagem WHERE id_personagem!=1;
+DELETE FROM raca WHERE id_raca!=1;
+DELETE FROM usuario WHERE id_usuario!=1;
+
+SELECT * FROM classe_personagem;
 SELECT * FROM atributos;
-DELETE from classe
-            WHERE id_classe!=9;
+SELECT * FROM classe;
+SELECT * FROM pericia;
+SELECT * FROM atributos;
+SELECT * FROM personagem;
+SELECT * FROM raca;
 SELECT * FROM usuario;
 -- -----------------------------------------------------
 -- Table `RPG`.`usuario`
@@ -117,21 +129,18 @@ DROP TABLE IF EXISTS `RPG`.`classe_personagem` ;
 
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `RPG`.`classe_personagem` (
-  `id_classe_personagem` INT NOT NULL,
+  `id_classe_personagem` INT NOT NULL AUTO_INCREMENT,
   `id_personagem` INT NOT NULL,
   `id_classe` INT NOT NULL,
   PRIMARY KEY (`id_classe_personagem`),
   CONSTRAINT `fk_classes_personagem_personagem1`
     FOREIGN KEY (`id_personagem`)
-    REFERENCES `RPG`.`personagem` (`id_personagem`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    REFERENCES `RPG`.`personagem` (`id_personagem`),
   CONSTRAINT `fk_classes_personagem_classe1`
     FOREIGN KEY (`id_classe`)
     REFERENCES `RPG`.`classe` (`id_classe`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+) ENGINE = InnoDB;
+
 
 SHOW WARNINGS;
 CREATE INDEX `fk_classes_personagem_personagem1_idx` ON `RPG`.`classe_personagem` (`id_personagem` ASC) VISIBLE;

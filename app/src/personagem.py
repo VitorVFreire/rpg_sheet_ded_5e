@@ -54,9 +54,11 @@ class Personagem(Usuario):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = """INSERT INTO classe_personagem
-                (id_personagem,id_classe) 
-                VALUES(%s,%s);"""
+                query = """
+                    INSERT INTO `RPG`.`classe_personagem` 
+                    (`id_personagem`, `id_classe`)
+                    VALUES (%s, %s)
+                """
                 mycursor.execute(query, (self._id_personagem,id_classe))
                 mydb.commit()
                 return True
@@ -71,7 +73,7 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = """DELETE from classe_personagem
                 WHERE id_classe_personagem=%s;"""
-                mycursor.execute(query, (id_classe_personagem))
+                mycursor.execute(query, (id_classe_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -87,6 +89,7 @@ class Personagem(Usuario):
                 (id_usuario,id_raca,nome_personagem) 
                 VALUES(%s,%s,%s);"""
                 mycursor.execute(query, (self._id,id_raca,nome_personagem))
+                self._id_personagem=mycursor.lastrowid  
                 mydb.commit()
                 return True
             return False
@@ -100,7 +103,7 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = """DELETE from personagem
                 WHERE id_personagem=%s;"""
-                mycursor.execute(query, (self._id_personagem))
+                mycursor.execute(query, (self._id_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -115,7 +118,7 @@ class Personagem(Usuario):
                 query = """UPDATE classe_personagem
                 SET id_classe=%s
                 WHERE id_classe_personagem=%s"""
-                mycursor.execute(query, (id_classe,id_classe_personagem))
+                mycursor.execute(query, (id_classe,id_classe_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -130,16 +133,19 @@ class Personagem(Usuario):
                 query = """SELECT cp.id_classe, cl.nome_classe,cp.id_classe_personagem
                 FROM classe_personagem cp, classe cl
                 WHERE cp.id_personagem = %s and cp.id_classe=cl.id_classe;"""
-                mycursor.execute(query, (self._id_personagem))
-                result = mycursor.fetchone()
+                mycursor.execute(query, (self._id_personagem,))
+                result = mycursor.fetchall()
                 if result:
+                    self._classe.clear()
                     for row in result:
-                        self.classe({'id_classe_personagem':row[2],'id_classe':row[0],'nome_classe':row[1]})
+                        self._classe.append({'id_classe_personagem': row[2], 'id_classe': row[0], 'nome_classe': row[1]})
                     return True
+                return False
             return False
         except pymysql.Error as e:
             print(e)
             return False
+
         
     @property
     def classe(self):
@@ -494,7 +500,7 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = """DELETE from atributos
                 WHERE id_personagem=%s;"""
-                mycursor.execute(query, (self._id_personagem))
+                mycursor.execute(query, (self._id_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -864,13 +870,13 @@ class Personagem(Usuario):
             print(e)
             return False
         
-    def delete_pericias_banco(self,id_pericia_personagem):
+    def delete_pericias_banco(self,id_pericia):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
                 query = """DELETE from pericia_personagem
-                WHERE id_pericia_personagem=%s;"""
-                mycursor.execute(query, (id_pericia_personagem))
+                WHERE id_pericia=%s;"""
+                mycursor.execute(query, (id_pericia,))
                 mydb.commit()
                 return True
             return False
@@ -888,9 +894,12 @@ class Personagem(Usuario):
                 WHERE pp.id_personagem = %s;"""
                 mycursor.execute(query, (self._id_personagem,))
                 result = mycursor.fetchall() 
-                for row in result:
-                    self.set_pericias({'id_pericia_personagem':row[3],'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
-                return True
+                if result:
+                    self._pericias.clear()
+                    for row in result:
+                        self._pericias.append({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
+                    return True
+                return False
             return False
         except pymysql.Error as e:
             print(e)
@@ -916,7 +925,7 @@ class Personagem(Usuario):
         return self._pericias
 
     @pericias.setter
-    def pericias(self, value):
+    def set_pericias(self, value):
         self._pericias.append(value)
         
     @property

@@ -11,6 +11,10 @@ class Raca:
         return self._nome_raca
     
     @property
+    def id_raca(self):
+        return self._id_raca
+    
+    @property
     def racas(self):
         if (type(self._id_raca) is list and len(self._id_raca)<=0) or (self._id_raca is None):
             self.carregar_racas()

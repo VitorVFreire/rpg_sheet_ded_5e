@@ -12,8 +12,19 @@ class Pericia:
         return self._nome_pericia
     
     @property
+    def id_pericia(self):
+        return self._id_pericia
+    
+    @property
     def status_uso(self):
-        return self._status_uso
+        if(type(self._id_pericia) is list and len(self._id_pericia)<=0):
+            retorno=[]
+            for status_uso in self.pericias:
+                retorno.append(status_uso['status_uso'])
+            return retorno[0]
+        elif self._status_uso is None:
+            self.carregar_pericia()
+            return self._status_uso
     
     @property
     def pericias(self):

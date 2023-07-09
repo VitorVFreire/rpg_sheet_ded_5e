@@ -9,6 +9,10 @@ class Classe:
     @property
     def nome_classe(self):
         return self._nome_classe
+    
+    @property
+    def id_classe(self):
+        return self._id_classe
 
     @property
     def classes(self):

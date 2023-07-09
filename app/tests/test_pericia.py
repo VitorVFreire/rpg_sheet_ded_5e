@@ -26,7 +26,7 @@ class PericiaTest(unittest.TestCase):
     
     def test_update_status_pericia(self):
         # Atualizar o status da pericia
-        self.pericia_teste.update_pericia_banco(chave='status_uso',valor="novo status")
+        self.assertTrue(self.pericia_teste.update_pericia_banco(chave='status_uso',valor="novo status"))
         self.pericia_teste.carregar_pericia()
         self.assertEqual(self.pericia_teste.status_uso, "novo status")
 
