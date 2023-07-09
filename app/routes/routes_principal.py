@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 from flask_session import Session
 
 from main import app
-from src import Usuario, Personagem, Pericia, Raca, Classe
+from src import Usuario, Personagem, Pericia, Raca, Classe, Salvaguarda
 
 @app.route('/')
 def index():
@@ -48,22 +48,49 @@ def personagem(id_personagem):
     personagem=Personagem(id_usuario=session.get('id_usuario'),id_personagem=id_personagem)
     classe=Classe()
     personagem.carregar_atributos_do_banco()
+    personagem.carregar_salvaguardas_do_banco()
     return render_template('ficha_personagem.html', titulo=personagem.nome_personagem, personagem=personagem,classes=classe.classes)
     
 @app.route('/atributos/<id_personagem>',methods=['POST'])
-def update_atributos(id_personagem):
+def atributos_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
         personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
         chave=request.form.get('chave')
         valor=request.form.get('valor')
+        
         if personagem.exists_atributos_banco() and chave != 'bonus_proficiencia':
             return jsonify({'result': personagem.update_atributos_banco(chave=chave, valor=valor),
-                'bonus': int(personagem.get_bonus(chave=chave))})
+                'bonus': int(personagem.get_bonus(chave=chave)),'resistencia':int(personagem.get_bonus(chave=chave))})
         elif personagem.exists_atributos_banco():
             return jsonify({'result': personagem.update_atributos_banco(chave=chave, valor=valor)})
+        
         return jsonify({'result':personagem.adicionar_atributo_banco(chave=chave,valor=valor),
-                        'bonus':int(personagem.get_bonus(chave=chave))})
+                        'bonus':int(personagem.get_bonus(chave=chave)),'resistencia':int(personagem.get_bonus(chave=chave))})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/salvaguarda/<id_personagem>',methods=['POST'])
+def salvaguardas_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        chave=request.form.get('chave')
+        tipo=request.form.get('tipo')
+        
+        salvaguarda=Salvaguarda(nome_salvaguarda=chave)
+        salvaguarda.carregar_salvaguarda_nome()
+        personagem.carregar_atributos_do_banco()
+        
+        if personagem.exists_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda) and tipo=='remover':
+            return jsonify({'result':personagem.delete_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
+                            'resistencia':int(personagem.get_salvaguardas(chave))})
+        elif tipo=='adicionar':
+            return jsonify({'result':personagem.adicionar_salvaguardas_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
+                            'resistencia':int(personagem.get_salvaguardas(chave))})
+        return jsonify({'result':False})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})

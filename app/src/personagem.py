@@ -633,7 +633,7 @@ class Personagem(Usuario):
     
     @property
     def bonus_carisma(self):
-        if self.carisma is None:
+        if self.carisma is None or self.carisma == 0:
             return 0
         return attributes.loc[self.carisma]
     
@@ -756,6 +756,21 @@ class Personagem(Usuario):
     def imagem_personagem(self):
         return self._caracteristicas['imagem_personagem']
 #-----------------------------------------------SALVAGUARDAS-----------------------------------------------
+    def exists_salvaguarda_banco(self, id_salvaguarda):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = "SELECT EXISTS (SELECT id_salvaguarda_personagem FROM salvaguarda_personagem WHERE id_personagem = %s and id_salvaguarda = %s)"
+                mycursor.execute(query, (self._id_personagem, id_salvaguarda))
+                result = mycursor.fetchone()
+                if result[0] == 1:
+                    return True
+                return False
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+        
     def adicionar_salvaguardas_banco(self,id_salvaguarda):
         try:
             if self._id_personagem:
@@ -773,13 +788,13 @@ class Personagem(Usuario):
             print(e)
             return False
     
-    def delete_salvaguarda_banco(self,id_salvaguarda_personagem):
+    def delete_salvaguarda_banco(self,id_salvaguarda):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
                 query = """DELETE from salvaguarda_personagem
-                WHERE id_salvaguarda_personagem=%s;"""
-                mycursor.execute(query, (id_salvaguarda_personagem,))
+                WHERE id_salvaguarda=%s;"""
+                mycursor.execute(query, (id_salvaguarda,))
                 mydb.commit()
                 return True
             return False
@@ -805,20 +820,27 @@ class Personagem(Usuario):
             print(e)
             return False
         
-    def update_salvaguardas_banco(self,id_salvaguarda,id_salvaguarda_personagem):
+    def update_salvaguardas_banco(self,nova_id_salvaguarda,antiga_id_salvaguarda):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
                 query = """UPDATE salvaguarda_personagem
                 SET id_salvaguarda=%s
-                WHERE id_salvaguarda_personagem=%s;"""
-                mycursor.execute(query, (id_salvaguarda,id_salvaguarda_personagem,))
+                WHERE id_salvaguarda=%s;"""
+                mycursor.execute(query, (nova_id_salvaguarda,antiga_id_salvaguarda,))
                 mydb.commit()
                 return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
+        
+    def get_salvaguardas(self,chave):
+        self.carregar_salvaguardas_do_banco()
+        if any(d.get('nome_salvaguarda') == chave for d in self._salvaguardas):
+            return attributes.loc[self._atributos[chave]+ self.bonus_proficiencia]
+        else:
+            return attributes.loc[self._atributos[chave]]
         
     @property
     def salvaguardas(self):
@@ -827,6 +849,11 @@ class Personagem(Usuario):
     @salvaguardas.setter
     def salvaguardas(self, value):
         self._salvaguardas.append(value)
+        
+    @property
+    def lista_nome_salvaguardas(self):
+        lista = [d.get('nome_salvaguarda') for d in self._salvaguardas]
+        return lista
 
     @property
     def resistencia_forca(self):

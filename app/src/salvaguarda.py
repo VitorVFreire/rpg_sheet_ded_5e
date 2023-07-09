@@ -53,6 +53,21 @@ class Salvaguarda:
             print(e)
             return False
         
+    def carregar_salvaguarda_nome(self):
+        try:
+            mycursor = mydb.cursor()
+            query = "SELECT id_salvaguarda,nome_salvaguarda FROM salvaguarda WHERE nome_salvaguarda=%s;"
+            mycursor.execute(query,(self._nome_salvaguarda,))
+            result = mycursor.fetchone() 
+            if result:
+                self._id_salvaguarda=result[0]
+                self._nome_salvaguarda=result[1]
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+        
     def insert_salvaguarda_banco(self):
         try:
             mycursor = mydb.cursor()

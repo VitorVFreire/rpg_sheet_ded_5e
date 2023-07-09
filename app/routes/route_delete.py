@@ -61,22 +61,7 @@ def delete_feitico():
     except EOFError as e:
         print(e)
         return render_template('index.html',titulo='home',msg='Erro na Exclusão do feitiço!')
-    
-@app.route('/delete/atributos',methods=['POST'])
-def delete_atributos():
-    try:
-        id_usuario=session.get('id_usuario')
-        id_personagem=request.form.get('id_personagem')
         
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
-                
-        personagem.delete_atributos_banco()
-        
-        return render_template('index.html',titulo='home',msg='Atributos Apagado!')
-    except EOFError as e:
-        print(e)
-        return render_template('index.html',titulo='home',msg='Erro na Exclusão dos atributos!')
-    
 @app.route('/delete/caracteristicas',methods=['POST'])
 def delete_caracteristicas():
     try:
@@ -91,21 +76,6 @@ def delete_caracteristicas():
     except EOFError as e:
         print(e)
         return render_template('index.html',titulo='home',msg='Erro na Exclusão dos caracteristicas!')
-    
-@app.route('/delete/salvaguarda',methods=['POST'])
-def delete_salvaguarda():
-    try:
-        id_usuario=session.get('id_usuario')
-        id_salvaguarda_personagem=request.form.get('id_salvaguarda_personagem')
-        
-        personagem=Personagem(id_usuario=id_usuario)
-                
-        personagem.delete_salvaguarda_banco(id_salvaguarda_personagem)
-        
-        return render_template('index.html',titulo='home',msg='Salvaguada Apagado!')
-    except EOFError as e:
-        print(e)
-        return render_template('index.html',titulo='home',msg='Erro na Exclusão do salvaguarda!')
     
 @app.route('/delete/pericia',methods=['POST'])
 def delete_pericia():
