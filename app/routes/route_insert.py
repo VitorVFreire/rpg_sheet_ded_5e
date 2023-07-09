@@ -98,7 +98,7 @@ def insert_feitico_personagem():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/insert_atributos',methods=['POST'])
+"""@app.route('/insert_atributos',methods=['POST'])
 def insert_atributos():
     try:
         id_usuario=session.get('id_usuario')        
@@ -119,7 +119,7 @@ def insert_atributos():
         return jsonify({'result':True})
     except EOFError as e:
         print(e)
-        return jsonify({'result':False})
+        return jsonify({'result':False})"""
     
 @app.route('/insert_caracteristicas',methods=['POST'])
 def insert_caracteristicas():

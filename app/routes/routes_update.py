@@ -66,19 +66,6 @@ def update_feitico():
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
-
-@app.route('/update/atributos',methods=['POST'])
-def update_atributos():
-    try:
-        id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario)
-        chave=request.form.get('chave')
-        valor=request.form.get('valor')
-        personagem.update_atributos_banco(chave=chave,valor=valor)
-        return jsonify({'result':True})
-    except EOFError as e:
-        print(e)
-        return jsonify({'result':False})
     
 @app.route('/update/caracteristicas',methods=['POST'])
 def update_caracteristicas():
