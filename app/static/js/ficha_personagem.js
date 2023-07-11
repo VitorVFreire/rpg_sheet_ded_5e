@@ -1,5 +1,29 @@
 const id_personagem = parseInt(document.querySelector('#id_personagem').value, 10);
 
+
+//MUDANÇA DE NOME DO PERSONAGEM:
+const input_nome= document.querySelectorAll('#nome_personagem');
+
+input_nome.forEach(input => {
+  input.addEventListener('blur', function() {
+    const id = input.id;
+    $.ajax({
+      url: `/base/${id_personagem}`,
+      type: 'POST',
+      data: {
+          chave: id,
+          valor: this.value,
+      },
+      success: function(response) {
+        var result = response.result;
+        $('#result-container').text('Resultado: ' + result);
+      }    
+    });
+  });
+});
+
+
+//MUDANÇA DE ATRIBUTOS:
 const inputs_atributos = document.querySelectorAll('input[id^="atributo_"]');
 
 inputs_atributos.forEach(input => {
@@ -21,6 +45,7 @@ inputs_atributos.forEach(input => {
         if ($(`#bonus_${atributo}`)) {
           $(`#bonus_${atributo}`).text(response.bonus);
           $(`#resistencia_${atributo}`).text(response.resistencia);
+          //ATUALIZA VALOR DE PERICIAS:
           atualizar_pericias();
         }
       }
@@ -28,6 +53,8 @@ inputs_atributos.forEach(input => {
   });
 });
 
+
+//MUDANÇA DE SALVAGUARDAS:
 const inputs_salvaguardas= document.querySelectorAll('input[id^="salvaguarda_"]');
 
 inputs_salvaguardas.forEach(input => {
@@ -55,6 +82,8 @@ inputs_salvaguardas.forEach(input => {
   });
 });
 
+
+//MUDANÇA DE STATUS BASE:
 const inputs_status_base = document.querySelectorAll('input[id^="status_base_"]');
 
 inputs_status_base.forEach(input => {
@@ -78,6 +107,8 @@ inputs_status_base.forEach(input => {
   });
 });
 
+
+//MUDANÇA DE PERICIAS:
 const inputs_pericias= document.querySelectorAll('input[id^="check_pericia_"]');
 
 inputs_pericias.forEach(input => {
@@ -106,10 +137,36 @@ inputs_pericias.forEach(input => {
 });
 
 
+//MUDANÇA DE CARACTERISTICAS:
+const inputs_caracteristicas= document.querySelectorAll('input[id^="caracteristicas_"]');
+
+inputs_caracteristicas.forEach(input => {
+  input.addEventListener('blur', function() {
+    const id = input.id;
+    const posicao=id.search('_')
+    const caracteristica = id.substring(posicao+1);
+
+    $.ajax({
+      url: `/caracteristicas_personagem/${id_personagem}`,
+      type: 'POST',
+      data: {
+          chave: caracteristica,
+          valor: this.value,
+      },
+      success: function(response) {
+        var result = response.result;
+        $('#result-container').text('Resultado: ' + result);
+      }    
+    });
+  });
+});
+
+
 function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+//FUNCAO PARA ATUALIZAR PERICIAS:
 function atualizar_pericias() {
   $.ajax({
     url: `/pericias/${id_personagem}`,

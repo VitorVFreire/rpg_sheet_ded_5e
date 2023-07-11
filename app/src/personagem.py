@@ -523,26 +523,27 @@ class Personagem(Usuario):
             return False
     
     def carregar_atributos_do_banco(self):
-        #try:
-        if self._id_personagem:
-            mycursor = mydb.cursor()
-            query = """SELECT forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia 
-            FROM atributos WHERE id_personagem = %s"""
-            mycursor.execute(query, (self._id_personagem,))
-            result = mycursor.fetchone() 
-            if result:
-                self.set_forca(result[0])
-                self.set_destreza(result[1])
-                self.set_constituicao(result[2])
-                self.set_inteligencia(result[3])
-                self.set_sabedoria(result[4])
-                self.set_carisma(result[5])
-                self._bonus_proficiencia = result[6]  # Update bonus_proficiencia directly
-                return True
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = """SELECT forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia 
+                FROM atributos WHERE id_personagem = %s"""
+                mycursor.execute(query, (self._id_personagem,))
+                result = mycursor.fetchone() 
+                if result:
+                    self.set_forca(result[0])
+                    self.set_destreza(result[1])
+                    self.set_constituicao(result[2])
+                    self.set_inteligencia(result[3])
+                    self.set_sabedoria(result[4])
+                    self.set_carisma(result[5])
+                    self._bonus_proficiencia = result[6]  # Update bonus_proficiencia directly
+                    return True
+                return False
             return False
-        """except pymysql.Error as e:
+        except pymysql.Error as e:
             print(e)
-            return False"""
+            return False
 
     
     def update_atributos_banco(self,chave,valor):
@@ -654,14 +655,30 @@ class Personagem(Usuario):
     def set_carisma(self,value):
         self._atributos['carisma']=value
 #-----------------------------------------------CARACTERISTICAS----------------------------------------------- 
-    def adicionar_caracteristicas_banco(self,idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem):
+    def exists_caracteristicas_banco(self):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = """INSERT INTO caracteristicas_personagem
-                (id_personagem,idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem) 
-                VALUES(%s,%s,%s,%s,%s,%s,%s,%s);"""
-                mycursor.execute(query, (self._id_personagem,idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem))
+                query = "SELECT EXISTS (SELECT id_caracteristicas_personagem FROM caracteristicas_personagem WHERE id_personagem = %s)"
+                mycursor.execute(query, (self._id_personagem,))
+                result = mycursor.fetchone()
+                if result[0] == 1:
+                    return True
+                return False
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
+    def adicionar_caracteristicas_banco(self,chave,valor):
+        try:
+            possibilidade_chave=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
+            if self._id_personagem and chave in possibilidade_chave:
+                mycursor = mydb.cursor()
+                query = f"""INSERT INTO caracteristicas_personagem
+                (id_personagem,{chave}) 
+                VALUES(%s,%s);"""
+                mycursor.execute(query, (self._id_personagem,valor,))
                 mydb.commit()
                 return True
             return False
@@ -675,7 +692,7 @@ class Personagem(Usuario):
                 mycursor = mydb.cursor()
                 query = """DELETE from caracteristicas_personagem
                 WHERE id_personagem=%s;"""
-                mycursor.execute(query, (self._id_personagem))
+                mycursor.execute(query, (self._id_personagem,))
                 mydb.commit()
                 return True
             return False
@@ -688,16 +705,16 @@ class Personagem(Usuario):
             if self._id_personagem:
                 mycursor = mydb.cursor()
                 query = "SELECT idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem FROM caracteristicas_personagem WHERE id_personagem = %s"
-                mycursor.execute(query, (self._id_personagem))
+                mycursor.execute(query, (self._id_personagem,))
                 result = mycursor.fetchone() 
-                for row in result:
-                    self.set_idade=row[0]
-                    self.set_cor_olhos=row[1]
-                    self.set_cor_pele=row[2]
-                    self.set_cor_cabelo=row[3]
-                    self.set_peso=row[4]
-                    self.set_altura=row[5]
-                    self.set_imagem_personagem=row[6]
+                if result:
+                    self.set_idade(result[0])
+                    self.set_cor_olhos(result[1])
+                    self.set_cor_pele(result[2])
+                    self.set_cor_cabelo(result[3])
+                    self.set_peso(result[4])
+                    self.set_altura(result[5])
+                    self.set_imagem_personagem(result[6])
                 return True
             return False
         except pymysql.Error as e:
@@ -721,12 +738,12 @@ class Personagem(Usuario):
             print(e)
             return False
     
-    def set_idade(self,value):
-        self._caracteristicas['idade']=value
-    
     @property
     def idade(self):
-        self._caracteristicas['idade']
+        return self._caracteristicas['idade']
+        
+    def set_idade(self,value):
+        self._caracteristicas['idade']=value
     
     def set_altura(self,value):
         self._caracteristicas['altura']=value

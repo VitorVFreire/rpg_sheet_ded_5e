@@ -22,21 +22,67 @@ def cadastro_login():
         return render_template('index.html',titulo='home',msg='Logado')
     return redirect(url_for('login'))
 
+@app.route('/logout')
+def logout():
+    session['id_usuario'] = None
+    return render_template('index.html',titulo='home',msg='Logout')
+
 @app.route('/cadastro_usuario')
 def criar_usuario():
     if session.get('id_usuario'):
         return render_template('index.html',titulo='home')
     return render_template('cadastro_usuario.html',titulo='cadastro de usuario')
 
-@app.route('/logout')
-def logout():
-    session['id_usuario'] = None
-    return render_template('index.html',titulo='home',msg='Logout')
+@app.route('/cadastro_usuario',methods=['POST'])
+def cadastro_usuario():
+    try:
+        email=request.form.get('email')
+        senha=request.form.get('senha')
+        nome=request.form.get('nome')
+        data_nascimento=request.form.get('data_nascimento')
+        
+        usuario=Usuario(nome=nome,email=email,senha=senha,data_nascimento=data_nascimento)
+        
+        if usuario.create_usuario():
+            session['id_usuario']=usuario.id
+            return render_template('index.html',titulo='home',msg='logado')
+        return render_template('login.html',titulo='login',msg='Erro no Login')
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/delete/usuario',methods=['POST'])
+def delete_usuario():
+    try:
+        id_usuario=session.get('id_usuario')
+        usuario=Usuario(id_usuario=id_usuario)
+                
+        usuario.delete_usuario(id_classe)
+        
+        return render_template('index.html',titulo='home',msg='Conta Encerrada!')
+    except EOFError as e:
+        print(e)
+        return render_template('index.html',titulo='home',msg='Erro na Exclusão da conta!')
 
 @app.route('/criar_personagem')
 def criar_personagem():
     racas=Raca()
     return render_template('create_personagem.html',titulo='Criar Personagem',racas=racas.racas)
+    
+@app.route('/insert_personagem',methods=['POST'])
+def insert_personagem():
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=Personagem(id_usuario=id_usuario)
+        id_raca=request.form.get('id_raca')
+        nome_personagem=request.form.get('nome_personagem')
+        
+        personagem.adicionar_personagem_banco(id_raca,nome_personagem)
+        
+        return jsonify({'result':True})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
 
 @app.route('/personagens')
 def personagens():
@@ -51,8 +97,9 @@ def personagem(id_personagem):
     personagem.carregar_salvaguardas_do_banco()
     personagem.carregar_status_base_do_banco()
     personagem.carregar_pericias_do_banco()
+    personagem.carregar_caracteristicas_do_banco()
     return render_template('ficha_personagem.html', titulo=personagem.nome_personagem, personagem=personagem,classes=classe.classes)
-    
+
 @app.route('/atributos/<id_personagem>',methods=['POST'])
 def atributos_db(id_personagem):
     try:
@@ -115,7 +162,7 @@ def status_base_db(id_personagem):
         return jsonify({'result':False})
     
 @app.route('/pericias/<id_personagem>',methods=['POST'])
-def pericias_personagem(id_personagem):
+def pericias_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
@@ -145,7 +192,7 @@ def pericias_personagem(id_personagem):
         return jsonify({'result': False})
 
 @app.route('/nova_pericia/<id_personagem>',methods=['POST'])
-def pericias_personagem_nova(id_personagem):
+def adicionar_perica_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
         personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
@@ -164,6 +211,38 @@ def pericias_personagem_nova(id_personagem):
             return jsonify({'result':personagem.adicionar_pericias_banco(id_pericia=pericia.id_pericia),
                             'pericia':int(personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
         return jsonify({'result':False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/caracteristicas_personagem/<id_personagem>',methods=['POST'])
+def caracteristicas_personagems_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        chave=request.form.get('chave')
+        valor=request.form.get('valor')
+                
+        if personagem.exists_caracteristicas_banco():
+            return jsonify({'result':personagem.update_caracteristicas_banco(chave=chave,valor=valor)})
+        else:
+            return jsonify({'result':personagem.adicionar_caracteristicas_banco(chave=chave,valor=valor)})
+        return jsonify({'result':False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/base/<id_personagem>',methods=['POST'])
+def base_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        chave=request.form.get('chave')
+        valor=request.form.get('valor')
+                
+        return jsonify({'result':personagem.update_personagem_banco(chave=chave,valor=valor)})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})

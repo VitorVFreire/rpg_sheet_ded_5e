@@ -66,7 +66,6 @@ class Pericia:
             query = "SELECT id_pericia, status_uso FROM pericia WHERE nome_pericia=%s;"
             mycursor.execute(query,(self._nome_pericia,))
             result = mycursor.fetchone() 
-            print(f'tipo id{type(self._id_pericia)}')
             if result:
                 self._id_pericia=result[0]
                 self._status_uso=result[1]
