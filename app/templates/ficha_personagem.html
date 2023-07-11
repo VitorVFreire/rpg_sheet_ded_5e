@@ -104,8 +104,14 @@ Carisma: <div id='resistencia_carisma'>{{ personagem.resistencia_carisma }}</div
 ] | sort(attribute='nome') %}
 
 {% for pericia in pericias %}
-    {{ pericia.nome }}: {{ pericia.valor }}<br>
+{% if pericia.nome.lower() not in personagem.lista_nome_pericias %}
+    <input type="checkbox" id="check_pericia_{{ pericia.nome.lower() }}" required/> 
+{% else %}
+    <input type="checkbox" id="check_pericia_{{ pericia.nome.lower() }}" checked required/> 
+{% endif %}
+    {{ pericia.nome }}: <div id="pericia_{{ pericia.nome.lower() }}">{{ pericia.valor }}</div><br>
 {% endfor %}
+
 
 <h2>Status Base: </h2> <br>
 Vida: <input class="form-control" id="status_base_vida" value="{{ personagem.vida }}" required/><br>

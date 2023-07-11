@@ -17,14 +17,7 @@ class Pericia:
     
     @property
     def status_uso(self):
-        if(type(self._id_pericia) is list and len(self._id_pericia)<=0):
-            retorno=[]
-            for status_uso in self.pericias:
-                retorno.append(status_uso['status_uso'])
-            return retorno[0]
-        elif self._status_uso is None:
-            self.carregar_pericia()
-            return self._status_uso
+        return self._status_uso
     
     @property
     def pericias(self):
@@ -60,6 +53,22 @@ class Pericia:
             result = mycursor.fetchall() 
             if result:
                 self._nome_pericia=result[0]
+                self._status_uso=result[1]
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+        
+    def carregar_pericia_nome(self):
+        try:
+            mycursor = mydb.cursor()
+            query = "SELECT id_pericia, status_uso FROM pericia WHERE nome_pericia=%s;"
+            mycursor.execute(query,(self._nome_pericia,))
+            result = mycursor.fetchone() 
+            print(f'tipo id{type(self._id_pericia)}')
+            if result:
+                self._id_pericia=result[0]
                 self._status_uso=result[1]
                 return True
             return False

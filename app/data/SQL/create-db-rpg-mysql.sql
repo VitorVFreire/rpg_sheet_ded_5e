@@ -18,6 +18,12 @@ DROP SCHEMA IF EXISTS `RPG` ;
 CREATE SCHEMA IF NOT EXISTS `RPG` DEFAULT CHARACTER SET utf8 ;
 SHOW WARNINGS;
 USE `RPG` ;
+
+SELECT pp.id_pericia, pc.nome_pericia, pc.status_uso,pp.id_pericia_personagem 
+                FROM pericia_personagem pp 
+                JOIN pericia pc ON pp.id_pericia = pc.id_pericia 
+                WHERE pp.id_personagem = 1;
+
 DELETE FROM classe_personagem;
 DELETE from classe WHERE id_classe!=9;
 DELETE FROM salvaguarda_personagem;
@@ -29,6 +35,7 @@ DELETE FROM personagem WHERE id_personagem!=1;
 DELETE FROM raca WHERE id_raca!=1;
 DELETE FROM usuario WHERE id_usuario!=1;
 
+SELECT * FROM status_base;
 SELECT * FROM salvaguarda;
 SELECT * from salvaguarda_personagem;
 SELECT * FROM classe_personagem;
@@ -292,10 +299,10 @@ SHOW WARNINGS;
 -- Table `RPG`.`tipo_dano`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `RPG`.`tipo_dano` ;
-
+USE RPG;
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `RPG`.`tipo_dano` (
-  `id_tipo_dano` INT NOT NULL,
+  `id_tipo_dano` INT NOT NULL AUTO_INCREMENT,
   `nome_tipo` VARCHAR(60) NULL,
   PRIMARY KEY (`id_tipo_dano`))
 ENGINE = InnoDB;
@@ -309,7 +316,7 @@ DROP TABLE IF EXISTS `RPG`.`armas_personagem` ;
 
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `RPG`.`armas_personagem` (
-  `id_armas_personagem` INT NOT NULL,
+  `id_armas_personagem` INT NOT NULL AUTO_INCREMENT,
   `id_personagem` INT NOT NULL,
   `id_tipo_dano` INT NOT NULL,
   `nome_arma` VARCHAR(45) NULL,
@@ -344,7 +351,7 @@ DROP TABLE IF EXISTS `RPG`.`dinheiro` ;
 
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `RPG`.`dinheiro` (
-  `id_dinheiro` INT NOT NULL,
+  `id_dinheiro` INT NOT NULL AUTO_INCREMENT,
   `id_personagem` INT NOT NULL,
   `prata` FLOAT NULL,
   `ouro` FLOAT NULL,
@@ -374,7 +381,7 @@ DROP TABLE IF EXISTS `RPG`.`status_base` ;
 
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `RPG`.`status_base` (
-  `id_status_base` INT NOT NULL,
+  `id_status_base` INT NOT NULL AUTO_INCREMENT,
   `id_personagem` INT NOT NULL,
   `vida` INT NULL,
   `xp` DOUBLE NULL,
@@ -411,7 +418,7 @@ DROP TABLE IF EXISTS `RPG`.`feitico` ;
 
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `RPG`.`feitico` (
-  `id_feitico` INT NOT NULL,
+  `id_feitico` INT NOT NULL AUTO_INCREMENT,
   `id_tipo_dano` INT NOT NULL,
   `nome_feitico` VARCHAR(45) NOT NULL,
   `tipo_feiticol` VARCHAR(15) NOT NULL,

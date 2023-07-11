@@ -49,6 +49,8 @@ def personagem(id_personagem):
     classe=Classe()
     personagem.carregar_atributos_do_banco()
     personagem.carregar_salvaguardas_do_banco()
+    personagem.carregar_status_base_do_banco()
+    personagem.carregar_pericias_do_banco()
     return render_template('ficha_personagem.html', titulo=personagem.nome_personagem, personagem=personagem,classes=classe.classes)
     
 @app.route('/atributos/<id_personagem>',methods=['POST'])
@@ -90,6 +92,77 @@ def salvaguardas_db(id_personagem):
         elif tipo=='adicionar':
             return jsonify({'result':personagem.adicionar_salvaguardas_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
                             'resistencia':int(personagem.get_salvaguardas(chave))})
+        return jsonify({'result':False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/status_base/<id_personagem>',methods=['POST'])
+def status_base_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        chave=request.form.get('chave')
+        valor=request.form.get('valor')
+        
+        if personagem.exists_status_base_banco():
+            return jsonify({'result': personagem.update_status_base_banco(chave=chave, valor=valor)})
+        else:
+            return jsonify({'result':personagem.adicionar_status_base_banco(chave=chave,valor=valor)})
+        return jsonify({'result':False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/pericias/<id_personagem>',methods=['POST'])
+def pericias_personagem(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
+        if personagem.carregar_atributos_do_banco() and personagem.carregar_pericias_do_banco():
+            return jsonify({
+                'acrobacia': int(personagem.acrobacia),
+                'arcanismo': int(personagem.arcanismo),
+                'atletismo': int(personagem.atletismo),
+                'atuacao': int(personagem.atuacao),
+                'enganacao': int(personagem.enganacao),
+                'furtividade': int(personagem.furtividade),
+                'historia': int(personagem.historia),
+                'intimidacao': int(personagem.intimidacao),
+                'investigacao': int(personagem.investigacao),
+                'lidar_com_animais': int(personagem.lidar_com_animais),
+                'medicina': int(personagem.medicina),
+                'natureza': int(personagem.natureza),
+                'percepcao': int(personagem.percepcao),
+                'persuasao': int(personagem.persuasao),
+                'prestidigitacao': int(personagem.prestidigitacao),
+                'religiao': int(personagem.religiao),
+                'sobrevivencia': int(personagem.sobrevivencia)
+            })
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False})
+
+@app.route('/nova_pericia/<id_personagem>',methods=['POST'])
+def pericias_personagem_nova(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        chave=request.form.get('chave')
+        tipo=request.form.get('tipo')
+
+        pericia=Pericia(nome_pericia=chave)
+        pericia.carregar_pericia_nome()
+        personagem.carregar_atributos_do_banco()
+
+        if tipo=='remover' and personagem.exists_pericia_banco(id_pericia=pericia.id_pericia):
+            return jsonify({'result':personagem.delete_pericias_banco(id_pericia=pericia.id_pericia),
+                            'pericia':int(personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
+        elif tipo=='adicionar':
+            return jsonify({'result':personagem.adicionar_pericias_banco(id_pericia=pericia.id_pericia),
+                            'pericia':int(personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)

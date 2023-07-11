@@ -212,15 +212,29 @@ class Personagem(Usuario):
         self._raca=value
 #-----------------------------------------------EQUIPAMENTOS-----------------------------------------------
 
-#-----------------------------------------------STATUS_BASE-----------------------------------------------   
-    def adicionar_status_base_banco(self,vida=0,xp=0,nivel=0,alinhamento=None,antecendente=None,faccao=None,inspiracao=0,ca=0,iniciativa=0,deslocamento=0,vida_atual=0,vida_temporaria=0):
+#-----------------------------------------------STATUS_BASE-----------------------------------------------           
+    def exists_status_base_banco(self):
         try:
             if self._id_personagem:
                 mycursor = mydb.cursor()
-                query = """INSERT INTO status_base
-                (id_personagem,vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria) 
-                VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
-                mycursor.execute(query, (self._id_personagem,vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria))
+                query = "SELECT EXISTS (SELECT id_status_base FROM status_base WHERE id_personagem = %s)"
+                mycursor.execute(query, (self._id_personagem,))
+                result = mycursor.fetchone()
+                if result[0] == 1:
+                    return True
+                return False
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
+    def adicionar_status_base_banco(self,chave,valor):
+        try:
+            possibilidade_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
+            if self._id_personagem and chave in possibilidade_chave:
+                mycursor = mydb.cursor()
+                query = f"INSERT INTO status_base(id_personagem,{chave}) VALUES(%s,%s);"
+                mycursor.execute(query, (self._id_personagem,valor,))
                 mydb.commit()
                 return True
             return False
@@ -249,23 +263,23 @@ class Personagem(Usuario):
                 query = """SELECT vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria
                 FROM status_base
                 WHERE id_personagem = %s;"""
-                mycursor.execute(query, (self._id_personagem))
+                mycursor.execute(query, (self._id_personagem,))
                 result = mycursor.fetchone()
                 if result:
-                    for row in result:
-                        self.vida=row[0]
-                        self.xp=row[1]
-                        self.nivel=row[2]
-                        self.alinhamento=row[3] 
-                        self.antecendente=row[4] 
-                        self.faccao=row[5]  
-                        self.inspiracao=row[6]
-                        self.set_ca=row[7]
-                        self.iniciativa[8]
-                        self.deslocamento=row[9]
-                        self.vida_atual=row[10]
-                        self.vida_temporaria=row[11]     
+                    self.vida=result[0]
+                    self.xp=result[1]
+                    self.nivel=result[2]
+                    self.alinhamento=result[3] 
+                    self.antecendente=result[4] 
+                    self.faccao=result[5]  
+                    self.inspiracao=result[6]
+                    self.ca=result[7]
+                    self.iniciativa=result[8]
+                    self.deslocamento=result[9]
+                    self.vida_atual=result[10]
+                    self.vida_temporaria=result[11]     
                     return True
+                return False
             return False
         except pymysql.Error as e:
             print(e)
@@ -838,7 +852,7 @@ class Personagem(Usuario):
     def get_salvaguardas(self,chave):
         self.carregar_salvaguardas_do_banco()
         if any(d.get('nome_salvaguarda') == chave for d in self._salvaguardas):
-            return attributes.loc[self._atributos[chave]+ self.bonus_proficiencia]
+            return attributes.loc[self._atributos[chave]]+ self.bonus_proficiencia
         else:
             return attributes.loc[self._atributos[chave]]
         
@@ -891,6 +905,21 @@ class Personagem(Usuario):
             return self.bonus_carisma + self._bonus_proficiencia
         return self.bonus_carisma
 #-----------------------------------------------PERICIAS-----------------------------------------------
+    def exists_pericia_banco(self, id_pericia):
+        try:
+            if self._id_personagem:
+                mycursor = mydb.cursor()
+                query = "SELECT EXISTS (SELECT id_pericia_personagem FROM pericia_personagem WHERE id_personagem = %s and id_pericia = %s)"
+                mycursor.execute(query, (self._id_personagem, id_pericia,))
+                result = mycursor.fetchone()
+                if result[0] == 1:
+                    return True
+                return False
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
     def adicionar_pericias_banco(self,id_pericia):
         try:
             if self._id_personagem:
@@ -954,6 +983,19 @@ class Personagem(Usuario):
             print(e)
             return False
 
+    def get_pericias(self,chave,status_uso):
+        if len(self._pericias) <=0:
+            self.carregar_pericias_do_banco()
+        if any(d.get('nome_pericia') == chave for d in self._pericias):
+            return attributes.loc[self._atributos[status_uso]]+ self.bonus_proficiencia
+        else:
+            return attributes.loc[self._atributos[status_uso]]
+
+    @property
+    def lista_nome_pericias(self):
+        lista = [d.get('nome_pericia') for d in self._pericias]
+        return lista
+
     @property
     def pericias(self):
         return self._pericias
@@ -982,90 +1024,90 @@ class Personagem(Usuario):
 
     @property
     def atuacao(self):
-        if any(d.get('nome_pericia') == self.atuacao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'atuacao' for d in self._pericias):
             return self.bonus_carisma + self._bonus_proficiencia
         return self.bonus_carisma
 
     @property
     def enganacao(self):
-        if any(d.get('nome_pericia') == self.enganacao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'enganacao' for d in self._pericias):
             return self.bonus_carisma + self._bonus_proficiencia
         return self.bonus_carisma
 
     @property
     def furtividade(self):
-        if any(d.get('nome_pericia') == self.furtividade.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'furtividade' for d in self._pericias):
             return self.bonus_destreza + self._bonus_proficiencia
         return self.bonus_destreza
 
     @property
     def historia(self):
-        if any(d.get('nome_pericia') == self.historia.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'historia' for d in self._pericias):
             return self.bonus_inteligencia + self._bonus_proficiencia
         return self.bonus_inteligencia
 
     @property
     def intimidacao(self):
-        if any(d.get('nome_pericia') == self.intimidacao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'intimidacao' for d in self._pericias):
             return self.bonus_carisma + self._bonus_proficiencia
         return self.bonus_carisma
 
     @property
     def intuicao(self):
-        if any(d.get('nome_pericia') == self.intuicao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'intuicao' for d in self._pericias):
             return self.bonus_sabedoria + self._bonus_proficiencia
         return self.bonus_sabedoria
 
     @property
     def investigacao(self):
-        if any(d.get('nome_pericia') == self.investigacao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'investigacao' for d in self._pericias):
             return self.bonus_inteligencia + self._bonus_proficiencia
         return self.bonus_inteligencia
 
     @property
     def lidar_com_animais(self):
-        if any(d.get('nome_pericia') == self.lidar_com_animais.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'lidar_com_animais' for d in self._pericias):
             return self.bonus_sabedoria + self._bonus_proficiencia
         return self.bonus_sabedoria
 
     @property
     def medicina(self):
-        if any(d.get('nome_pericia') == self.medicina.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'medicina' for d in self._pericias):
             return self.bonus_sabedoria + self._bonus_proficiencia
         return self.bonus_sabedoria
 
     @property
     def natureza(self):
-        if any(d.get('nome_pericia') == self.natureza.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'natureza' for d in self._pericias):
             return self.bonus_inteligencia + self._bonus_proficiencia
         return self.bonus_inteligencia
 
     @property
     def percepcao(self):
-        if any(d.get('nome_pericia') == self.percepcao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'percepcao' for d in self._pericias):
             return self.bonus_sabedoria + self._bonus_proficiencia
         return self.bonus_sabedoria
 
     @property
     def persuasao(self):
-        if any(d.get('nome_pericia') == self.persuasao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'persuasao' for d in self._pericias):
             return self.bonus_carisma + self._bonus_proficiencia
         return self.bonus_carisma
 
     @property
     def prestidigitacao(self):
-        if any(d.get('nome_pericia') == self.prestidigitacao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'prestidigitacao' for d in self._pericias):
             return self.bonus_destreza + self._bonus_proficiencia
         return self.bonus_destreza
 
     @property
     def religiao(self):
-        if any(d.get('nome_pericia') == self.religiao.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'religiao' for d in self._pericias):
             return self.bonus_inteligencia + self._bonus_proficiencia
         return self.bonus_inteligencia
 
     @property
     def sobrevivencia(self):
-        if any(d.get('nome_pericia') == self.sobrevivencia.__name__ for d in self._pericias):
+        if any(d.get('nome_pericia') == 'sobrevivencia' for d in self._pericias):
             return self.bonus_sabedoria + self._bonus_proficiencia
         return self.bonus_sabedoria
