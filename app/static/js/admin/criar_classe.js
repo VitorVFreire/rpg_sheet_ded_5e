@@ -5,7 +5,7 @@ $(document).ready(function() {
         var nome_classe = $('#nome_classe').val();
 
         $.ajax({
-            url: '/insert_classe',
+            url: '/criar_classe',
             type: 'POST',
             data: {
                 nome_classe: nome_classe,

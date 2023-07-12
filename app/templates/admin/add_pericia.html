@@ -1,0 +1,11 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<br>
+    <form id="form">
+        <input placeholder="nome da pericia" type="text" class="form-control" id="nome_pericia" name="nome_pericia" required/>
+        <input placeholder="status uso" type="text" class="form-control" id="status_uso" name="status_uso" required/>
+        <button type="submit" id="btn-cadastrar" class="btn-dark">Cadastrar</button>
+    </form>
+    <div id="result-container"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/admin/criar_pericia.js')}}"></script>
+{% endblock %}

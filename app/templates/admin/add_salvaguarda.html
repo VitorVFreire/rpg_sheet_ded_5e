@@ -1,0 +1,10 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<br>
+    <form id="form">
+        <input placeholder="nome da salvaguarda" type="text" class="form-control" id="nome_salvaguarda" name="nome_salvaguarda" required/>
+        <button type="submit" id="btn-cadastrar" class="btn-dark">Cadastrar</button>
+    </form>
+    <div id="result-container"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/admin/criar_salvaguarda.js')}}"></script>
+{% endblock %}

@@ -2,13 +2,13 @@ $(document).ready(function() {
     $('#form').submit(function(e) {
         e.preventDefault();
         
-        var nome_raca = $('#nome_raca').val();
+        var nome_salvaguarda = $('#nome_salvaguarda').val();
 
         $.ajax({
-            url: '/criar_raca',
+            url: '/criar_salvaguarda',
             type: 'POST',
             data: {
-                nome_raca: nome_raca,
+                nome_salvaguarda: nome_salvaguarda,
             },
             success: function(response) {
                 var result = response.result;
