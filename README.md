@@ -57,7 +57,7 @@ SECRET_KEY = 'your_key'
 ```
 ##### Execute o arquivo create_db.py para criar o database | Run the create_db.py file to create the database:
 ```
-python data/conexao_db.py
+python data/create_db.py
 ```
 ##### Execute o arquivo main.py para rodar o site | Run the main.py file to run the website:
 ```
