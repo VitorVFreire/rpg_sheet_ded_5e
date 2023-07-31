@@ -2,86 +2,147 @@
 {% block conteudo %}
 Nome do Jogador: {{personagem.nome}}
 <input id="id_personagem" type="hidden" value="{{personagem.id_personagem}}">
-<br>
-Nome do Personagem: <input class="form-control" id="nome_personagem" value="{{personagem.nome_personagem}}" required/><br>
-Raça: {{personagem.raca}}
 
-<br>
-Proficiencia: <input type="number" class="form-control" id="atributo_bonus_proficiencia" value="{{personagem.bonus_proficiencia}}" required/><br> 
+<div class="container text-center">
+    <div class="row justify-content">
+        <div class="col">
+            Nome do Personagem: <input class="form-control text-center" id="nome_personagem" value="{{personagem.nome_personagem}}" required/>
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            Vida: <input class="form-control text-center" id="status_base_vida" value="{{ personagem.vida }}" required/>
+        </div>
+        <div class="col">
+            Nível: <input class="form-control text-center" id="status_base_nivel" value="{{ personagem.nivel }}" required/>
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            Inspiração: <input class="form-control text-center" id="status_base_inspiracao" value="{{ personagem.inspiracao }}" required/>
+        </div>
+        <div class="col">
+            CA: <input class="form-control text-center" id="status_base_ca" value="{{ personagem.ca }}" required/>
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            Iniciativa: <input class="form-control text-center" id="status_base_iniciativa" value="{{ personagem.iniciativa }}" required/>
+        </div>
+        <div class="col">
+            Vida Atual: <input class="form-control text-center" id="status_base_vida_atual" value="{{ personagem.vida_atual }}" required/>
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            Vida Temporária: <input class="form-control text-center" id="status_base_vida_temporaria" value="{{ personagem.vida_temporaria }}" required/>
+        </div>
+        <div class="col">
+            Proficiencia: <input type="number" class="form-control text-center" id="atributo_bonus_proficiencia" value="{{personagem.bonus_proficiencia}}" required/> 
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            Raça: <a href="">{{personagem.raca}}</a>
+        </div>
+        <div class="col">
+            <a href="">Classe:</a>
+            {% for classe in personagem.classe %}
+                <a href="">{{classe['nome_classe']}}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
-<h2>Atributos: </h2><br>
-Força: <input type="number" class="form-control" id="atributo_forca" value="{{ personagem.forca }}" required/>
-Bônus Força: <div id='bonus_forca'>{{ personagem.bonus_forca }}</div><br><br>
+<h2>Atributos: </h2>
+<div class="container text-center">
+    <div class="row justify-content">
+        <div class="col">
+            <h3>Força:</h3><input type="number" class="form-control text-center" id="atributo_forca" value="{{ personagem.forca }}" required/>
+            Bônus Força: <div id='bonus_forca'>{{ personagem.bonus_forca }}</div>
+        </div>
+        <div class="col">
+            <h3>Destreza:</h3> <input type="number" class="form-control text-center" id="atributo_destreza" value="{{ personagem.destreza }}" required/>
+            Bônus Destreza: <div id='bonus_destreza'>{{ personagem.bonus_destreza }}</div>
+        </div>
+        <div class="col">
+            <h3>Constituição:</h3> <input type="number" class="form-control text-center" id="atributo_constituicao" value="{{ personagem.constituicao }}" required/>
+            Bônus Constituição: <div id='bonus_constituicao'>{{ personagem.bonus_constituicao }}</div>
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            <h3>Inteligência:</h3> <input type="number" class="form-control text-center" id="atributo_inteligencia" value="{{ personagem.inteligencia }}" required/>
+            Bônus Inteligência: <div id='bonus_inteligencia'>{{ personagem.bonus_inteligencia }}</div>
+        </div>
+        <div class="col">
+            <h3>Sabedoria:</h3> <input type="number" class="form-control text-center" id="atributo_sabedoria" value="{{ personagem.sabedoria }}" required/>
+            Bônus Sabedoria: <div id='bonus_sabedoria'>{{ personagem.bonus_sabedoria }}</div>
+        </div>
+        <div class="col">
+            <h3>Carisma:</h3> <input type="number" class="form-control text-center" id="atributo_carisma" value="{{ personagem.carisma }}" required/>
+            Bônus Carisma: <div id='bonus_carisma'>{{ personagem.bonus_carisma }}</div>
+        </div>
+    </div>
+</div>
 
-Destreza: <input type="number" class="form-control" id="atributo_destreza" value="{{ personagem.destreza }}" required/>
-Bônus Destreza: <div id='bonus_destreza'>{{ personagem.bonus_destreza }}</div><br><br>
+<h2>Salvaguardas:</h2>
+<div class="container text-center">
+    <div class="row justify-content">
+        <div class="col">
+            {% if 'forca' not in personagem.lista_nome_salvaguardas %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_forca" required/> 
+            {% else %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_forca" checked required/> 
+            {% endif %}
+            <h5>Força:</h5> <div id='resistencia_forca'>{{ personagem.resistencia_forca }}</div>
+        </div>
+        <div class="col">
+            {% if 'destreza' not in personagem.lista_nome_salvaguardas %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_destreza" required/> 
+            {% else %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_destreza" checked required/> 
+            {% endif %}
+            <h5>Destreza:</h5> <div id='resistencia_destreza'>{{ personagem.resistencia_destreza }}</div>
+        </div>
+        <div class="col">
+            {% if 'constituicao' not in personagem.lista_nome_salvaguardas %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_constituicao" required/> 
+            {% else %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_constituicao" checked required/> 
+            {% endif %}
+            <h5>Constituição:</h5> <div id='resistencia_constituicao'>{{ personagem.resistencia_constituicao }}</div>
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            {% if 'inteligencia' not in personagem.lista_nome_salvaguardas %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_inteligencia" required/> 
+            {% else %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_inteligencia" checked required/> 
+            {% endif %}
+            <h5>Inteligência:</h5> <div id='resistencia_inteligencia'>{{ personagem.resistencia_inteligencia }}</div>
+        </div>
+        <div class="col">
+            {% if 'sabedoria' not in personagem.lista_nome_salvaguardas %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_sabedoria" required/> 
+            {% else %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_sabedoria" checked required/> 
+            {% endif %}
+            <h5>Sabedoria:</h5> <div id="resistencia_sabedoria">{{ personagem.resistencia_sabedoria }}</div>
+        </div>
+        <div class="col">
+            {% if 'carisma' not in personagem.lista_nome_salvaguardas %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_carisma" required/> 
+            {% else %}
+                <input type="checkbox" class="form-check-input mt-0" id="salvaguarda_carisma" checked required/> 
+            {% endif %}
+            <h5>Carisma:</h5> <div id='resistencia_carisma'>{{ personagem.resistencia_carisma }}</div>
+        </div>
+    </div>
+</div>
 
-Constituição: <input type="number" class="form-control" id="atributo_constituicao" value="{{ personagem.constituicao }}" required/>
-Bônus Constituição: <div id='bonus_constituicao'>{{ personagem.bonus_constituicao }}</div><br><br>
-
-Inteligência: <input type="number" class="form-control" id="atributo_inteligencia" value="{{ personagem.inteligencia }}" required/>
-Bônus Inteligência: <div id='bonus_inteligencia'>{{ personagem.bonus_inteligencia }}</div><br><br>
-
-Sabedoria: <input type="number" class="form-control" id="atributo_sabedoria" value="{{ personagem.sabedoria }}" required/>
-Bônus Sabedoria: <div id='bonus_sabedoria'>{{ personagem.bonus_sabedoria }}</div><br><br>
-
-Carisma: <input type="number" class="form-control" id="atributo_carisma" value="{{ personagem.carisma }}" required/>
-Bônus Carisma: <div id='bonus_carisma'>{{ personagem.bonus_carisma }}</div><br><br>
-
-<h2>Caracteristicas do personagem:</h2><br>
-
-Idade: <input class="form-control" id="caracteristicas_idade" value="{{ personagem.idade }}" required/><br>
-Cor dos Olhos: <input class="form-control" id="caracteristicas_cor_olhos" value="{{ personagem.cor_olhos }}" required/><br>
-Cor da Pele: <input class="form-control" id="caracteristicas_cor_pele" value="{{ personagem.cor_pele }}" required/><br>
-Cor do Cabelo: <input class="form-control" id="caracteristicas_cor_cabelo" value="{{ personagem.cor_cabelo }}" required/><br>
-Peso: <input class="form-control" id="caracteristicas_peso" value="{{ personagem.peso }}" required/><br>
-Altura: <input class="form-control" id="caracteristicas_altura" value="{{ personagem.altura }}" required/><br>
-
-{% if personagem.imagem_personagem is none %}
-    Imagem do personagem: <input type="image" src="{{ url_for('static', filename='img/personagem.png') }}" alt="Submit" width="48" height="48" required/><br>
-{% else %}
-    Imagem do personagem: <img src="{{ personagem.imagem_personagem }}"><br>
-{% endif %}
-
-<h2>Salvaguardas:</h2><br>
-{% if 'forca' not in personagem.lista_nome_salvaguardas %}
-    <input type="checkbox" id="salvaguarda_forca" required/> 
-{% else %}
-    <input type="checkbox" id="salvaguarda_forca" checked required/> 
-{% endif %}
-Força: <div id='resistencia_forca'>{{ personagem.resistencia_forca }}</div><br>
-{% if 'destreza' not in personagem.lista_nome_salvaguardas %}
-    <input type="checkbox" id="salvaguarda_destreza" required/> 
-{% else %}
-    <input type="checkbox" id="salvaguarda_destreza" checked required/> 
-{% endif %}
-Destreza: <div id='resistencia_destreza'>{{ personagem.resistencia_destreza }}</div><br>
-{% if 'constituicao' not in personagem.lista_nome_salvaguardas %}
-    <input type="checkbox" id="salvaguarda_constituicao" required/> 
-{% else %}
-    <input type="checkbox" id="salvaguarda_constituicao" checked required/> 
-{% endif %}
-Constituição: <div id='resistencia_constituicao'>{{ personagem.resistencia_constituicao }}</div><br>
-{% if 'inteligencia' not in personagem.lista_nome_salvaguardas %}
-    <input type="checkbox" id="salvaguarda_inteligencia" required/> 
-{% else %}
-    <input type="checkbox" id="salvaguarda_inteligencia" checked required/> 
-{% endif %}
-Inteligência: <div id='resistencia_inteligencia'>{{ personagem.resistencia_inteligencia }}</div><br>
-{% if 'sabedoria' not in personagem.lista_nome_salvaguardas %}
-    <input type="checkbox" id="salvaguarda_sabedoria" required/> 
-{% else %}
-    <input type="checkbox" id="salvaguarda_sabedoria" checked required/> 
-{% endif %}
-Sabedoria: <div id="resistencia_sabedoria">{{ personagem.resistencia_sabedoria }}</div><br>
-{% if 'carisma' not in personagem.lista_nome_salvaguardas %}
-    <input type="checkbox" id="salvaguarda_carisma" required/> 
-{% else %}
-    <input type="checkbox" id="salvaguarda_carisma" checked required/> 
-{% endif %}
-Carisma: <div id='resistencia_carisma'>{{ personagem.resistencia_carisma }}</div><br>
-
-<h2>Pericias:</h2><br>
+<h2>Pericias:</h2>
 {% set pericias = [
     {'nome': 'Atletismo', 'valor': personagem.atletismo},
     {'nome': 'Acrobacia', 'valor': personagem.acrobacia},
@@ -103,39 +164,77 @@ Carisma: <div id='resistencia_carisma'>{{ personagem.resistencia_carisma }}</div
     {'nome': 'Persuasão', 'valor': personagem.persuasao}
 ] | sort(attribute='nome') %}
 
-{% for pericia in pericias %}
-{% if pericia.nome.lower() not in personagem.lista_nome_pericias %}
-    <input type="checkbox" id="check_pericia_{{ pericia.nome.lower() }}" required/> 
+<div class="container text-center">
+    <div class="row row-cols-3">
+      {% for pericia in pericias %}
+        <div class="col">
+          {% if pericia.nome.lower() not in personagem.lista_nome_pericias %}
+            <input type="checkbox" class="form-check-input mt-0" id="check_pericia_{{ pericia.nome.lower() }}" required/>
+          {% else %}
+            <input type="checkbox" class="form-check-input mt-0" id="check_pericia_{{ pericia.nome.lower() }}" checked required/>
+          {% endif %}
+          <h6>{{ pericia.nome }}:</h6> <div id="pericia_{{ pericia.nome.lower() }}">{{ pericia.valor }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+<h2>Caracteristicas do personagem:</h2>
+
+<div class="container text-center">
+    <div class="row justify-content">
+      <div class="col">
+        Idade: <input class="form-control text-center" id="caracteristicas_idade" value="{{ personagem.idade }}" required/>
+      </div>
+      <div class="col">
+        Cor dos Olhos: <input class="form-control text-center" id="caracteristicas_cor_olhos" value="{{ personagem.cor_olhos }}" required/>
+      </div>
+      <div class="col">
+        Cor da Pele: <input class="form-control text-center" id="caracteristicas_cor_pele" value="{{ personagem.cor_pele }}" required/>
+      </div>
+    </div>
+    <div class="row justify-content">
+      <div class="col">
+        Cor do Cabelo: <input class="form-control text-center" id="caracteristicas_cor_cabelo" value="{{ personagem.cor_cabelo }}" required/>
+      </div>
+      <div class="col">
+        Peso: <input class="form-control text-center" id="caracteristicas_peso" value="{{ personagem.peso }}" required/>
+      </div>
+      <div class="col">
+        Altura: <input class="form-control text-center" id="caracteristicas_altura" value="{{ personagem.altura }}" required/>
+      </div>
+    </div>
+</div>
+  
+<h2>Status Base: </h2> 
+<div class="container text-center">
+    <div class="row justify-content">
+      <div class="col">
+        XP: <input class="form-control text-center" id="status_base_xp" value="{{ personagem.xp }}" required/>
+      </div>
+      <div class="col">
+        Alinhamento: <input class="form-control text-center" id="status_base_alinhamento" value="{{ personagem.alinhamento }}" required/>
+      </div>
+      <div class="col">
+        Antecedente: <input class="form-control text-center" id="status_base_antecedente" value="{{ personagem.antecedente }}" required/>
+      </div>
+    </div>
+    <div class="row justify-content">
+      <div class="col">
+        Facção: <input class="form-control text-center" id="status_base_faccao" value="{{ personagem.faccao }}" required/>
+      </div>
+      <div class="col">
+        Deslocamento: <input class="form-control text-center" id="status_base_deslocamento" value="{{ personagem.deslocamento }}" required/>
+      </div>
+    </div>
+</div>
+
+{% if personagem.imagem_personagem is none %}
+    Imagem do personagem: <input type="image" src="{{ url_for('static', filename='img/personagem.png') }}" alt="Submit" width="48" height="48" required/>
 {% else %}
-    <input type="checkbox" id="check_pericia_{{ pericia.nome.lower() }}" checked required/> 
+    Imagem do personagem: <img src="{{ personagem.imagem_personagem }}">
 {% endif %}
-    {{ pericia.nome }}: <div id="pericia_{{ pericia.nome.lower() }}">{{ pericia.valor }}</div><br>
-{% endfor %}
-
-
-<h2>Status Base: </h2> <br>
-Vida: <input class="form-control" id="status_base_vida" value="{{ personagem.vida }}" required/><br>
-XP: <input class="form-control" id="status_base_xp" value="{{ personagem.xp }}" required/><br>
-Nível: <input class="form-control" id="status_base_nivel" value="{{ personagem.nivel }}" required/><br>
-Alinhamento: <input class="form-control" id="status_base_alinhamento" value="{{ personagem.alinhamento }}" required/><br>
-Antecedente: <input class="form-control" id="status_base_antecedente" value="{{ personagem.antecedente }}" required/><br>
-Facção: <input class="form-control" id="status_base_faccao" value="{{ personagem.faccao }}" required/><br>
-Inspiração: <input class="form-control" id="status_base_inspiracao" value="{{ personagem.inspiracao }}" required/><br>
-CA: <input class="form-control" id="status_base_ca" value="{{ personagem.ca }}" required/><br>
-Iniciativa: <input class="form-control" id="status_base_iniciativa" value="{{ personagem.iniciativa }}" required/><br>
-Deslocamento: <input class="form-control" id="status_base_deslocamento" value="{{ personagem.deslocamento }}" required/><br>
-Vida Atual: <input class="form-control" id="status_base_vida_atual" value="{{ personagem.vida_atual }}" required/><br>
-Vida Temporária: <input class="form-control" id="status_base_vida_temporaria" value="{{ personagem.vida_temporaria }}" required/><br>
-
-<ul style="list-style-type: none">
-    {% for classe in classes %}
-        <li>
-            <input class="form-check-input mt-0" type="checkbox" id="classe" name="classe" value="{{classe['id_classe']}}" required/>
-            <label for="classe" required/>{{classe['nome_classe']}}</label><br> 
-        </li>           
-    {% endfor %}
-</ul>
-
+  
 <div id="result-container"></div>
 <script type="text/javascript" src="{{url_for('static', filename='js/ficha_personagem.js')}}"></script>
 {% endblock %}

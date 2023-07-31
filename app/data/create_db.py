@@ -29,7 +29,9 @@ cursor.execute("""CREATE TABLE usuario (
 
 cursor.execute("""CREATE TABLE raca (
     id_raca INT PRIMARY KEY AUTO_INCREMENT,
-    nome_raca VARCHAR(45) NOT NULL
+    nome_raca VARCHAR(45) NOT NULL,
+    link_detalhes VARCHAR(300),
+    detalhes VARCHAR(200)
 );""")
 
 cursor.execute("""CREATE TABLE personagem (
@@ -44,7 +46,8 @@ cursor.execute("""CREATE TABLE personagem (
 cursor.execute("""CREATE TABLE pericia (
     id_pericia INT PRIMARY KEY AUTO_INCREMENT,
     nome_pericia VARCHAR(45) NOT NULL,
-    status_uso VARCHAR(45) NOT NULL
+    status_uso VARCHAR(45) NOT NULL,
+    link_detalhes VARCHAR(300)
 );""")
 
 cursor.execute("""CREATE TABLE pericia_personagem (
@@ -88,7 +91,8 @@ cursor.execute("""CREATE TABLE status_base (
 
 cursor.execute("""CREATE TABLE salvaguarda (
     id_salvaguarda INT PRIMARY KEY AUTO_INCREMENT,
-    nome_salvaguarda VARCHAR(45) NOT NULL
+    nome_salvaguarda VARCHAR(45) NOT NULL,
+    link_detalhes VARCHAR(300)
 );""")
 
 cursor.execute("""CREATE TABLE salvaguarda_personagem (
@@ -114,7 +118,8 @@ cursor.execute("""CREATE TABLE caracteristicas_personagem (
 
 cursor.execute("""CREATE TABLE classe (
     id_classe INT PRIMARY KEY AUTO_INCREMENT,
-    nome_classe VARCHAR(45)
+    nome_classe VARCHAR(45) NOT NULL,
+    link_detalhes VARCHAR(300)
 );""")
 
 cursor.execute("""CREATE TABLE classe_personagem (
