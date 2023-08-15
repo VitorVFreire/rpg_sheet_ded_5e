@@ -4,9 +4,9 @@ import pymysql
 
 from src import Personagem
 
-class Personagem_Atributos(Personagem):
+class PersonagemAtributos(Personagem):
     def __init__(self, id_usuario=None,id_personagem=None):
-        super().__init__(id=id_usuario, id_personagem=id_personagem)
+        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._atributos = {
             'forca': 0,
             'destreza': 0,
@@ -109,7 +109,7 @@ class Personagem_Atributos(Personagem):
         
     @property
     def bonus_proficiencia(self):
-        return self._bonus_proficiencia
+        return self._bonus_proficiencia if self._bonus_proficiencia is not None else 0
     
     @bonus_proficiencia.setter
     def bonus_proficiencia(self,value):
@@ -117,7 +117,7 @@ class Personagem_Atributos(Personagem):
     
     @property
     def forca(self):
-        return self._atributos['forca']
+        return self._atributos['forca'] if self._atributos['forca'] is not None else 0
     
     @property
     def bonus_forca(self):
@@ -130,7 +130,7 @@ class Personagem_Atributos(Personagem):
         
     @property
     def destreza(self):
-        return self._atributos['destreza']
+        return self._atributos['destreza'] if self._atributos['destreza'] is not None else 0
     
     @property
     def bonus_destreza(self):
@@ -143,7 +143,7 @@ class Personagem_Atributos(Personagem):
     
     @property
     def constituicao(self):
-        return self._atributos['constituicao']
+        return self._atributos['constituicao'] if self._atributos['constituicao'] is not None else 0
     
     @property
     def bonus_constituicao(self):
@@ -156,7 +156,7 @@ class Personagem_Atributos(Personagem):
     
     @property
     def inteligencia(self):
-        return self._atributos['inteligencia']
+        return self._atributos['inteligencia'] if self._atributos['inteligencia'] is not None else 0
     
     @property
     def bonus_inteligencia(self):
@@ -169,7 +169,7 @@ class Personagem_Atributos(Personagem):
     
     @property
     def sabedoria(self):
-        return self._atributos['sabedoria']
+        return self._atributos['sabedoria'] if self._atributos['sabedoria'] is not None else 0
     
     @property
     def bonus_sabedoria(self):
@@ -182,11 +182,11 @@ class Personagem_Atributos(Personagem):
     
     @property
     def carisma(self):
-        return self._atributos['carisma']
+        return self._atributos['carisma'] if self._atributos['carisma'] is not None else 0
     
     @property
     def bonus_carisma(self):
-        if self.carisma is None or self.carisma == 0:
+        if self.carisma is None:
             return 0
         return attributes.loc[self.carisma]
     

@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 from flask_session import Session
 
 from main import app
-from src import Usuario, Personagem, Pericia, Raca, Classe, Salvaguarda
+from src import Usuario, Pericia, Raca, Classe, Salvaguarda
+from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
+from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase
 
 @app.route('/')
 def index():
@@ -93,18 +95,137 @@ def personagens():
 def personagem(id_personagem):
     personagem=Personagem(id_usuario=session.get('id_usuario'),id_personagem=id_personagem)
     classe=Classe()
-    personagem.carregar_atributos_do_banco()
-    personagem.carregar_salvaguardas_do_banco()
-    personagem.carregar_status_base_do_banco()
-    personagem.carregar_pericias_do_banco()
-    personagem.carregar_caracteristicas_do_banco()
     return render_template('ficha_personagem.html', titulo=personagem.nome_personagem, personagem=personagem,classes=classe.classes)
 
-@app.route('/atributos/<id_personagem>',methods=['POST'])
+@app.route('/caracteristicas/<id_personagem>', methods=['POST', 'GET'])
+def caracteristicas_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
+        if personagem.carregar_caracteristicas_do_banco():
+            return jsonify({
+                'idade': int(personagem.idade),
+                'altura': float(personagem.altura),
+                'peso': float(personagem.peso),
+                'cor dos olhos': personagem.cor_olhos,
+                'cor da pele': personagem.cor_pele,
+                'cor do cabelo': personagem.cor_cabelo,
+                'imagem_personagem': personagem.imagem_personagem
+            })
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False}) 
+
+@app.route('/atributos/<id_personagem>',methods=['POST','GET'])
 def atributos_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        personagem=PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)
+        if personagem.carregar_atributos_do_banco():
+            return jsonify({
+                'forca': int(personagem.forca),
+                'bonus_forca': int(personagem.bonus_forca),
+                'destreza': int(personagem.destreza),
+                'bonus_destreza': int(personagem.bonus_destreza),
+                'inteligencia': int(personagem.inteligencia),
+                'bonus_inteligencia': int(personagem.bonus_inteligencia),
+                'constituicao': int(personagem.constituicao),
+                'bonus_constituicao': int(personagem.bonus_constituicao),
+                'sabedoria': int(personagem.sabedoria),
+                'bonus_sabedoria': int(personagem.bonus_sabedoria),
+                'carisma': int(personagem.carisma),
+                'bonus_carisma': int(personagem.bonus_carisma),
+                'bonus_proficiencia': int(personagem.bonus_proficiencia)
+            })
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False}) 
+    
+@app.route('/salvaguardas/<id_personagem>', methods=['POST','GET'])
+def salvaguardas_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
+        if personagem.carregar_atributos_do_banco() and personagem.carregar_salvaguardas_do_banco():
+            return jsonify({
+                'forca': int(personagem.resistencia_forca),
+                'destreza': int(personagem.resistencia_destreza),
+                'inteligencia': int(personagem.resistencia_inteligencia),
+                'constituicao': int(personagem.resistencia_constituicao),
+                'sabedoria': int(personagem.resistencia_sabedoria),
+                'carisma': int(personagem.resistencia_carisma),
+                'salvaguardas': personagem.lista_nome_salvaguardas
+            })
+            return jsonify({'result': False})
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False})
+    
+@app.route('/status_base/<id_personagem>', methods=['POST', 'GET'])
+def status_base_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)  
+        if personagem.carregar_status_base_do_banco():
+            return jsonify({
+                'nivel': personagem.nivel,
+                'alinhamento': personagem.alinhamento,
+                'faccao': personagem.faccao,
+                'antecendente': personagem.antecendente,
+                'xp': personagem.xp,
+                'deslocamento': personagem.deslocamento,
+                'iniciativa': personagem.iniciativa,
+                'vida': personagem.vida,
+                'vida_atual': personagem.vida_atual,
+                'vida_temporaria': personagem.vida_temporaria,
+                'inspiracao': personagem.inspiracao,
+                'ca': personagem.ca
+            })
+            return jsonify({'result': False})
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False})
+
+@app.route('/pericias/<id_personagem>',methods=['POST','GET'])
+def pericias_db(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        if personagem.carregar_atributos_do_banco() and personagem.carregar_pericias_do_banco():
+            return jsonify({
+                'acrobacia': int(personagem.acrobacia),
+                'arcanismo': int(personagem.arcanismo),
+                'atletismo': int(personagem.atletismo),
+                'atuacao': int(personagem.atuacao),
+                'enganacao': int(personagem.enganacao),
+                'furtividade': int(personagem.furtividade),
+                'historia': int(personagem.historia),
+                'intimidacao': int(personagem.intimidacao),
+                'investigacao': int(personagem.investigacao),
+                'lidar_com_animais': int(personagem.lidar_com_animais),
+                'medicina': int(personagem.medicina),
+                'natureza': int(personagem.natureza),
+                'percepcao': int(personagem.percepcao),
+                'persuasao': int(personagem.persuasao),
+                'prestidigitacao': int(personagem.prestidigitacao),
+                'religiao': int(personagem.religiao),
+                'sobrevivencia': int(personagem.sobrevivencia),
+                'pericias': personagem.lista_nome_pericias
+            })
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False})
+
+@app.route('/update/atributos/<id_personagem>',methods=['POST'])
+def update_atributos_db(id_personagem):
+    try:
+        id_usuario=session.get('id_usuario')
+        personagem=PersonagemAtributos(id_usuario=id_usuario,id_personagem=id_personagem)
         chave=request.form.get('chave')
         valor=request.form.get('valor')
         
@@ -120,11 +241,11 @@ def atributos_db(id_personagem):
         print(e)
         return jsonify({'result':False})
     
-@app.route('/salvaguarda/<id_personagem>',methods=['POST'])
-def salvaguardas_db(id_personagem):
+@app.route('/update/salvaguarda/<id_personagem>',methods=['POST'])
+def update_salvaguardas_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        personagem=PersonagemSalvaguardas(id_usuario=id_usuario,id_personagem=id_personagem)
         
         chave=request.form.get('chave')
         tipo=request.form.get('tipo')
@@ -144,11 +265,11 @@ def salvaguardas_db(id_personagem):
         print(e)
         return jsonify({'result':False})
     
-@app.route('/status_base/<id_personagem>',methods=['POST'])
-def status_base_db(id_personagem):
+@app.route('/update/status_base/<id_personagem>',methods=['POST'])
+def update_status_base_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        personagem=PersonagemStatusBase(id_usuario=id_usuario,id_personagem=id_personagem)
         chave=request.form.get('chave')
         valor=request.form.get('valor')
         
@@ -160,42 +281,12 @@ def status_base_db(id_personagem):
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
-    
-@app.route('/pericias/<id_personagem>',methods=['POST'])
-def pericias_db(id_personagem):
-    try:
-        id_usuario = session.get('id_usuario')
-        personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
-        if personagem.carregar_atributos_do_banco() and personagem.carregar_pericias_do_banco():
-            return jsonify({
-                'acrobacia': int(personagem.acrobacia),
-                'arcanismo': int(personagem.arcanismo),
-                'atletismo': int(personagem.atletismo),
-                'atuacao': int(personagem.atuacao),
-                'enganacao': int(personagem.enganacao),
-                'furtividade': int(personagem.furtividade),
-                'historia': int(personagem.historia),
-                'intimidacao': int(personagem.intimidacao),
-                'investigacao': int(personagem.investigacao),
-                'lidar_com_animais': int(personagem.lidar_com_animais),
-                'medicina': int(personagem.medicina),
-                'natureza': int(personagem.natureza),
-                'percepcao': int(personagem.percepcao),
-                'persuasao': int(personagem.persuasao),
-                'prestidigitacao': int(personagem.prestidigitacao),
-                'religiao': int(personagem.religiao),
-                'sobrevivencia': int(personagem.sobrevivencia)
-            })
-        return jsonify({'result': False})
-    except EOFError as e:
-        print(e)
-        return jsonify({'result': False})
 
-@app.route('/nova_pericia/<id_personagem>',methods=['POST'])
-def adicionar_perica_db(id_personagem):
+@app.route('/update/nova_pericia/<id_personagem>',methods=['POST'])
+def update_adicionar_perica_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        personagem=PersonagemPericias(id_usuario=id_usuario,id_personagem=id_personagem)
         
         chave=request.form.get('chave')
         tipo=request.form.get('tipo')
@@ -215,11 +306,11 @@ def adicionar_perica_db(id_personagem):
         print(e)
         return jsonify({'result':False})
     
-@app.route('/caracteristicas_personagem/<id_personagem>',methods=['POST'])
-def caracteristicas_personagems_db(id_personagem):
+@app.route('/update/caracteristicas_personagem/<id_personagem>',methods=['POST'])
+def update_caracteristicas_personagems_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        personagem=PersonagemCaracteristicas(id_usuario=id_usuario,id_personagem=id_personagem)
         
         chave=request.form.get('chave')
         valor=request.form.get('valor')
@@ -233,8 +324,8 @@ def caracteristicas_personagems_db(id_personagem):
         print(e)
         return jsonify({'result':False})
     
-@app.route('/base/<id_personagem>',methods=['POST'])
-def base_db(id_personagem):
+@app.route('/update/base/<id_personagem>',methods=['POST'])
+def update_base_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
         personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)

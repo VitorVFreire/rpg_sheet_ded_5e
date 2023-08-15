@@ -3,11 +3,10 @@ from .pericia import Pericia
 from .raca import Raca
 from .classe import Classe
 from .salvaguarda import Salvaguarda
-
-from personagem import Personagem
-from personagem import Personagem_Atributos 
-from personagem import Personagem_Habilidades 
-from personagem import Personagem_Pericias
-from personagem import Personagem_Salvaguardas
-from personagem import Personagem_Status_Base
-from personagem import Personagem_Caracteristicas
+from .personagem import Personagem
+from .personagem_atributos import PersonagemAtributos
+from .personagem_caracteristicas import PersonagemCaracteristicas
+from .personagem_habilidades import PersonagemHabilidades
+from .personagem_pericias import PersonagemPericias
+from .personagem_salvaguardas import PersonagemSalvaguardas
+from .personagem_status_base import PersonagemStatusBase

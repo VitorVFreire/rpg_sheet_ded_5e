@@ -9,7 +9,6 @@ class Personagem(Usuario):
         self._nome_personagem=None
         self._classe = []
         self._raca = None
-        
         self._armas=[]
         self._equipamentos=[]            
         

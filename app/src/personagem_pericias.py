@@ -3,11 +3,11 @@ from src import Usuario
 import pandas
 import pymysql
 
-from src import Personagem_Atributos
+from src import PersonagemAtributos
 
-class Personagem_Pericias(Personagem_Atributos):
+class PersonagemPericias(PersonagemAtributos):
     def __init__(self, id_usuario=None,id_personagem=None):
-        super().__init__(id=id_usuario, id_personagem=id_personagem)
+        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._pericias=[] 
         
     def exists_pericia_banco(self, id_pericia):

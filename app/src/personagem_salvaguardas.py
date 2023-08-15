@@ -2,12 +2,12 @@ from data import mydb, attributes
 from src import Usuario
 import pymysql
 
-from src import Personagem_Atributos
+from src import PersonagemAtributos
 
-class Personagem_Salvaguardas(Personagem_Atributos):
+class PersonagemSalvaguardas(PersonagemAtributos):
     def __init__(self, id_usuario=None,id_personagem=None):
-        super().__init__(id=id_usuario, id_personagem=id_personagem)
-    self._salvaguardas = []
+        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
+        self._salvaguardas = []
     
     def exists_salvaguarda_banco(self, id_salvaguarda):
         try:

@@ -4,9 +4,9 @@ import pymysql
 
 from src import Personagem
 
-class Personagem_Status_Base(Personagem):
+class PersonagemStatusBase(Personagem):
     def __init__(self, id_usuario=None,id_personagem=None):
-        super().__init__(id=id_usuario, id_personagem=id_personagem)
+        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._alinhamento = None
         self._antecendente = None
         self._ca = None

@@ -4,9 +4,9 @@ import pymysql
 
 from src import Personagem
 
-class Personagem_Caracteristicas(Personagem):
+class PersonagemCaracteristicas(Personagem):
     def __init__(self, id_usuario=None,id_personagem=None):
-        super().__init__(id=id_usuario, id_personagem=id_personagem)
+        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._caracteristicas = {
             'idade': None,
             'altura': None,
