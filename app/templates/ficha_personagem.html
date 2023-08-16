@@ -14,7 +14,10 @@ Nome do Jogador: {{personagem.nome}}
             Vida: <input class="form-control text-center" id="status_base_vida" required/>
         </div>
         <div class="col">
-            Nível: <input class="form-control text-center" id="status_base_nivel" required/>
+            Vida_temporaria: <input class="form-control text-center" id="status_base_vida_temporaria" required/>
+        </div>
+        <div class="col">
+            Vida_atual: <input class="form-control text-center" id="status_base_vida_atual" required/>
         </div>
     </div>
     <div class="row justify-content">
@@ -24,18 +27,30 @@ Nome do Jogador: {{personagem.nome}}
         <div class="col">
             CA: <input class="form-control text-center" id="status_base_ca" required/>
         </div>
+        <div class="col">
+            Nível: <input class="form-control text-center" id="status_base_nivel" required/>
+        </div>
     </div>
     <div class="row justify-content">
+        <div class="col">
+            Alinhamento: <input class="form-control text-center" id="status_base_alinhamento" required/>
+        </div>
+        <div class="col">
+            Faccao: <input class="form-control text-center" id="status_base_faccao" required/>
+        </div>
+        <div class="col">
+            Antecendente: <input class="form-control text-center" id="status_base_antecendente" required/> 
+        </div>
+    </div>
+    <div class="row justify-content">
+        <div class="col">
+            xp: <input class="form-control text-center" id="status_base_xp" required/>
+        </div>
+        <div class="col">
+            Deslocamento: <input class="form-control text-center" id="status_base_deslocamento" required/>
+        </div>
         <div class="col">
             Iniciativa: <input class="form-control text-center" id="status_base_iniciativa" required/>
-        </div>
-        <div class="col">
-            Vida Atual: <input class="form-control text-center" id="status_base_vida_atual" required/>
-        </div>
-    </div>
-    <div class="row justify-content">
-        <div class="col">
-            Vida Temporária: <input class="form-control text-center" id="status_base_vida_temporaria" required/>
         </div>
         <div class="col">
             Proficiencia: <input type="number" class="form-control text-center" id="atributo_bonus_proficiencia" required/> 
@@ -85,6 +100,9 @@ Nome do Jogador: {{personagem.nome}}
         </div>
     </div>
 </div>
+
+<section data-pericias-lista>
+</section>
   
 <div id="result-container"></div>
 <script type="text/javascript" src="{{url_for('static', filename='js/ficha_personagem.js')}}"></script>

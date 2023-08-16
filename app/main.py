@@ -2,6 +2,7 @@ from flask import Flask,session
 from flask_session import Session
 import os
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv()
 
@@ -14,4 +15,5 @@ Session(app)
 from routes import *
 
 if __name__ == '__main__':
-    app.run(port=8085, host='0.0.0.0',debug=True)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(app.run(port=8085, host='0.0.0.0', debug=True))

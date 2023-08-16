@@ -118,7 +118,7 @@ def caracteristicas_db(id_personagem):
         return jsonify({'result': False}) 
 
 @app.route('/atributos/<id_personagem>',methods=['POST','GET'])
-def atributos_db(id_personagem):
+async def atributos_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
         personagem=PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)
@@ -191,7 +191,40 @@ def status_base_db(id_personagem):
         return jsonify({'result': False})
 
 @app.route('/pericias/<id_personagem>',methods=['POST','GET'])
-def pericias_db(id_personagem):
+async def pericias_db(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        if personagem.carregar_atributos_do_banco() and personagem.carregar_pericias_do_banco():
+            return jsonify({
+                'pericias': {
+                    'acrobacia': int(personagem.acrobacia),
+                    'arcanismo': int(personagem.arcanismo),
+                    'atletismo': int(personagem.atletismo),
+                    'atuacao': int(personagem.atuacao),
+                    'enganacao': int(personagem.enganacao),
+                    'furtividade': int(personagem.furtividade),
+                    'historia': int(personagem.historia),
+                    'intimidacao': int(personagem.intimidacao),
+                    'investigacao': int(personagem.investigacao),
+                    'lidar_com_animais': int(personagem.lidar_com_animais),
+                    'medicina': int(personagem.medicina),
+                    'natureza': int(personagem.natureza),
+                    'percepcao': int(personagem.percepcao),
+                    'persuasao': int(personagem.persuasao),
+                    'prestidigitacao': int(personagem.prestidigitacao),
+                    'religiao': int(personagem.religiao),
+                    'sobrevivencia': int(personagem.sobrevivencia)
+                },                
+                'pericias_do_personagem': personagem.lista_nome_pericias
+            })
+        return jsonify({'result': False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result': False})
+    
+@app.route('/valores/pericias/<id_personagem>',methods=['POST','GET'])
+def novo_pericias_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
@@ -213,8 +246,7 @@ def pericias_db(id_personagem):
                 'persuasao': int(personagem.persuasao),
                 'prestidigitacao': int(personagem.prestidigitacao),
                 'religiao': int(personagem.religiao),
-                'sobrevivencia': int(personagem.sobrevivencia),
-                'pericias': personagem.lista_nome_pericias
+                'sobrevivencia': int(personagem.sobrevivencia)
             })
         return jsonify({'result': False})
     except EOFError as e:
