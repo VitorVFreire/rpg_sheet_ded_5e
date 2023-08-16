@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
 from flask_session import Session
+import asyncio
 
 from main import app
 from src import Usuario, Pericia, Raca, Classe, Salvaguarda
@@ -17,9 +18,9 @@ def login():
     return render_template('login.html',titulo='login',msg='Erro no Login')
 
 @app.post('/login')
-def cadastro_login():
+async def cadastro_login():
     usuario=Usuario(email=request.form.get('email'),senha=request.form.get('senha'))
-    if usuario.valid_usuario():
+    if await usuario.valid_usuario():
         session['id_usuario']=usuario.id
         return render_template('index.html',titulo='home',msg='Logado')
     return redirect(url_for('login'))
@@ -36,7 +37,7 @@ def criar_usuario():
     return render_template('cadastro_usuario.html',titulo='cadastro de usuario')
 
 @app.route('/cadastro_usuario',methods=['POST'])
-def cadastro_usuario():
+async def cadastro_usuario():
     try:
         email=request.form.get('email')
         senha=request.form.get('senha')
@@ -45,8 +46,8 @@ def cadastro_usuario():
         
         usuario=Usuario(nome=nome,email=email,senha=senha,data_nascimento=data_nascimento)
         
-        if usuario.create_usuario():
-            session['id_usuario']=usuario.id
+        if await usuario.create_usuario():
+            session['id_usuario'] = usuario.id
             return render_template('index.html',titulo='home',msg='logado')
         return render_template('login.html',titulo='login',msg='Erro no Login')
     except EOFError as e:
@@ -54,12 +55,12 @@ def cadastro_usuario():
         return jsonify({'result':False})
     
 @app.route('/delete/usuario',methods=['POST'])
-def delete_usuario():
+async def delete_usuario():
     try:
         id_usuario=session.get('id_usuario')
         usuario=Usuario(id_usuario=id_usuario)
                 
-        usuario.delete_usuario(id_classe)
+        await usuario.delete_usuario(id_classe)
         
         return render_template('index.html',titulo='home',msg='Conta Encerrada!')
     except EOFError as e:
@@ -67,35 +68,42 @@ def delete_usuario():
         return render_template('index.html',titulo='home',msg='Erro na Exclusão da conta!')
 
 @app.route('/criar_personagem')
-def criar_personagem():
+async def criar_personagem():
     racas=Raca()
-    return render_template('create_personagem.html',titulo='Criar Personagem',racas=racas.racas)
+    return render_template('create_personagem.html',titulo='Criar Personagem',racas= await racas.racas)
     
 @app.route('/insert_personagem',methods=['POST'])
-def insert_personagem():
+async def insert_personagem():
     try:
         id_usuario=session.get('id_usuario')
         personagem=Personagem(id_usuario=id_usuario)
         id_raca=request.form.get('id_raca')
         nome_personagem=request.form.get('nome_personagem')
         
-        personagem.adicionar_personagem_banco(id_raca,nome_personagem)
+        resultado = await personagem.adicionar_personagem_banco(id_raca,nome_personagem)
         
-        return jsonify({'result':True})
+        return jsonify({'result': resultado})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
 
 @app.route('/personagens')
-def personagens():
+async def personagens():
     usuario=Usuario(id=session.get('id_usuario'))
-    return render_template('personagens.html',titulo='Personagens',personagens=usuario.personagens)
+    return render_template('personagens.html',titulo='Personagens',personagens = await usuario.personagens)
 
 @app.route('/personagem/<id_personagem>')
-def personagem(id_personagem):
-    personagem=Personagem(id_usuario=session.get('id_usuario'),id_personagem=id_personagem)
-    classe=Classe()
-    return render_template('ficha_personagem.html', titulo=personagem.nome_personagem, personagem=personagem,classes=classe.classes)
+async def personagem(id_personagem):
+    personagem = Personagem(id_usuario=session.get('id_usuario'), id_personagem=id_personagem)
+    await personagem.carregar_personagem_banco()
+    return render_template(
+        'ficha_personagem.html',
+        titulo = await personagem.nome_personagem,
+        raca = await personagem.raca,
+        nome = await personagem.nome,
+        id_personagem = personagem.id_personagem,
+        nome_personagem = await personagem.nome_personagem
+    )
 
 @app.route('/caracteristicas/<id_personagem>', methods=['POST', 'GET'])
 def caracteristicas_db(id_personagem):
@@ -120,9 +128,9 @@ def caracteristicas_db(id_personagem):
 @app.route('/atributos/<id_personagem>',methods=['POST','GET'])
 async def atributos_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)
-        if personagem.carregar_atributos_do_banco():
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)
+        if await personagem.carregar_atributos_do_banco():
             return jsonify({
                 'forca': int(personagem.forca),
                 'bonus_forca': int(personagem.bonus_forca),
@@ -195,7 +203,7 @@ async def pericias_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
-        if personagem.carregar_atributos_do_banco() and personagem.carregar_pericias_do_banco():
+        if await personagem.carregar_atributos_do_banco() and await personagem.carregar_pericias_do_banco():
             return jsonify({
                 'pericias': {
                     'acrobacia': int(personagem.acrobacia),
@@ -224,11 +232,11 @@ async def pericias_db(id_personagem):
         return jsonify({'result': False})
     
 @app.route('/valores/pericias/<id_personagem>',methods=['POST','GET'])
-def novo_pericias_db(id_personagem):
+async def novo_pericias_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
-        if personagem.carregar_atributos_do_banco() and personagem.carregar_pericias_do_banco():
+        if await personagem.carregar_atributos_do_banco() and await personagem.carregar_pericias_do_banco():
             return jsonify({
                 'acrobacia': int(personagem.acrobacia),
                 'arcanismo': int(personagem.arcanismo),
@@ -254,21 +262,21 @@ def novo_pericias_db(id_personagem):
         return jsonify({'result': False})
 
 @app.route('/update/atributos/<id_personagem>',methods=['POST'])
-def update_atributos_db(id_personagem):
+async def update_atributos_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=PersonagemAtributos(id_usuario=id_usuario,id_personagem=id_personagem)
-        chave=request.form.get('chave')
-        valor=request.form.get('valor')
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemAtributos(id_usuario=id_usuario,id_personagem=id_personagem)
+        chave = request.form.get('chave')
+        valor = request.form.get('valor')
         
-        if personagem.exists_atributos_banco() and chave != 'bonus_proficiencia':
-            return jsonify({'result': personagem.update_atributos_banco(chave=chave, valor=valor),
-                'bonus': int(personagem.get_bonus(chave=chave)),'resistencia':int(personagem.get_bonus(chave=chave))})
-        elif personagem.exists_atributos_banco():
-            return jsonify({'result': personagem.update_atributos_banco(chave=chave, valor=valor)})
+        if await personagem.exists_atributos_banco() and chave != 'bonus_proficiencia':
+            return jsonify({'result': await personagem.update_atributos_banco(chave=chave, valor=valor),
+                'bonus': int(await personagem.get_bonus(chave=chave)),'resistencia':int(await personagem.get_bonus(chave=chave))})
+        elif await personagem.exists_atributos_banco():
+            return jsonify({'result': await personagem.update_atributos_banco(chave=chave, valor=valor)})
         
-        return jsonify({'result':personagem.adicionar_atributo_banco(chave=chave,valor=valor),
-                        'bonus':int(personagem.get_bonus(chave=chave)),'resistencia':int(personagem.get_bonus(chave=chave))})
+        return jsonify({'result': await personagem.adicionar_atributo_banco(chave=chave,valor=valor),
+                        'bonus':int(await personagem.get_bonus(chave=chave)),'resistencia':int(await personagem.get_bonus(chave=chave))})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
@@ -315,7 +323,7 @@ def update_status_base_db(id_personagem):
         return jsonify({'result':False})
 
 @app.route('/update/nova_pericia/<id_personagem>',methods=['POST'])
-def update_adicionar_perica_db(id_personagem):
+async def update_adicionar_perica_db(id_personagem):
     try:
         id_usuario=session.get('id_usuario')
         personagem=PersonagemPericias(id_usuario=id_usuario,id_personagem=id_personagem)
@@ -325,14 +333,14 @@ def update_adicionar_perica_db(id_personagem):
 
         pericia=Pericia(nome_pericia=chave)
         pericia.carregar_pericia_nome()
-        personagem.carregar_atributos_do_banco()
+        await personagem.carregar_atributos_do_banco()
 
-        if tipo=='remover' and personagem.exists_pericia_banco(id_pericia=pericia.id_pericia):
-            return jsonify({'result':personagem.delete_pericias_banco(id_pericia=pericia.id_pericia),
-                            'pericia':int(personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
+        if tipo=='remover' and await personagem.exists_pericia_banco(id_pericia=pericia.id_pericia):
+            return jsonify({'result': await personagem.delete_pericias_banco(id_pericia=pericia.id_pericia),
+                            'pericia':int(await personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
         elif tipo=='adicionar':
-            return jsonify({'result':personagem.adicionar_pericias_banco(id_pericia=pericia.id_pericia),
-                            'pericia':int(personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
+            return jsonify({'result': await personagem.adicionar_pericias_banco(id_pericia=pericia.id_pericia),
+                            'pericia':int(await personagem.get_pericias(chave=chave,status_uso=pericia.status_uso))})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)

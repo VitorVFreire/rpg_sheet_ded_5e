@@ -2,6 +2,7 @@ from data import get_connection
 from src import Usuario
 import pandas
 import pymysql
+import asyncio
 
 from src import PersonagemAtributos
 
@@ -10,87 +11,90 @@ class PersonagemPericias(PersonagemAtributos):
         super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._pericias=[] 
         
-    def exists_pericia_banco(self, id_pericia):
+    async def exists_pericia_banco(self, id_pericia):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = "SELECT EXISTS (SELECT id_pericia_personagem FROM pericia_personagem WHERE id_personagem = %s and id_pericia = %s)"
-                mycursor.execute(query, (self._id_personagem, id_pericia,))
-                result = mycursor.fetchone()
-                if result[0] == 1:
-                    return True
-                return False
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "SELECT EXISTS (SELECT id_pericia_personagem FROM pericia_personagem WHERE id_personagem = %s and id_pericia = %s)"
+                        await mycursor.execute(query, (self._id_personagem, id_pericia,))
+                        result = await mycursor.fetchone()
+                        if result[0] == 1:
+                            return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
     
-    def adicionar_pericias_banco(self,id_pericia):
+    async def adicionar_pericias_banco(self,id_pericia):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = "INSERT INTO pericia_personagem(id_personagem,id_pericia) VALUES(%s,%s);"
-                mycursor.execute(query, (self._id_personagem,id_pericia))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "INSERT INTO pericia_personagem(id_personagem,id_pericia) VALUES(%s,%s);"
+                        await mycursor.execute(query, (self._id_personagem,id_pericia))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def delete_pericias_banco(self,id_pericia):
+    async def delete_pericias_banco(self,id_pericia):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """DELETE from pericia_personagem
-                WHERE id_pericia=%s;"""
-                mycursor.execute(query, (id_pericia,))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """DELETE from pericia_personagem
+                        WHERE id_pericia=%s;"""
+                        await mycursor.execute(query, (id_pericia,))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
     
-    def carregar_pericias_do_banco(self):
+    async def carregar_pericias_do_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """SELECT pp.id_pericia, pc.nome_pericia, pc.status_uso,pp.id_pericia_personagem 
-                FROM pericia_personagem pp 
-                JOIN pericia pc ON pp.id_pericia = pc.id_pericia 
-                WHERE pp.id_personagem = %s;"""
-                mycursor.execute(query, (self._id_personagem,))
-                result = mycursor.fetchall() 
-                if result:
-                    self._pericias.clear()
-                    for row in result:
-                        self._pericias.append({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
-                    return True
-                return False
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """SELECT pp.id_pericia, pc.nome_pericia, pc.status_uso,pp.id_pericia_personagem 
+                        FROM pericia_personagem pp 
+                        JOIN pericia pc ON pp.id_pericia = pc.id_pericia 
+                        WHERE pp.id_personagem = %s;"""
+                        await mycursor.execute(query, (self._id_personagem,))
+                        result = await mycursor.fetchall() 
+                        if result:
+                            self._pericias.clear()
+                            for row in result:
+                                self._pericias.append({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
+                            return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def update_pericias_banco(self,id_pericia,id_pericia_personagem):
+    async def update_pericias_banco(self,id_pericia,id_pericia_personagem):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """UPDATE pericia_personagem
-                SET id_pericia=%s
-                WHERE id_pericia_personagem=%s;"""
-                mycursor.execute(query, (id_pericia,id_pericia_personagem))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """UPDATE pericia_personagem
+                        SET id_pericia=%s
+                        WHERE id_pericia_personagem=%s;"""
+                        await mycursor.execute(query, (id_pericia,id_pericia_personagem))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
 
-    def get_pericias(self,chave,status_uso):
+    async def get_pericias(self,chave,status_uso):
         if len(self._pericias) <=0:
-            self.carregar_pericias_do_banco()
+            await self.carregar_pericias_do_banco()
         if any(d.get('nome_pericia') == chave for d in self._pericias):
             return attributes.loc[self._atributos[status_uso]]+ self.bonus_proficiencia
         else:

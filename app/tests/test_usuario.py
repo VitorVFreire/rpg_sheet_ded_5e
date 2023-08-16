@@ -1,54 +1,59 @@
 import unittest
-from data import mydb
+from data import get_connection
 from src import Usuario
+import asyncio
+
 
 class UsuarioTest(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
-        mydb.connect()  # Conectar ao banco de dados
+    async def setUpClass(cls):
+        conn = await get_connection()
+        mydb = await conn.cursor()
+        await mydb.connect()  # Conectar ao banco de dados
         cls.usuario_teste = Usuario(nome="John", email="john@example.com", senha="pass123", data_nascimento="1990-01-01")
-        cls.usuario_teste.create_usuario()  # Criar um usuário de teste
+        await cls.usuario_teste.create_usuario()  # Criar um usuário de teste
 
     @classmethod
-    def tearDownClass(cls):
-        cls.usuario_teste.delete_usuario()  # Excluir o usuário de teste
-        mydb.close()  # Fechar a conexão com o banco de dados
+    async def tearDownClass(cls):
+        await cls.usuario_teste.delete_usuario()  # Excluir o usuário de teste
+        await mydb.close()  # Fechar a conexão com o banco de dados
 
-    def test_valid_usuario(self):
+    async def test_valid_usuario(self):
         # O usuário de teste deve ser válido
-        self.assertEqual(self.usuario_teste.valid_usuario(), True)
+        await self.assertEqual(await self.usuario_teste.valid_usuario(), True)
 
-    def test_get_usuario(self):
+    async def test_get_usuario(self):
         # Verificar se as informações do usuário estão corretas
-        usuario_info = self.usuario_teste.get_usuario()
-        self.assertIsNotNone(usuario_info)
-        self.assertEqual(usuario_info["nome"], "John")
-        self.assertEqual(usuario_info["email"], "john@example.com")
+        await self.usuario_teste.get_usuario()
+        await self.assertIsNotNone(self.usuario_teste)
+        await self.assertEqual(self.usuario_teste.nome, "John")
+        await self.assertEqual(self.usuario_teste.email, "john@example.com")
 
-    def test_update_usuario(self):
+    async def test_update_usuario(self):
         # Atualizar o nome do usuário
-        self.usuario_teste.update_usuario("nome", "John Doe")
-        usuario_info = self.usuario_teste.get_usuario()
-        self.assertIsNotNone(usuario_info)
-        self.assertEqual(usuario_info["nome"], "John Doe")
+        await self.usuario_teste.update_usuario("nome", "John Doe")
+        await self.usuario_teste.get_usuario()
+        await self.assertIsNotNone(self.usuario_teste.nome)
+        await self.assertEqual(self.usuario_teste.nome, "John Doe")
 
-    """def test_carregar_personagens_banco(self):
+    """async def test_carregar_personagens_banco(self):
         # Carregar os personagens do usuário do banco de dados
-        self.assertTrue(self.usuario_teste.carregar_personagens_banco())
+        await self.assertTrue(self.usuario_teste.carregar_personagens_banco())
         personagens = self.usuario_teste.personagens
-        self.assertGreater(len(personagens), 0)"""
+        await self.assertGreater(len(personagens), 0)"""
 
-    def test_years(self):
+    async def test_years(self):
         # Verificar a idade do usuário com base em sua data de nascimento
-        self.assertEqual(self.usuario_teste.years, 33)
+        await self.assertEqual(self.usuario_teste.years, 33)
 
-    def test_invalid_usuario(self):
+    async def test_invalid_usuario(self):
         # Testar um usuário inválido
         usuario = Usuario(email="invalid@example.com", senha="invalidpass")
-        self.assertEqual(usuario.valid_usuario(), False)
+        await self.assertEqual(await usuario.valid_usuario(), False)
 
 if __name__ == '__main__':
-    unittest.main()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(unittest.main())    
     
 #python -m unittest -v tests/test_usuario.py
 

@@ -1,6 +1,7 @@
 from data import get_connection, attributes
 from src import Usuario
 import pymysql
+import asyncio
 
 from src import Personagem
 
@@ -17,92 +18,95 @@ class PersonagemAtributos(Personagem):
         }
         self._bonus_proficiencia = None
         
-    def exists_atributos_banco(self):
+    async def exists_atributos_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = "SELECT EXISTS (SELECT id_atributos FROM atributos WHERE id_personagem = %s)"
-                mycursor.execute(query, (self._id_personagem,))
-                result = mycursor.fetchone()
-                if result[0] == 1:
-                    return True
-                return False
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "SELECT EXISTS (SELECT id_atributos FROM atributos WHERE id_personagem = %s)"
+                        await mycursor.execute(query, (self._id_personagem,))
+                        result = await mycursor.fetchone()
+                        if result[0] == 1:
+                            return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
     
-    def adicionar_atributo_banco(self,chave,valor):
+    async def adicionar_atributo_banco(self,chave,valor):
         try:
             possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
             if self._id_personagem and chave in possibilidade_chave:
-                mycursor = mydb.cursor()
-                query = f"INSERT INTO atributos(id_personagem,{chave}) VALUES(%s,%s);"
-                mycursor.execute(query, (self._id_personagem,valor,))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = f"INSERT INTO atributos(id_personagem,{chave}) VALUES(%s,%s);"
+                        await mycursor.execute(query, (self._id_personagem,valor,))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def delete_atributos_banco(self):
+    async def delete_atributos_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """DELETE from atributos
-                WHERE id_personagem=%s;"""
-                mycursor.execute(query, (self._id_personagem,))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """DELETE from atributos
+                        WHERE id_personagem=%s;"""
+                        await mycursor.execute(query, (self._id_personagem,))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
     
-    def carregar_atributos_do_banco(self):
+    async def carregar_atributos_do_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """SELECT forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia 
-                FROM atributos WHERE id_personagem = %s"""
-                mycursor.execute(query, (self._id_personagem,))
-                result = mycursor.fetchone() 
-                if result:
-                    self.set_forca(result[0])
-                    self.set_destreza(result[1])
-                    self.set_constituicao(result[2])
-                    self.set_inteligencia(result[3])
-                    self.set_sabedoria(result[4])
-                    self.set_carisma(result[5])
-                    self._bonus_proficiencia = result[6]  # Update bonus_proficiencia directly
-                    return True
-                return False
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """SELECT forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia 
+                        FROM atributos WHERE id_personagem = %s"""
+                        await mycursor.execute(query, (self._id_personagem,))
+                        result = await mycursor.fetchone() 
+                        if result:
+                            self.set_forca(result[0])
+                            self.set_destreza(result[1])
+                            self.set_constituicao(result[2])
+                            self.set_inteligencia(result[3])
+                            self.set_sabedoria(result[4])
+                            self.set_carisma(result[5])
+                            self._bonus_proficiencia = result[6]  # Update bonus_proficiencia directly
+                            return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
 
     
-    def update_atributos_banco(self,chave,valor):
+    async def update_atributos_banco(self,chave,valor):
         try:
             possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
             if self._id_personagem and chave in possibilidade_chave:
-                mycursor = mydb.cursor()
-                query = f"""UPDATE atributos
-                SET {chave}=%s
-                WHERE id_personagem=%s;"""
-                parametros=(valor,self._id_personagem)
-                mycursor.execute(query, parametros)
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = f"""UPDATE atributos
+                        SET {chave}=%s
+                        WHERE id_personagem=%s;"""
+                        parametros=(valor,self._id_personagem)
+                        await mycursor.execute(query, parametros)
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def get_bonus(self,chave):
-        self.carregar_atributos_do_banco()
+    async def get_bonus(self,chave):
+        await self.carregar_atributos_do_banco()
         if self._atributos[chave] is None:
             return 0
         return attributes.loc[self._atributos[chave]]

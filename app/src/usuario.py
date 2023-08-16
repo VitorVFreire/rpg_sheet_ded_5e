@@ -43,9 +43,9 @@ class Usuario:
         self._id = value
     
     @property
-    def nome(self):
+    async def nome(self):
         if self._nome is None:
-            self.get_usuario()  
+            await self.get_usuario()  
         return self._nome
     
     @nome.setter
@@ -80,19 +80,17 @@ class Usuario:
     async def delete_usuario(self):
         try:
             if self._id:
-                conn = await get_connection()
-                mycursor = await conn.cursor()
-                await mycursor.execute('DELETE from usuario WHERE id_usuario=%s', (self._id,))
-                await conn.commit()
-                await conn.close()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        await mycursor.execute('DELETE from usuario WHERE id_usuario=%s', (self._id,))
+                        await conn.commit()
+                        return True
             elif self._email:
-                conn = await get_connection()
-                mycursor = await conn.cursor()
-                await mycursor.execute('DELETE from usuario WHERE email=%s', (self._email,))
-                await conn.commit()
-                await conn.close()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        await mycursor.execute('DELETE from usuario WHERE email=%s', (self._email,))
+                        await conn.commit()
+                        return True
             return False
         except EOFError as e:
             print(e)
@@ -101,12 +99,12 @@ class Usuario:
     async def create_usuario(self):
         try:
             if self._nome and self._email and self._senha and self._data_nascimento:
-                conn = await get_connection()
-                mycursor = await conn.cursor()
-                await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
-                await conn.commit()
-                self._id= await mycursor.lastrowid    
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
+                        await conn.commit()
+                        self._id= await mycursor.lastrowid    
+                        return True
         except EOFError as e:
                 print(e)
                 return False
@@ -118,12 +116,12 @@ class Usuario:
             if self._id and chave in possiveis_chave:
                 if chave=='senha':
                     valor=criptografar(valor)
-                conn = await get_connection()
-                mycursor = await conn.cursor()
-                query = f"UPDATE usuario SET {chave} = %s WHERE id_usuario = %s"
-                await mycursor.execute(query, (valor, self._id))
-                await conn.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = f"UPDATE usuario SET {chave} = %s WHERE id_usuario = %s"
+                        await mycursor.execute(query, (valor, self._id))
+                        await conn.commit()
+                        return True
             return False
         except EOFError as e:
             print(e)
@@ -146,8 +144,6 @@ class Usuario:
                         self.email = result[2]
                         self.senha = result[3]
                         self.data_nascimento = result[4]
-                        await mycursor.close() 
-                    await mycursor.close()  
             return None
         except EOFError as e:
             print(e)
@@ -155,18 +151,18 @@ class Usuario:
     
     async def valid_usuario(self):
         try:
-            conn = await get_connection()
-            mycursor = await conn.cursor()
-            if self._email and self._senha:
-                await mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
-                result = await mycursor.fetchone()  
-                if result:
-                    print(result)
-                    self._id=result[0]
-                    self._nome=result[1]
-                    self.__tipo_usuario=result[4]
-                    self._data_nascimento=result[5]
-                    return True
+            async with await get_connection() as conn:
+                async with conn.cursor() as mycursor:
+                    if self._email and self._senha:
+                        await mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
+                        result = await mycursor.fetchone()  
+                        if result:
+                            print(result)
+                            self._id=result[0]
+                            self._nome=result[1]
+                            self.__tipo_usuario=result[4]
+                            self._data_nascimento=result[5]
+                            return True
             return False
         except EOFError as e:
             print(e)
@@ -174,18 +170,18 @@ class Usuario:
         
     async def carregar_personagens_banco(self):
         try:
-            conn = await get_connection()
-            mycursor = await conn.cursor()
-            if self._id:
-                query="""SELECT pr.id_personagem,pr.nome_personagem,rc.nome_raca,rc.id_raca
-                FROM personagem pr,raca rc
-                WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
-                await mycursor.execute(query,(self._id,))
-                result = await mycursor.fetchall()  
-                if result:
-                    for row in result:
-                        self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3]})
-                    return True
+            async with await get_connection() as conn:
+                async with conn.cursor() as mycursor:
+                    if self._id:
+                        query="""SELECT pr.id_personagem,pr.nome_personagem,rc.nome_raca,rc.id_raca
+                        FROM personagem pr,raca rc
+                        WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
+                        await mycursor.execute(query,(self._id,))
+                        result = await mycursor.fetchall()  
+                        if result:
+                            for row in result:
+                                self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3]})
+                            return True
             return 'Sem Personagens no Banco', False
         except EOFError as e:
             print(e)

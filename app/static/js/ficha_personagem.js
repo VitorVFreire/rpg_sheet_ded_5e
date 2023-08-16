@@ -1,44 +1,8 @@
 const id_personagem = parseInt(document.querySelector('#id_personagem').value, 10);
 
 //status_base()
-//atributos()
-//pericias()
-
-atributos_teste()
-atributos_teste()
-atributos_teste()
-atributos_teste()
-atributos_teste()
-atributos_teste()
-atributos_teste()
-atributos_teste()
-pericias_teste()
-pericias_teste()
-
-pericias_teste()
-pericias_teste()
-pericias_teste()
-pericias_teste()
-pericias_teste()
-pericias_teste()
-pericias_teste()
-pericias_teste()
-pericias_teste()
-
-
-async function atributos_teste(){
-  const conexao_atributos = await fetch(`http://192.168.1.100:8085/atributos/${id_personagem}`)
-  const atributos = await conexao_atributos.json()
-
-  console.log(atributos)
-}
-async function pericias_teste(){
-  const conexao_atributos = await fetch(`http://192.168.1.100:8085/pericias/${id_personagem}`)
-  const atributos = await conexao_atributos.json()
-
-  console.log(atributos)
-}
-
+atributos()
+pericias()
 
 async function status_base(){
   const conexao_status_base = await fetch(`http://192.168.1.100:8085/status_base/${id_personagem}`)
