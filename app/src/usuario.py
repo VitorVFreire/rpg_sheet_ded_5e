@@ -1,6 +1,7 @@
 from tools import criptografar
-from data import mydb
+from data import get_connection
 import datetime
+import asyncio
 
 class Usuario:
     def __init__(self,id=None,nome=None,email=None,senha=None,data_nascimento=None):
@@ -13,126 +14,154 @@ class Usuario:
         self._personagens=[]
         
     @property
-    def tipo_usuario(self):
+    async def tipo_usuario(self):
         if self.__tipo_usuario is None:
-            self.__tipo_usuario=self.get_usuario()['tipo_usuario']
+            user = await self.get_usuario()
+            self.__tipo_usuario = user['tipo_usuario']
         return self.__tipo_usuario   
     
-    def usuario_admin(self):
+    async def usuario_admin(self):
         if self.__tipo_usuario is None:
-            self.__tipo_usuario=self.get_usuario()['tipo_usuario']
+            user = await self.get_usuario()
+            self.__tipo_usuario=user['tipo_usuario']
         return self.__tipo_usuario=='admin'   
     
     @property
-    def personagens(self):
+    async def personagens(self):
         if len(self._personagens)<=0:
-            self.carregar_personagens_banco()
+            await self.carregar_personagens_banco()
         return self._personagens
     
     @property
     def id(self):
         if self._id is None:
-            self._id=self.get_usuario()['id_usuario']
+            self.get_usuario()
         return self._id
+    
+    @id.setter
+    def id(self,value):
+        self._id = value
     
     @property
     def nome(self):
         if self._nome is None:
-            self._nome=self.get_usuario()['nome']
+            self.get_usuario()  
         return self._nome
+    
+    @nome.setter
+    def nome(self,value):
+        self._nome = value
     
     @property
     def email(self):
         if self._email is None:
-            self._email=self.get_usuario()['email']
+            self.get_usuario()
         return self._email
     
+    @email.setter
+    def email(self, value):
+        self._email = value
+    
     @property
-    def years(self):
+    def data_nascimento(self):
         if self._data_nascimento is None:
-            self._data_nascimento = self.get_usuario()['data_nascimento']
+            self.get_usuario()  
         if self._data_nascimento:
             today = datetime.date.today()
             data_nascimento_str = self._data_nascimento.strftime('%Y-%m-%d')
             dif = today - datetime.datetime.strptime(data_nascimento_str, '%Y-%m-%d').date()
             return dif.days // 365
         return None
+    
+    @data_nascimento.setter
+    def data_nascimento(self,value):
+        self._data_nascimento = value
             
-    def delete_usuario(self):
+    async def delete_usuario(self):
         try:
             if self._id:
-                mycursor = mydb.cursor()
-                mycursor.execute('DELETE from usuario WHERE id_usuario=%s', (self._id,))
-                mydb.commit()
-                mydb.close()
+                conn = await get_connection()
+                mycursor = await conn.cursor()
+                await mycursor.execute('DELETE from usuario WHERE id_usuario=%s', (self._id,))
+                await conn.commit()
+                await conn.close()
                 return True
             elif self._email:
-                mycursor = mydb.cursor()
-                mycursor.execute('DELETE from usuario WHERE email=%s', (self._email,))
-                mydb.commit()
-                mydb.close()
+                conn = await get_connection()
+                mycursor = await conn.cursor()
+                await mycursor.execute('DELETE from usuario WHERE email=%s', (self._email,))
+                await conn.commit()
+                await conn.close()
                 return True
             return False
         except EOFError as e:
             print(e)
             return False   
     
-    def create_usuario(self):
+    async def create_usuario(self):
         try:
             if self._nome and self._email and self._senha and self._data_nascimento:
-                mycursor = mydb.cursor()
-                mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
-                mydb.commit()
-                self._id=mycursor.lastrowid    
+                conn = await get_connection()
+                mycursor = await conn.cursor()
+                await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
+                await conn.commit()
+                self._id= await mycursor.lastrowid    
                 return True
         except EOFError as e:
                 print(e)
                 return False
         return False
     
-    def update_usuario(self, chave, valor):
+    async def update_usuario(self, chave, valor):
         try:
             possiveis_chave=['nome','email','senha','data_nascimento','tipo_usuario']
             if self._id and chave in possiveis_chave:
                 if chave=='senha':
                     valor=criptografar(valor)
-                mycursor = mydb.cursor()
+                conn = await get_connection()
+                mycursor = await conn.cursor()
                 query = f"UPDATE usuario SET {chave} = %s WHERE id_usuario = %s"
-                mycursor.execute(query, (valor, self._id))
-                mydb.commit()
+                await mycursor.execute(query, (valor, self._id))
+                await conn.commit()
                 return True
             return False
         except EOFError as e:
             print(e)
             return False
         
-    def get_usuario(self):
+    async def get_usuario(self):
         try:
-            mycursor = mydb.cursor()
-            result = {}
-            if self._id:
-                mycursor.execute("SELECT * FROM usuario WHERE id_usuario=%s", (self._id,))
-                result = mycursor.fetchone()
-            elif self._email:
-                mycursor.execute("SELECT * FROM usuario WHERE email=%s", (self._email,))
-                result = mycursor.fetchone()
-            if result:
-                column_nomes = [column[0] for column in mycursor.description]
-                usuario={}
-                for chave, valor in zip(column_nomes,result):
-                    usuario[chave] = valor
-                return usuario
+            async with await get_connection() as conn:
+                async with conn.cursor() as mycursor:
+                    result = {}
+                    if self._id:
+                        await mycursor.execute("SELECT id_usuario, nome, email, senha, data_nascimento FROM usuario WHERE id_usuario=%s", (self._id,))
+                        result = await mycursor.fetchone()
+                    elif self._email:
+                        await mycursor.execute("SELECT id_usuario, nome, email, senha, data_nascimento FROM usuario WHERE email=%s", (self._email,))
+                        result = await mycursor.fetchone()
+                    if result:
+                        self.id = result[0]
+                        self.nome = result[1]
+                        self.email = result[2]
+                        self.senha = result[3]
+                        self.data_nascimento = result[4]
+                        await mycursor.close() 
+                    await mycursor.close()  
             return None
-        except:
-            return None
+        except EOFError as e:
+            print(e)
+            return False
     
-    def valid_usuario(self):
+    async def valid_usuario(self):
         try:
-            mycursor = mydb.cursor()
+            conn = await get_connection()
+            mycursor = await conn.cursor()
             if self._email and self._senha:
-                mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
-                result = mycursor.fetchone()  
+                await mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
+                result = await mycursor.fetchone()  
                 if result:
+                    print(result)
                     self._id=result[0]
                     self._nome=result[1]
                     self.__tipo_usuario=result[4]
@@ -143,15 +172,16 @@ class Usuario:
             print(e)
             return False 
         
-    def carregar_personagens_banco(self):
+    async def carregar_personagens_banco(self):
         try:
-            mycursor = mydb.cursor()
+            conn = await get_connection()
+            mycursor = await conn.cursor()
             if self._id:
                 query="""SELECT pr.id_personagem,pr.nome_personagem,rc.nome_raca,rc.id_raca
                 FROM personagem pr,raca rc
                 WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
-                mycursor.execute(query,(self._id,))
-                result = mycursor.fetchall()  
+                await mycursor.execute(query,(self._id,))
+                result = await mycursor.fetchall()  
                 if result:
                     for row in result:
                         self._personagens.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3]})

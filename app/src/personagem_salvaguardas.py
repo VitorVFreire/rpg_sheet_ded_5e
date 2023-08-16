@@ -1,4 +1,4 @@
-from data import mydb, attributes
+from data import get_connection
 from src import Usuario
 import pymysql
 

@@ -1,4 +1,4 @@
-from data import mydb
+from data import get_connection
 import pymysql
 
 class Pericia:
