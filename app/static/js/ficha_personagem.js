@@ -3,6 +3,7 @@ const id_personagem = parseInt(document.querySelector('#id_personagem').value, 1
 status_base()
 atributos()
 pericias()
+salvaguardas()
 
 async function status_base(){
   const conexao_status_base = await fetch(`http://192.168.1.100:8085/status_base/${id_personagem}`)
@@ -69,7 +70,8 @@ async function atributos(){
     atributos.inteligencia,
     atributos.sabedoria,
     atributos.carisma, 
-    atributos.constituicao)
+    atributos.constituicao,
+    atributos.bonus_proficiencia)
   
   html_bonus_atributos(atributos.bonus_forca, 
     atributos.bonus_inteligencia,
@@ -79,7 +81,7 @@ async function atributos(){
     atributos.bonus_constituicao)
 }
 
-function html_atributos(forca, destreza, inteligencia, sabedoria, carisma, constituicao){
+function html_atributos(forca, destreza, inteligencia, sabedoria, carisma, constituicao, bonus_proficiencia){
   const atributo_forca = document.getElementById('atributo_forca')
   atributo_forca.value = forca
 
@@ -97,6 +99,9 @@ function html_atributos(forca, destreza, inteligencia, sabedoria, carisma, const
 
   const atributo_constituicao = document.getElementById('atributo_constituicao')
   atributo_constituicao.value = constituicao
+
+  const atributo_bonus_proficiencia = document.getElementById('atributo_bonus_proficiencia')
+  atributo_bonus_proficiencia.value = bonus_proficiencia
 }
 
 function html_bonus_atributos(bonus_forca, bonus_inteligencia, bonus_carisma, bonus_sabedoria, bonus_destreza, bonus_constituicao){
@@ -132,6 +137,7 @@ async function pericias(){
 
 function html_pericias(periciasData, periciasDoPersonagem) {
   const periciasSection = document.querySelector('[data-pericias-lista]');
+  periciasSection.innerHTML += '<h3>Pericias</h3>'
   periciasSection.classList.add('row', 'justify-content')
   let contador = 0;
   for (const pericia in periciasData) {
@@ -158,6 +164,46 @@ function html_pericias(periciasData, periciasDoPersonagem) {
       }
     }
   }
+}
+
+async function salvaguardas(){
+  const conexao_salvaguardas = await fetch(`http://192.168.1.100:8085/salvaguardas/${id_personagem}`)
+  const salvaguardas = await conexao_salvaguardas.json()
+
+  html_salvaguardas(salvaguardas.forca, 
+    salvaguardas.destreza, 
+    salvaguardas.inteligencia,
+    salvaguardas.sabedoria,
+    salvaguardas.carisma, 
+    salvaguardas.constituicao)
+    const listaSalvaguardasUnicas = [...new Set(salvaguardas.salvaguardas)];
+
+    for (const salvaguarda of listaSalvaguardasUnicas) {
+      let check_box_salvaguarda = document.querySelector(`#check_salvaguarda_${salvaguarda}`);
+      if (check_box_salvaguarda) {
+        check_box_salvaguarda.checked = true;
+      }
+    }
+}
+
+function html_salvaguardas(forca, destreza, inteligencia, sabedoria, carisma, constituicao){
+  const atributo_forca = document.getElementById('resistencia_forca')
+  atributo_forca.innerHTML = forca.toString()
+
+  const atributo_destreza = document.getElementById('resistencia_destreza')
+  atributo_destreza.innerHTML = destreza.toString()
+
+  const atributo_inteligencia = document.getElementById('resistencia_inteligencia')
+  atributo_inteligencia.innerHTML = inteligencia.toString()
+
+  const atributo_sabedoria = document.getElementById('resistencia_sabedoria')
+  atributo_sabedoria.innerHTML = sabedoria.toString()
+
+  const atributo_carisma = document.getElementById('resistencia_carisma')
+  atributo_carisma.innerHTML = carisma.toString()
+
+  const atributo_constituicao = document.getElementById('resistencia_constituicao')
+  atributo_constituicao.innerHTML = constituicao.toString()
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -188,8 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
   inputs_atributos.forEach(input => {
     input.addEventListener('blur', function() {
       const id = input.id;
-      const posicao = id.search('_');
-      const atributo = id.substring(posicao + 1);
+      const posicao = id.search('to_');
+      const atributo = id.substring(posicao + 3);
 
       $.ajax({
         url: `/update/atributos/${id_personagem}`,
@@ -203,9 +249,9 @@ document.addEventListener('DOMContentLoaded', function() {
           $('#result-container').text('Resultado: ' + result);
           if ($(`#bonus_${atributo}`)) {
             $(`#bonus_${atributo}`).text(response.bonus);
-            $(`#resistencia_${atributo}`).text(response.resistencia);
-            //ATUALIZA VALOR DE PERICIAS:
+            $(`#resistencia_${atributo}`).innerHTML = response.resistencia;
             atualizar_pericias();
+            atualizar_salvaguardas();
           }
         }
       });    
@@ -214,13 +260,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   //MUDANÇA DE SALVAGUARDAS:
-  const inputs_salvaguardas= document.querySelectorAll('input[id^="salvaguarda_"]');
+  const inputs_salvaguardas= document.querySelectorAll('input[id^="check_salvaguarda_"]');
 
   inputs_salvaguardas.forEach(input => {
     input.addEventListener('change', function() {
       const id = input.id;
-      const posicao = id.search('_');
-      const salvaguarda = id.substring(posicao + 1);
+      const posicao = id.search('da_');
+      const salvaguarda = id.substring(posicao + 3);
       let tipo = 'adicionar';
       if (!this.checked) {
         tipo = 'remover';
@@ -235,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
         success: function(response) {
           var result = response.result;
           $('#result-container').text('Resultado: ' + result);
-          $(`#resistencia_${salvaguarda}`).text(response.resistencia);
+          document.getElementById(`resistencia_${salvaguarda}`).innerHTML = response.resistencia;
         }
       });
     });
@@ -269,7 +315,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //MUDANÇA DE PERICIAS:
   const inputs_pericias= document.querySelectorAll('input[id^="check_pericia_"]');
-  console.log(`input: ${inputs_pericias}`)
   inputs_pericias.forEach(input => {
     input.addEventListener('change', function() {
       const id = input.id;
@@ -330,11 +375,26 @@ function capitalizeFirstLetter(str) {
 function atualizar_pericias() {
   $.ajax({
     url: `/valores/pericias/${id_personagem}`,
-    type: 'POST',
+    type: 'GET',
     success: function(response) {
       for (const [key, value] of Object.entries(response)) {
         $(`#pericia_${key}`).text(value);
       }
+    }
+  });
+}
+
+function atualizar_salvaguardas(){
+  $.ajax({
+    url: `/salvaguardas/${id_personagem}`,
+    type: 'GET',
+    success: function(response) {
+      html_salvaguardas(response.forca, 
+        response.destreza, 
+        response.inteligencia,
+        response.sabedoria,
+        response.carisma, 
+        response.constituicao)
     }
   });
 }

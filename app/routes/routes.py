@@ -152,11 +152,11 @@ async def atributos_db(id_personagem):
         return jsonify({'result': False}) 
     
 @app.route('/salvaguardas/<id_personagem>', methods=['POST','GET'])
-def salvaguardas_db(id_personagem):
+async def salvaguardas_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
-        if personagem.carregar_atributos_do_banco() and personagem.carregar_salvaguardas_do_banco():
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
+        if await personagem.carregar_atributos_do_banco() and await personagem.carregar_salvaguardas_do_banco():
             return jsonify({
                 'forca': int(personagem.resistencia_forca),
                 'destreza': int(personagem.resistencia_destreza),
@@ -166,7 +166,6 @@ def salvaguardas_db(id_personagem):
                 'carisma': int(personagem.resistencia_carisma),
                 'salvaguardas': personagem.lista_nome_salvaguardas
             })
-            return jsonify({'result': False})
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
@@ -281,24 +280,24 @@ async def update_atributos_db(id_personagem):
         return jsonify({'result':False})
     
 @app.route('/update/salvaguarda/<id_personagem>',methods=['POST'])
-def update_salvaguardas_db(id_personagem):
+async def update_salvaguardas_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=PersonagemSalvaguardas(id_usuario=id_usuario,id_personagem=id_personagem)
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemSalvaguardas(id_usuario=id_usuario,id_personagem=id_personagem)
         
-        chave=request.form.get('chave')
-        tipo=request.form.get('tipo')
+        chave = request.form.get('chave')
+        tipo = request.form.get('tipo')
         
-        salvaguarda=Salvaguarda(nome_salvaguarda=chave)
-        salvaguarda.carregar_salvaguarda_nome()
-        personagem.carregar_atributos_do_banco()
+        salvaguarda = Salvaguarda(nome_salvaguarda=chave)
+        await salvaguarda.carregar_salvaguarda_nome()
+        await personagem.carregar_atributos_do_banco()
         
-        if personagem.exists_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda) and tipo=='remover':
-            return jsonify({'result':personagem.delete_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
-                            'resistencia':int(personagem.get_salvaguardas(chave))})
+        if await personagem.exists_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda) and tipo=='remover':
+            return jsonify({'result': await personagem.delete_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
+                            'resistencia':int(await personagem.get_salvaguardas(chave))})
         elif tipo=='adicionar':
-            return jsonify({'result':personagem.adicionar_salvaguardas_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
-                            'resistencia':int(personagem.get_salvaguardas(chave))})
+            return jsonify({'result': await personagem.adicionar_salvaguardas_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
+                            'resistencia':int(await personagem.get_salvaguardas(chave))})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)

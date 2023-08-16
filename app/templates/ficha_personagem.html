@@ -63,41 +63,83 @@ Nome do Jogador: {{nome}}
     </div>
 </div>
 
-<h2>Atributos: </h2>
-<div class="container text-center">
-    <div class="row justify-content">
-        <div class="col">
-            <h3>Força:</h3><input type="number" class="form-control text-center" id="atributo_forca" required/>
-            Bônus Força: <div id='bonus_forca'></div>
+<section data-atributos>
+    <h2>Atributos: </h2>
+    <div class="container text-center">
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Força:</h3><input type="number" class="form-control text-center" id="atributo_forca" required/>
+                Bônus Força: <div id='bonus_forca'></div>
+            </div>
+            <div class="col">
+                <h3>Destreza:</h3> <input type="number" class="form-control text-center" id="atributo_destreza" required/>
+                Bônus Destreza: <div id='bonus_destreza'></div>
+            </div>
+            <div class="col">
+                <h3>Constituição:</h3> <input type="number" class="form-control text-center" id="atributo_constituicao" required/>
+                Bônus Constituição: <div id='bonus_constituicao'></div>
+            </div>
         </div>
-        <div class="col">
-            <h3>Destreza:</h3> <input type="number" class="form-control text-center" id="atributo_destreza" required/>
-            Bônus Destreza: <div id='bonus_destreza'></div>
-        </div>
-        <div class="col">
-            <h3>Constituição:</h3> <input type="number" class="form-control text-center" id="atributo_constituicao" required/>
-            Bônus Constituição: <div id='bonus_constituicao'></div>
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Inteligência:</h3> <input type="number" class="form-control text-center" id="atributo_inteligencia" required/>
+                Bônus Inteligência: <div id='bonus_inteligencia'></div>
+            </div>
+            <div class="col">
+                <h3>Sabedoria:</h3> <input type="number" class="form-control text-center" id="atributo_sabedoria" required/>
+                Bônus Sabedoria: <div id='bonus_sabedoria'></div>
+            </div>
+            <div class="col">
+                <h3>Carisma:</h3> <input type="number" class="form-control text-center" id="atributo_carisma" required/>
+                Bônus Carisma: <div id='bonus_carisma'></div>
+            </div>
         </div>
     </div>
-    <div class="row justify-content">
-        <div class="col">
-            <h3>Inteligência:</h3> <input type="number" class="form-control text-center" id="atributo_inteligencia" required/>
-            Bônus Inteligência: <div id='bonus_inteligencia'></div>
+</section>
+
+<section data-salvaguardas>
+    <h2>Salvaguardas: </h2>
+    <div class="container text-center">
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Força:</h3>
+                <div id='resistencia_forca'></div>
+                <input type="checkbox" class="form-check-input" id="check_salvaguarda_forca" required/>
+            </div>
+            <div class="col">
+                <h3>Destreza:</h3>
+                <div id='resistencia_destreza'></div>
+                <input type="checkbox" class="form-check-input" id="check_salvaguarda_destreza" required/>
+            </div>
+            <div class="col">
+                <h3>Constituição:</h3>
+                <div id='resistencia_constituicao'></div>
+                <input type="checkbox" class="form-check-input" id="check_salvaguarda_constituicao" required/>
+            </div>
         </div>
-        <div class="col">
-            <h3>Sabedoria:</h3> <input type="number" class="form-control text-center" id="atributo_sabedoria" required/>
-            Bônus Sabedoria: <div id='bonus_sabedoria'></div>
-        </div>
-        <div class="col">
-            <h3>Carisma:</h3> <input type="number" class="form-control text-center" id="atributo_carisma" required/>
-            Bônus Carisma: <div id='bonus_carisma'></div>
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Inteligência:</h3>
+                <div id='resistencia_inteligencia'></div>
+                <input type="checkbox" class="form-check-input" id="check_salvaguarda_inteligencia" required/>
+            </div>
+            <div class="col">
+                <h3>Sabedoria:</h3>
+                <div id='resistencia_sabedoria'></div>
+                <input type="checkbox" class="form-check-input" id="check_salvaguarda_sabedoria" required/>
+            </div>
+            <div class="col">
+                <h3>Carisma:</h3>
+                <div id='resistencia_carisma'></div>
+                <input type="checkbox" class="form-check-input" id="check_salvaguarda_carisma" required/>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 <section data-pericias-lista>
 </section>
-  
+
 <div id="result-container"></div>
 <script type="text/javascript" src="{{url_for('static', filename='js/ficha_personagem.js')}}"></script>
 {% endblock %}
