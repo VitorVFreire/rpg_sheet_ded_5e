@@ -173,11 +173,11 @@ def salvaguardas_db(id_personagem):
         return jsonify({'result': False})
     
 @app.route('/status_base/<id_personagem>', methods=['POST', 'GET'])
-def status_base_db(id_personagem):
+async def status_base_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)  
-        if personagem.carregar_status_base_do_banco():
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)  
+        if await personagem.carregar_status_base_do_banco():
             return jsonify({
                 'nivel': personagem.nivel,
                 'alinhamento': personagem.alinhamento,
@@ -192,7 +192,6 @@ def status_base_db(id_personagem):
                 'inspiracao': personagem.inspiracao,
                 'ca': personagem.ca
             })
-            return jsonify({'result': False})
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
@@ -306,18 +305,17 @@ def update_salvaguardas_db(id_personagem):
         return jsonify({'result':False})
     
 @app.route('/update/status_base/<id_personagem>',methods=['POST'])
-def update_status_base_db(id_personagem):
+async def update_status_base_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=PersonagemStatusBase(id_usuario=id_usuario,id_personagem=id_personagem)
-        chave=request.form.get('chave')
-        valor=request.form.get('valor')
+        id_usuario = session.get('id_usuario')
+        personagem = PersonagemStatusBase(id_usuario=id_usuario,id_personagem=id_personagem)
+        chave = request.form.get('chave')
+        valor = request.form.get('valor')
         
-        if personagem.exists_status_base_banco():
-            return jsonify({'result': personagem.update_status_base_banco(chave=chave, valor=valor)})
+        if await personagem.exists_status_base_banco():
+            return jsonify({'result': await personagem.update_status_base_banco(chave=chave, valor=valor)})
         else:
-            return jsonify({'result':personagem.adicionar_status_base_banco(chave=chave,valor=valor)})
-        return jsonify({'result':False})
+            return jsonify({'result': await personagem.adicionar_status_base_banco(chave=chave,valor=valor)})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
@@ -365,15 +363,15 @@ def update_caracteristicas_personagems_db(id_personagem):
         return jsonify({'result':False})
     
 @app.route('/update/base/<id_personagem>',methods=['POST'])
-def update_base_db(id_personagem):
+async def update_base_db(id_personagem):
     try:
-        id_usuario=session.get('id_usuario')
-        personagem=Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        id_usuario = session.get('id_usuario')
+        personagem = Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
         
-        chave=request.form.get('chave')
-        valor=request.form.get('valor')
+        chave = request.form.get('chave')
+        valor = request.form.get('valor')
                 
-        return jsonify({'result':personagem.update_personagem_banco(chave=chave,valor=valor)})
+        return jsonify({'result': await personagem.update_personagem_banco(chave=chave,valor=valor)})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})

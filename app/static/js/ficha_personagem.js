@@ -1,6 +1,6 @@
 const id_personagem = parseInt(document.querySelector('#id_personagem').value, 10);
 
-//status_base()
+status_base()
 atributos()
 pericias()
 

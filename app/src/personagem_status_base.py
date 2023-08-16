@@ -1,6 +1,7 @@
 from data import get_connection
 from src import Usuario
 import pymysql
+import asyncio
 
 from src import Personagem
 
@@ -20,90 +21,93 @@ class PersonagemStatusBase(Personagem):
         self._vida_temporaria = None
         self._xp = None
         
-    def exists_status_base_banco(self):
+    async def exists_status_base_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = "SELECT EXISTS (SELECT id_status_base FROM status_base WHERE id_personagem = %s)"
-                mycursor.execute(query, (self._id_personagem,))
-                result = mycursor.fetchone()
-                if result[0] == 1:
-                    return True
-                return False
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "SELECT EXISTS (SELECT id_status_base FROM status_base WHERE id_personagem = %s)"
+                        await mycursor.execute(query, (self._id_personagem,))
+                        result = await mycursor.fetchone()
+                        if result[0] == 1:
+                            return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
     
-    def adicionar_status_base_banco(self,chave,valor):
+    async def adicionar_status_base_banco(self,chave,valor):
         try:
             possibilidade_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
             if self._id_personagem and chave in possibilidade_chave:
-                mycursor = mydb.cursor()
-                query = f"INSERT INTO status_base(id_personagem,{chave}) VALUES(%s,%s);"
-                mycursor.execute(query, (self._id_personagem,valor,))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = f"INSERT INTO status_base(id_personagem,{chave}) VALUES(%s,%s);"
+                        await mycursor.execute(query, (self._id_personagem,valor,))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def delete_status_base_banco(self):
+    async def delete_status_base_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """DELETE from status_base
-                WHERE id_personagem=%s;"""
-                mycursor.execute(query, (self._id_personagem))
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """DELETE from status_base
+                        WHERE id_personagem=%s;"""
+                        await mycursor.execute(query, (self._id_personagem))
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def carregar_status_base_do_banco(self):
+    async def carregar_status_base_do_banco(self):
         try:
             if self._id_personagem:
-                mycursor = mydb.cursor()
-                query = """SELECT vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria
-                FROM status_base
-                WHERE id_personagem = %s;"""
-                mycursor.execute(query, (self._id_personagem,))
-                result = mycursor.fetchone()
-                if result:
-                    self.vida=result[0]
-                    self.xp=result[1]
-                    self.nivel=result[2]
-                    self.alinhamento=result[3] 
-                    self.antecendente=result[4] 
-                    self.faccao=result[5]  
-                    self.inspiracao=result[6]
-                    self.ca=result[7]
-                    self.iniciativa=result[8]
-                    self.deslocamento=result[9]
-                    self.vida_atual=result[10]
-                    self.vida_temporaria=result[11]     
-                    return True
-                return False
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """SELECT vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria
+                        FROM status_base
+                        WHERE id_personagem = %s;"""
+                        await mycursor.execute(query, (self._id_personagem,))
+                        result = await mycursor.fetchone()
+                        if result:
+                            self.vida=result[0]
+                            self.xp=result[1]
+                            self.nivel=result[2]
+                            self.alinhamento=result[3] 
+                            self.antecendente=result[4] 
+                            self.faccao=result[5]  
+                            self.inspiracao=result[6]
+                            self.ca=result[7]
+                            self.iniciativa=result[8]
+                            self.deslocamento=result[9]
+                            self.vida_atual=result[10]
+                            self.vida_temporaria=result[11]     
+                            return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    def update_status_base_banco(self,chave,valor):
+    async def update_status_base_banco(self,chave,valor):
         try:
             possibilidades_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
             if self._id_personagem and chave in possibilidades_chave:
-                mycursor = mydb.cursor()
-                query = f"""UPDATE status_base
-                SET {chave}=%s
-                WHERE id_personagem=%s;"""
-                parametros=(valor,self._id_personagem)
-                mycursor.execute(query, parametros)
-                mydb.commit()
-                return True
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = f"""UPDATE status_base
+                        SET {chave}=%s
+                        WHERE id_personagem=%s;"""
+                        parametros=(valor,self._id_personagem)
+                        await mycursor.execute(query, parametros)
+                        await conn.commit()
+                        return True
             return False
         except pymysql.Error as e:
             print(e)
