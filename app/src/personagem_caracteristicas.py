@@ -107,7 +107,7 @@ class PersonagemCaracteristicas(Personagem):
     
     @property
     def idade(self):
-        return self._caracteristicas['idade']
+        return self._caracteristicas['idade'] 
         
     def set_idade(self,value):
         self._caracteristicas['idade']=value

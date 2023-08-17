@@ -90,6 +90,7 @@ class PersonagemStatusBase(Personagem):
                             self.vida_atual=result[10]
                             self.vida_temporaria=result[11]     
                             return True
+                return True
             return False
         except pymysql.Error as e:
             print(e)

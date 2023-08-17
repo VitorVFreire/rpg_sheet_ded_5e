@@ -71,6 +71,7 @@ class PersonagemPericias(PersonagemAtributos):
                             for row in result:
                                 self._pericias.append({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
                             return True
+                return True
             return False
         except pymysql.Error as e:
             print(e)
@@ -116,107 +117,107 @@ class PersonagemPericias(PersonagemAtributos):
     @property
     def acrobacia(self):
         if any(d.get('nome_pericia') == 'acrobacia' for d in self._pericias):
-            return self.bonus_destreza + self._bonus_proficiencia
-        return self.bonus_destreza
+            return int(self.bonus_destreza + self._bonus_proficiencia) if self.bonus_destreza is not None else ''
+        return int(self.bonus_destreza) if self.bonus_destreza is not None else ''
 
     @property
     def arcanismo(self):
         if any(d.get('nome_pericia') == 'arcanismo' for d in self._pericias):
-            return self.bonus_inteligencia + self._bonus_proficiencia
-        return self.bonus_inteligencia
+            return int(self.bonus_inteligencia + self._bonus_proficiencia) if self.bonus_inteligencia is not None else '' 
+        return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else ''
 
     @property
     def atletismo(self):
         if any(d.get('nome_pericia') == 'atletismo' for d in self._pericias):
-            return self.bonus_forca + self._bonus_proficiencia
-        return self.bonus_forca
+            return int (self.bonus_forca + self._bonus_proficiencia) if self.bonus_forca is not None else ''
+        return int(self.bonus_forca) if self.bonus_forca is not None else ''
 
     @property
     def atuacao(self):
         if any(d.get('nome_pericia') == 'atuacao' for d in self._pericias):
-            return self.bonus_carisma + self._bonus_proficiencia
-        return self.bonus_carisma
+            return int(self.bonus_carisma + self._bonus_proficiencia)
+        return int(self.bonus_carisma) if self.bonus_carisma is not None else ''
 
     @property
     def enganacao(self):
         if any(d.get('nome_pericia') == 'enganacao' for d in self._pericias):
-            return self.bonus_carisma + self._bonus_proficiencia
-        return self.bonus_carisma
+            return int(self.bonus_carisma + self._bonus_proficiencia)
+        return int(self.bonus_carisma) if self.bonus_carisma is not None else ''
 
     @property
     def furtividade(self):
         if any(d.get('nome_pericia') == 'furtividade' for d in self._pericias):
-            return self.bonus_destreza + self._bonus_proficiencia
-        return self.bonus_destreza
+            return int(self.bonus_destreza + self._bonus_proficiencia) if self.bonus_destreza is not None else ''        
+        return int(self.bonus_destreza) if self.bonus_destreza is not None else ''
 
     @property
     def historia(self):
         if any(d.get('nome_pericia') == 'historia' for d in self._pericias):
-            return self.bonus_inteligencia + self._bonus_proficiencia
-        return self.bonus_inteligencia
+            return int(self.bonus_inteligencia + self._bonus_proficiencia) if self.bonus_inteligencia is not None else ''
+        return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else ''
 
     @property
     def intimidacao(self):
         if any(d.get('nome_pericia') == 'intimidacao' for d in self._pericias):
-            return self.bonus_carisma + self._bonus_proficiencia
-        return self.bonus_carisma
+            return int(self.bonus_carisma + self._bonus_proficiencia)
+        return int(self.bonus_carisma) if self.bonus_carisma is not None else ''
 
     @property
     def intuicao(self):
         if any(d.get('nome_pericia') == 'intuicao' for d in self._pericias):
-            return self.bonus_sabedoria + self._bonus_proficiencia
-        return self.bonus_sabedoria
+            return int(self.bonus_sabedoria + self._bonus_proficiencia) if self.bonus_sabedoria is not None else ''
+        return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else ''
 
     @property
     def investigacao(self):
         if any(d.get('nome_pericia') == 'investigacao' for d in self._pericias):
-            return self.bonus_inteligencia + self._bonus_proficiencia
-        return self.bonus_inteligencia
+            return int(self.bonus_inteligencia + self._bonus_proficiencia) if self.bonus_inteligencia is not None else ''
+        return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else ''
 
     @property
     def lidar_com_animais(self):
         if any(d.get('nome_pericia') == 'lidar_com_animais' for d in self._pericias):
-            return self.bonus_sabedoria + self._bonus_proficiencia
-        return self.bonus_sabedoria
+            return int(self.bonus_sabedoria + self._bonus_proficiencia) if self.bonus_sabedoria is not None else ''
+        return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else ''
 
     @property
     def medicina(self):
         if any(d.get('nome_pericia') == 'medicina' for d in self._pericias):
-            return self.bonus_sabedoria + self._bonus_proficiencia
-        return self.bonus_sabedoria
+            return int(self.bonus_sabedoria + self._bonus_proficiencia) if self.bonus_sabedoria is not None else ''
+        return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else ''
 
     @property
     def natureza(self):
         if any(d.get('nome_pericia') == 'natureza' for d in self._pericias):
-            return self.bonus_inteligencia + self._bonus_proficiencia
-        return self.bonus_inteligencia
+            return int(self.bonus_inteligencia + self._bonus_proficiencia) if self.bonus_inteligencia is not None else ''
+        return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else ''
 
     @property
     def percepcao(self):
         if any(d.get('nome_pericia') == 'percepcao' for d in self._pericias):
-            return self.bonus_sabedoria + self._bonus_proficiencia
-        return self.bonus_sabedoria
+            return int(self.bonus_sabedoria + self._bonus_proficiencia) if self.bonus_sabedoria is not None else ''
+        return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else ''
 
     @property
     def persuasao(self):
         if any(d.get('nome_pericia') == 'persuasao' for d in self._pericias):
-            return self.bonus_carisma + self._bonus_proficiencia
-        return self.bonus_carisma
+            return int(self.bonus_carisma + self._bonus_proficiencia)
+        return int(self.bonus_carisma) if self.bonus_carisma is not None else ''
 
     @property
     def prestidigitacao(self):
         if any(d.get('nome_pericia') == 'prestidigitacao' for d in self._pericias):
-            return self.bonus_destreza + self._bonus_proficiencia
-        return self.bonus_destreza
+            return int(self.bonus_destreza + self._bonus_proficiencia) if self.bonus_destreza is not None else ''        
+        return int(self.bonus_destreza) if self.bonus_destreza is not None else ''
 
     @property
     def religiao(self):
         if any(d.get('nome_pericia') == 'religiao' for d in self._pericias):
-            return self.bonus_inteligencia + self._bonus_proficiencia
-        return self.bonus_inteligencia
+            return int(self.bonus_inteligencia + self._bonus_proficiencia) if self.bonus_inteligencia is not None else ''
+        return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else ''
 
     @property
     def sobrevivencia(self):
         if any(d.get('nome_pericia') == 'sobrevivencia' for d in self._pericias):
-            return self.bonus_sabedoria + self._bonus_proficiencia
-        return self.bonus_sabedoria
+            return int(self.bonus_sabedoria + self._bonus_proficiencia) if self.bonus_sabedoria is not None else ''
+        return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else ''

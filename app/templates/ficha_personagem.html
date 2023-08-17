@@ -140,6 +140,39 @@ Nome do Jogador: {{nome}}
 <section data-pericias-lista>
 </section>
 
+<section data-caracteristicas>
+    <h2>Caracteristicas: </h2>
+    <div class="container text-center">
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Idade:</h3><input type="text" class="form-control text-center" id="caracteristicas_idade" required/>
+            </div>
+            <div class="col">
+                <h3>Altura</h3> <input type="number" class="form-control text-center" id="caracteristicas_altura" required/>
+            </div>
+            <div class="col">
+                <h3>Peso</h3> <input type="number" class="form-control text-center" id="caracteristicas_peso" required/>
+            </div>
+        </div>
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Cor dos Olhos</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_dos_olhos" required/>
+            </div>
+            <div class="col">
+                <h3>Cor da Pele</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_da_pele" required/>
+            </div>
+            <div class="col">
+                <h3>Cor do Cabelo</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_do_cabelo" required/>
+            </div>
+        </div>
+        <div class="row justify-content">
+            <div class="col">
+                <h3>Imagem Personagem</h3> <input type="url" class="form-control text-center" id="caracteristicas_imagem_personagem" required/>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div id="result-container"></div>
 <script type="text/javascript" src="{{url_for('static', filename='js/ficha_personagem.js')}}"></script>
 {% endblock %}

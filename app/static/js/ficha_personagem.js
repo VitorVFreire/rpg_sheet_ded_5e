@@ -4,6 +4,7 @@ status_base()
 atributos()
 pericias()
 salvaguardas()
+caracteristicas()
 
 async function status_base(){
   const conexao_status_base = await fetch(`http://192.168.1.100:8085/status_base/${id_personagem}`)
@@ -106,22 +107,22 @@ function html_atributos(forca, destreza, inteligencia, sabedoria, carisma, const
 
 function html_bonus_atributos(bonus_forca, bonus_inteligencia, bonus_carisma, bonus_sabedoria, bonus_destreza, bonus_constituicao){
   const atributo_bonus_forca = document.getElementById('bonus_forca')
-  atributo_bonus_forca.innerHTML = bonus_forca.toString()
+  atributo_bonus_forca.innerHTML = bonus_forca
 
   const atributo_bonus_destreza = document.getElementById('bonus_destreza')
-  atributo_bonus_destreza.innerHTML = bonus_destreza.toString()
+  atributo_bonus_destreza.innerHTML = bonus_destreza
 
   const atributo_bonus_inteligencia = document.getElementById('bonus_inteligencia')
-  atributo_bonus_inteligencia.innerHTML = bonus_inteligencia.toString()
+  atributo_bonus_inteligencia.innerHTML = bonus_inteligencia
 
   const atributo_bonus_sabedoria = document.getElementById('bonus_sabedoria')
-  atributo_bonus_sabedoria.innerHTML = bonus_sabedoria.toString()
+  atributo_bonus_sabedoria.innerHTML = bonus_sabedoria
 
   const atributo_bonus_carisma = document.getElementById('bonus_carisma')
-  atributo_bonus_carisma.innerHTML = bonus_carisma.toString()
+  atributo_bonus_carisma.innerHTML = bonus_carisma
 
   const atributo_bonus_constituicao = document.getElementById('bonus_constituicao')
-  atributo_bonus_constituicao.innerHTML = bonus_constituicao.toString()
+  atributo_bonus_constituicao.innerHTML = bonus_constituicao
 }
 
 async function pericias(){
@@ -169,7 +170,6 @@ function html_pericias(periciasData, periciasDoPersonagem) {
 async function salvaguardas(){
   const conexao_salvaguardas = await fetch(`http://192.168.1.100:8085/salvaguardas/${id_personagem}`)
   const salvaguardas = await conexao_salvaguardas.json()
-
   html_salvaguardas(salvaguardas.forca, 
     salvaguardas.destreza, 
     salvaguardas.inteligencia,
@@ -188,22 +188,58 @@ async function salvaguardas(){
 
 function html_salvaguardas(forca, destreza, inteligencia, sabedoria, carisma, constituicao){
   const atributo_forca = document.getElementById('resistencia_forca')
-  atributo_forca.innerHTML = forca.toString()
+  atributo_forca.innerHTML = forca 
 
   const atributo_destreza = document.getElementById('resistencia_destreza')
-  atributo_destreza.innerHTML = destreza.toString()
+  atributo_destreza.innerHTML = destreza
 
   const atributo_inteligencia = document.getElementById('resistencia_inteligencia')
-  atributo_inteligencia.innerHTML = inteligencia.toString()
+  atributo_inteligencia.innerHTML = inteligencia
 
   const atributo_sabedoria = document.getElementById('resistencia_sabedoria')
-  atributo_sabedoria.innerHTML = sabedoria.toString()
+  atributo_sabedoria.innerHTML = sabedoria
 
   const atributo_carisma = document.getElementById('resistencia_carisma')
-  atributo_carisma.innerHTML = carisma.toString()
+  atributo_carisma.innerHTML = carisma
 
   const atributo_constituicao = document.getElementById('resistencia_constituicao')
-  atributo_constituicao.innerHTML = constituicao.toString()
+  atributo_constituicao.innerHTML = constituicao
+}
+
+async function caracteristicas(){
+  const conexao_caracteristicas = await fetch(`http://192.168.1.100:8085/caracteristicas/${id_personagem}`)
+  const caracteristicas = await conexao_caracteristicas.json()
+
+  html_caracteristicas(caracteristicas.idade,
+    caracteristicas.altura,
+    caracteristicas.peso,
+    caracteristicas.cor_dos_olhos,
+    caracteristicas.cor_da_pele,
+    caracteristicas.cor_do_cabelo,
+    caracteristicas.imagem_personagem)
+}
+
+function html_caracteristicas(idade, altura, peso, cor_dos_olhos, cor_da_pele, cor_do_cabelo, imagem_personagem){
+  const status_idade = document.getElementById('caracteristicas_idade')
+  status_idade.value = idade 
+
+  const status_altura = document.getElementById('caracteristicas_altura')
+  status_altura.value = altura 
+
+  const status_peso = document.getElementById('caracteristicas_peso')
+  status_peso.value = peso
+
+  const status_cor_dos_olhos = document.getElementById('caracteristicas_cor_dos_olhos')
+  status_cor_dos_olhos.value = cor_dos_olhos
+
+  const status_cor_da_pele = document.getElementById('caracteristicas_cor_da_pele')
+  status_cor_da_pele.value = cor_da_pele
+
+  const status_cor_do_cabelo = document.getElementById('caracteristicas_cor_do_cabelo')
+  status_cor_do_cabelo.value = cor_do_cabelo
+
+  const status_imagem_personagem = document.getElementById('caracteristicas_imagem_personagem')
+  status_imagem_personagem.value = imagem_personagem
 }
 
 document.addEventListener('DOMContentLoaded', function() {

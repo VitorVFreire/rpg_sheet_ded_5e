@@ -81,6 +81,7 @@ class PersonagemAtributos(Personagem):
                             self.set_carisma(result[5])
                             self._bonus_proficiencia = result[6]  # Update bonus_proficiencia directly
                             return True
+                return True
             return False
         except pymysql.Error as e:
             print(e)
@@ -113,7 +114,7 @@ class PersonagemAtributos(Personagem):
         
     @property
     def bonus_proficiencia(self):
-        return self._bonus_proficiencia if self._bonus_proficiencia is not None else 0
+        return int(self._bonus_proficiencia) if self._bonus_proficiencia is not None else None
     
     @bonus_proficiencia.setter
     def bonus_proficiencia(self,value):
@@ -121,78 +122,66 @@ class PersonagemAtributos(Personagem):
     
     @property
     def forca(self):
-        return self._atributos['forca'] if self._atributos['forca'] is not None else 0
+        return int(self._atributos['forca']) if self._atributos['forca'] is not None else None
     
     @property
     def bonus_forca(self):
-        if self.forca is None:
-            return 0
-        return attributes.loc[self.forca]
+        return int(attributes.loc[self.forca]) if self.forca is not None else None
     
     def set_forca(self, value):
-        self._atributos['forca'] = value
+        self._atributos['forca'] = value 
         
     @property
     def destreza(self):
-        return self._atributos['destreza'] if self._atributos['destreza'] is not None else 0
+        return int(self._atributos['destreza']) if self._atributos['destreza'] is not None else None
     
     @property
     def bonus_destreza(self):
-        if self.destreza is None:
-            return 0
-        return attributes.loc[self.destreza]
+        return int(attributes.loc[self.destreza]) if self._atributos['destreza'] is not None else None
     
     def set_destreza(self,value):
         self._atributos['destreza']=value
     
     @property
     def constituicao(self):
-        return self._atributos['constituicao'] if self._atributos['constituicao'] is not None else 0
+        return int(self._atributos['constituicao']) if self._atributos['constituicao'] is not None else None
     
     @property
     def bonus_constituicao(self):
-        if self.constituicao is None:
-            return 0
-        return attributes.loc[self.constituicao]
+        return int(attributes.loc[self.constituicao]) if self._atributos['constituicao'] is not None else None
            
     def set_constituicao(self,value):
         self._atributos['constituicao']=value
     
     @property
     def inteligencia(self):
-        return self._atributos['inteligencia'] if self._atributos['inteligencia'] is not None else 0
+        return int(self._atributos['inteligencia']) if self._atributos['inteligencia'] is not None else None
     
     @property
     def bonus_inteligencia(self):
-        if self.inteligencia is None:
-            return 0
-        return attributes.loc[self.inteligencia]
+        return int(attributes.loc[self.inteligencia]) if self._atributos['inteligencia'] is not None else None
     
     def set_inteligencia(self,value):
         self._atributos['inteligencia']=value
     
     @property
     def sabedoria(self):
-        return self._atributos['sabedoria'] if self._atributos['sabedoria'] is not None else 0
+        return int(self._atributos['sabedoria']) if self._atributos['sabedoria'] is not None else None
     
     @property
     def bonus_sabedoria(self):
-        if self.sabedoria is None:
-            return 0
-        return attributes.loc[self.sabedoria]
+        return int(attributes.loc[self.sabedoria]) if self._atributos['sabedoria'] is not None else None
      
     def set_sabedoria(self,value):
         self._atributos['sabedoria']=value
     
     @property
     def carisma(self):
-        return self._atributos['carisma'] if self._atributos['carisma'] is not None else 0
+        return int(self._atributos['carisma']) if self._atributos['carisma'] is not None else None
     
     @property
     def bonus_carisma(self):
-        if self.carisma is None:
-            return 0
-        return attributes.loc[self.carisma]
+        return int(attributes.loc[self.carisma]) if self._atributos['carisma'] is not None else None
     
     def set_carisma(self,value):
         self._atributos['carisma']=value

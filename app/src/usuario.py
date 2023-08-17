@@ -157,7 +157,6 @@ class Usuario:
                         await mycursor.execute("SELECT * FROM usuario WHERE email=%s and senha=%s",(self._email,self._senha))
                         result = await mycursor.fetchone()  
                         if result:
-                            print(result)
                             self._id=result[0]
                             self._nome=result[1]
                             self.__tipo_usuario=result[4]

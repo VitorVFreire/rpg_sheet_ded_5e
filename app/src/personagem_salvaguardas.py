@@ -71,6 +71,7 @@ class PersonagemSalvaguardas(PersonagemAtributos):
                             for row in result:
                                 self._salvaguardas.append({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[1]})
                             return True
+                return True
             return False
         except pymysql.Error as e:
             print(e)
@@ -116,34 +117,34 @@ class PersonagemSalvaguardas(PersonagemAtributos):
     def resistencia_forca(self):
         if any(d.get('nome_salvaguarda') == 'forca' for d in self._salvaguardas):
             return self.bonus_forca + self._bonus_proficiencia
-        return self.bonus_forca 
+        return int(self.bonus_forca) if self.bonus_forca is not None else None
     
     @property
     def resistencia_destreza(self):
         if any(d.get('nome_salvaguarda') == 'destreza' for d in self._salvaguardas):
             return self.bonus_destreza + self._bonus_proficiencia
-        return self.bonus_destreza 
+        return int(self.bonus_destreza) if self.bonus_destreza is not None else None
     
     @property
     def resistencia_constituicao(self):
         if any(d.get('nome_salvaguarda') == 'constituicao' for d in self._salvaguardas):
             return self.bonus_constituicao + self._bonus_proficiencia
-        return self.bonus_constituicao
+        return int(self.bonus_constituicao) if self.bonus_constituicao is not None else None
     
     @property
     def resistencia_inteligencia(self):
         if any(d.get('nome_salvaguarda') == 'inteligencia' for d in self._salvaguardas):
             return self.bonus_inteligencia + self._bonus_proficiencia
-        return self.bonus_inteligencia
+        return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else None
     
     @property
     def resistencia_sabedoria(self):
         if any(d.get('nome_salvaguarda') == 'sabedoria' for d in self._salvaguardas):
             return self.bonus_sabedoria + self._bonus_proficiencia
-        return self.bonus_sabedoria
+        return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else None
     
     @property
     def resistencia_carisma(self):
         if any(d.get('nome_salvaguarda') == 'carisma' for d in self._salvaguardas):
             return self.bonus_carisma + self._bonus_proficiencia
-        return self.bonus_carisma
+        return int(self.bonus_carisma) if self.bonus_carisma is not None else None
