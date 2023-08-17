@@ -85,7 +85,7 @@ class Pericia:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO pericia(nome_pericia,status_uso) VALUES(%s,%s);"
                         await mycursor.execute(query, (self._nome_pericia,self._status_uso,))
-                        self._id_pericia = await mycursor.lastrowid
+                        self._id_pericia = mycursor.lastrowid
                         await conn.commit()
                         return True
             return False

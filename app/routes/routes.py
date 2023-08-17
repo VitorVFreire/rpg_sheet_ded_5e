@@ -79,6 +79,7 @@ async def personagens():
 @app.route('/personagem/<id_personagem>')
 async def personagem(id_personagem):
     personagem = Personagem(id_usuario=session.get('id_usuario'), id_personagem=id_personagem)
+    await personagem.personagem_pertence_usuario()
     await personagem.carregar_personagem_banco()
     return render_template(
         'ficha_personagem.html',

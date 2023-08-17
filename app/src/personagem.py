@@ -2,6 +2,7 @@ from data import get_connection
 from src import Usuario
 import pymysql
 import asyncio
+from flask import abort
 
 class Personagem(Usuario):
     def __init__(self, id_usuario=None,id_personagem=None):
@@ -11,7 +12,22 @@ class Personagem(Usuario):
         self._classe = []
         self._raca = None
         self._armas=[]
-        self._equipamentos=[]            
+        self._equipamentos=[]      
+        
+    async def personagem_pertence_usuario(self):
+        try:
+            if self._id_personagem:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "SELECT EXISTS (SELECT id_personagem FROM personagem WHERE id_personagem = %s and id_usuario = %s)"
+                        await mycursor.execute(query, (self._id_personagem, self.id))
+                        result = await mycursor.fetchone()
+                        if result[0] == 1:
+                            return True
+            abort(403, "Acesso Negado")
+        except pymysql.Error as e:
+            print(e)
+            return False      
         
     @property
     def id_personagem(self):
@@ -59,7 +75,7 @@ class Personagem(Usuario):
                         (id_usuario,id_raca,nome_personagem) 
                         VALUES(%s,%s,%s);"""
                         await mycursor.execute(query, (self._id,id_raca,nome_personagem))
-                        self._id_personagem = await mycursor.lastrowid  
+                        self._id_personagem = mycursor.lastrowid  
                         await conn.commit()
                         return True
             return False

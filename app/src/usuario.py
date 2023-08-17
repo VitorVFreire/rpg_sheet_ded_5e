@@ -103,7 +103,7 @@ class Usuario:
                     async with conn.cursor() as mycursor:
                         await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
                         await conn.commit()
-                        self._id= await mycursor.lastrowid    
+                        self._id = mycursor.lastrowid    
                         return True
         except EOFError as e:
                 print(e)

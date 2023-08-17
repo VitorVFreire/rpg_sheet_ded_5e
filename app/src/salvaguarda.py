@@ -78,7 +78,7 @@ class Salvaguarda:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO salvaguarda (nome_salvaguarda) VALUES (%s);"
                         await mycursor.execute(query, (str(self._nome_salvaguarda),))
-                        self._id_salvaguarda = await mycursor.lastrowid 
+                        self._id_salvaguarda = mycursor.lastrowid 
                         await conn.commit()
                         return True
         except pymysql.Error as e:

@@ -66,7 +66,7 @@ class Raca:
                 async with conn.cursor() as mycursor:
                     query = "INSERT INTO raca (nome_raca) VALUES (%s);"
                     await mycursor.execute(query, (str(self._nome_raca),))
-                    self._id_raca = await mycursor.lastrowid 
+                    self._id_raca = mycursor.lastrowid 
                     await conn.commit()
                     await conn.close()
                     return True

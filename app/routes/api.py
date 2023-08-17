@@ -25,6 +25,7 @@ async def caracteristicas_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
+        await personagem.personagem_pertence_usuario()
         if await personagem.carregar_caracteristicas_do_banco():
             return jsonify({
                 'idade': personagem.idade,
