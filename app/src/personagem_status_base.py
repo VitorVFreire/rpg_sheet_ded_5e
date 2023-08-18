@@ -116,7 +116,7 @@ class PersonagemStatusBase(Personagem):
     
     @property
     def nivel(self):
-        return self._nivel
+        return int(self._nivel) if self._nivel is not None else None 
     
     @nivel.setter
     def nivel(self,value):

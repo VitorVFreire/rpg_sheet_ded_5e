@@ -33,7 +33,7 @@ class PersonagemCaracteristicas(Personagem):
             print(e)
             return False
     
-    async def adicionar_caracteristicas_banco(self,chave,valor):
+    async def adicionar_caracteristicas_banco(self,chave, valor):
         try:
             possibilidade_chave=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
             if self._id_personagem and chave in possibilidade_chave:
@@ -42,7 +42,7 @@ class PersonagemCaracteristicas(Personagem):
                         query = f"""INSERT INTO caracteristicas_personagem
                         (id_personagem,{chave}) 
                         VALUES(%s,%s);"""
-                        await mycursor.execute(query, (self._id_personagem,valor,))
+                        await mycursor.execute(query, (self._id_personagem, valor,))
                         await conn.commit()
                         return True
             return False
@@ -70,7 +70,7 @@ class PersonagemCaracteristicas(Personagem):
             if self._id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        query = "SELECT idade,cor_olhos,cor_pele,cor_cabelo,peso,altura,imagem_personagem FROM caracteristicas_personagem WHERE id_personagem = %s"
+                        query = "SELECT idade, cor_olhos, cor_pele, cor_cabelo, peso, altura, imagem_personagem FROM caracteristicas_personagem WHERE id_personagem = %s"
                         await mycursor.execute(query, (self._id_personagem,))
                         result = await mycursor.fetchone() 
                         if result:
@@ -87,7 +87,7 @@ class PersonagemCaracteristicas(Personagem):
             print(e)
             return False
         
-    async def update_caracteristicas_banco(self,chave,valor):
+    async def update_caracteristicas_banco(self,chave, valor):
         try:
             possibilidade_chave=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
             if self._id_personagem and chave in possibilidade_chave:
@@ -109,46 +109,46 @@ class PersonagemCaracteristicas(Personagem):
     def idade(self):
         return self._caracteristicas['idade'] 
         
-    def set_idade(self,value):
-        self._caracteristicas['idade']=value
+    def set_idade(self, value):
+        self._caracteristicas['idade'] = value
     
-    def set_altura(self,value):
-        self._caracteristicas['altura']=value
+    def set_altura(self, value):
+        self._caracteristicas['altura'] = value
         
     @property
     def altura(self):
         return self._caracteristicas['altura']
     
-    def set_peso(self,value):
-        self._caracteristicas['peso']=value
+    def set_peso(self, value):
+        self._caracteristicas['peso'] = value
     
     @property
     def peso(self):
         return self._caracteristicas['peso']
     
-    def set_cor_olhos(self,value):
-        self._caracteristicas['cor dos olhos']=value
+    def set_cor_olhos(self, value):
+        self._caracteristicas['cor dos olhos'] = value
         
     @property
     def cor_olhos(self):
         return self._caracteristicas['cor dos olhos']
     
-    def set_cor_pele(self,value):
-        self._caracteristicas['cor da pele']=value
+    def set_cor_pele(self, value):
+        self._caracteristicas['cor da pele'] = value
     
     @property
     def cor_pele(self):
         return self._caracteristicas['cor da pele']
     
-    def set_cor_cabelo(self,value):
-        self._caracteristicas['cor do cabelo']=value
+    def set_cor_cabelo(self, value):
+        self._caracteristicas['cor do cabelo'] = value
     
     @property
     def cor_cabelo(self):
         return self._caracteristicas['cor do cabelo']  
     
-    def set_imagem_personagem(self,value):
-        self._caracteristicas['imagem_personagem']=value
+    def set_imagem_personagem(self, value):
+        self._caracteristicas['imagem_personagem'] = value
         
     @property
     def imagem_personagem(self):

@@ -79,7 +79,7 @@ class PersonagemAtributos(Personagem):
                             self.set_inteligencia(result[3])
                             self.set_sabedoria(result[4])
                             self.set_carisma(result[5])
-                            self._bonus_proficiencia = result[6]  # Update bonus_proficiencia directly
+                            self._bonus_proficiencia = result[6]
                             return True
                 return True
             return False

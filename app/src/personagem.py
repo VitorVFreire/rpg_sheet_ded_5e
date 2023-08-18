@@ -11,8 +11,8 @@ class Personagem(Usuario):
         self._nome_personagem=None
         self._classe = []
         self._raca = None
-        self._armas=[]
-        self._equipamentos=[]      
+        self._armas = []
+        self._equipamentos = []      
         
     async def personagem_pertence_usuario(self):
         try:
@@ -128,7 +128,7 @@ class Personagem(Usuario):
                             await self._classe.clear()
                             for row in result:
                                 self._classe.append({'id_classe_personagem': row[2], 'id_classe': row[0], 'nome_classe': row[1]})
-                                return True
+                            return True
             return False
         except pymysql.Error as e:
             print(e)

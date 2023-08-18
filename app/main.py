@@ -1,4 +1,4 @@
-from flask import Flask,session
+from flask import Flask, session
 from flask_session import Session
 import os
 from dotenv import load_dotenv

@@ -5,25 +5,23 @@ import asyncio
 
 class Usuario:
     def __init__(self,id=None,nome=None,email=None,senha=None,data_nascimento=None):
-        self._id=id
-        self._nome=nome
-        self._email=email
-        self._senha=criptografar(senha)
-        self.__tipo_usuario=None
-        self._data_nascimento = data_nascimento
-        self._personagens=[]
+        self._id = id
+        self._nome = nome
+        self._email = email
+        self._senha = criptografar(senha)
+        self.__tipo_usuario = None
+        self._data_nascimento  =  data_nascimento
+        self._personagens = []
         
     @property
     async def tipo_usuario(self):
         if self.__tipo_usuario is None:
-            user = await self.get_usuario()
-            self.__tipo_usuario = user['tipo_usuario']
+            await self.get_usuario()
         return self.__tipo_usuario   
     
     async def usuario_admin(self):
         if self.__tipo_usuario is None:
-            user = await self.get_usuario()
-            self.__tipo_usuario=user['tipo_usuario']
+            await self.get_usuario()
         return self.__tipo_usuario=='admin'   
     
     @property
@@ -133,10 +131,10 @@ class Usuario:
                 async with conn.cursor() as mycursor:
                     result = {}
                     if self._id:
-                        await mycursor.execute("SELECT id_usuario, nome, email, senha, data_nascimento FROM usuario WHERE id_usuario=%s", (self._id,))
+                        await mycursor.execute("SELECT id_usuario, nome, email, senha, data_nascimento, tipo_usuario FROM usuario WHERE id_usuario=%s", (self._id,))
                         result = await mycursor.fetchone()
                     elif self._email:
-                        await mycursor.execute("SELECT id_usuario, nome, email, senha, data_nascimento FROM usuario WHERE email=%s", (self._email,))
+                        await mycursor.execute("SELECT id_usuario, nome, email, senha, data_nascimento, tipo_usuario FROM usuario WHERE email=%s", (self._email,))
                         result = await mycursor.fetchone()
                     if result:
                         self.id = result[0]
@@ -144,6 +142,7 @@ class Usuario:
                         self.email = result[2]
                         self.senha = result[3]
                         self.data_nascimento = result[4]
+                        self.__tipo_usuario = result[5]
             return None
         except EOFError as e:
             print(e)

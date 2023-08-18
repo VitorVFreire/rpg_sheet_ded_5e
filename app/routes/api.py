@@ -12,6 +12,7 @@ async def insert_personagem():
     try:
         id_usuario = session.get('id_usuario')
         personagem = Personagem(id_usuario=id_usuario)
+        
         id_raca = request.form.get('id_raca')
         nome_personagem = request.form.get('nome_personagem')
                 
@@ -25,7 +26,9 @@ async def caracteristicas_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
+        
         await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_caracteristicas_do_banco():
             return jsonify({
                 'idade': personagem.idade,
@@ -45,7 +48,10 @@ async def caracteristicas_db(id_personagem):
 async def atributos_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        personagem = PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)
+        personagem = PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)        
+        
+        await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_atributos_do_banco():
             return jsonify({
                 'forca': personagem.forca,
@@ -72,6 +78,9 @@ async def salvaguardas_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
+        
+        await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_atributos_do_banco() and await personagem.carregar_salvaguardas_do_banco():
             return jsonify({
                 'forca': personagem.resistencia_forca,
@@ -91,7 +100,10 @@ async def salvaguardas_db(id_personagem):
 async def status_base_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        personagem = PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)  
+        personagem = PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)          
+        
+        await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_status_base_do_banco():
             return jsonify({
                 'nivel': personagem.nivel,
@@ -117,6 +129,9 @@ async def pericias_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_atributos_do_banco() and await personagem.carregar_pericias_do_banco():
             return jsonify({
                 'pericias': {
@@ -150,6 +165,9 @@ async def novo_pericias_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_atributos_do_banco() and await personagem.carregar_pericias_do_banco():
             return jsonify({
                 'acrobacia': personagem.acrobacia,
@@ -180,6 +198,9 @@ async def update_atributos_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemAtributos(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+        
         chave = request.form.get('chave')
         valor = request.form.get('valor')
         
@@ -201,10 +222,13 @@ async def update_salvaguardas_db(id_personagem):
         id_usuario = session.get('id_usuario')
         personagem = PersonagemSalvaguardas(id_usuario=id_usuario,id_personagem=id_personagem)
         
+        await personagem.personagem_pertence_usuario()        
+        
         chave = request.form.get('chave')
         tipo = request.form.get('tipo')
         
         salvaguarda = Salvaguarda(nome_salvaguarda=chave)
+        
         await salvaguarda.carregar_salvaguarda_nome()
         await personagem.carregar_atributos_do_banco()
         
@@ -224,6 +248,9 @@ async def update_status_base_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = PersonagemStatusBase(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+        
         chave = request.form.get('chave')
         valor = request.form.get('valor')
         
@@ -241,10 +268,13 @@ async def update_adicionar_perica_db(id_personagem):
         id_usuario = session.get('id_usuario')
         personagem = PersonagemPericias(id_usuario=id_usuario,id_personagem=id_personagem)
         
+        await personagem.personagem_pertence_usuario()        
+        
         chave = request.form.get('chave')
         tipo = request.form.get('tipo')
 
         pericia = Pericia(nome_pericia=chave)
+        
         await pericia.carregar_pericia_nome()
         await personagem.carregar_atributos_do_banco()
 
@@ -265,6 +295,8 @@ async def update_caracteristicas_personagems_db(id_personagem):
         id_usuario = session.get('id_usuario')
         personagem = PersonagemCaracteristicas(id_usuario=id_usuario,id_personagem=id_personagem)
         
+        await personagem.personagem_pertence_usuario()       
+        
         chave = request.form.get('chave')
         valor = request.form.get('valor')
                 
@@ -281,6 +313,8 @@ async def update_base_db(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
         personagem = Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
         
         chave = request.form.get('chave')
         valor = request.form.get('valor')

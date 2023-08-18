@@ -59,7 +59,7 @@ async def delete_usuario():
         id_usuario=session.get('id_usuario')
         usuario=Usuario(id_usuario=id_usuario)
                 
-        await usuario.delete_usuario(id_classe)
+        await usuario.delete_usuario()
         
         return render_template('index.html',titulo='home',msg='Conta Encerrada!')
     except EOFError as e:
@@ -73,7 +73,7 @@ async def criar_personagem():
     
 @app.route('/personagens')
 async def personagens():
-    usuario=Usuario(id=session.get('id_usuario'))
+    usuario = Usuario(id=session.get('id_usuario'))
     return render_template('personagens.html',titulo='Personagens',personagens = await usuario.personagens)
 
 @app.route('/personagem/<id_personagem>')
@@ -87,5 +87,5 @@ async def personagem(id_personagem):
         raca = await personagem.raca,
         nome = await personagem.nome,
         id_personagem = personagem.id_personagem,
-        nome_personagem = await personagem.nome_personagem
+        nome_personagem = await personagem.nome_personagem,
     )
