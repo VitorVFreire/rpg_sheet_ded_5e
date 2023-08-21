@@ -1,0 +1,12 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    <label for="niveis_feitico"Selecionar nível do feitiço:</label>
+    <select name="niveis_feitico" id="niveis_feitico">
+        {% for nivel_feitico in niveis_feitico %}
+            <option value="{nivel_feitico}">{nivel_feitico}</option>
+        {% endfor %}
+    </select>
+    <section data-adiconar-feitico> 
+
+    </section>
+{% endblock %}

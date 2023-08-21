@@ -3,9 +3,9 @@ import pymysql
 import asyncio
 
 class Salvaguarda:
-    def __init__(self,id_salvaguarda=None,nome_salvaguarda=None):
-        self._id_salvaguarda = id_salvaguarda if id_salvaguarda is not None else []
-        self._nome_salvaguarda = nome_salvaguarda if nome_salvaguarda is not None else []
+    def __init__(self, id_salvaguarda = None, nome_salvaguarda = None):
+        self._id_salvaguarda = id_salvaguarda or []
+        self._nome_salvaguarda = nome_salvaguarda or []
         
     @property
     def nome_salvaguarda(self):

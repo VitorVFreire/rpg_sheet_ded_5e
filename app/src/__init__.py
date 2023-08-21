@@ -2,6 +2,7 @@ from .usuario import Usuario
 from .pericia import Pericia
 from .raca import Raca
 from .classe import Classe
+from .habilidade import Habilidade
 from .salvaguarda import Salvaguarda
 from .personagem import Personagem
 from .personagem_atributos import PersonagemAtributos

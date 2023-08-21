@@ -4,8 +4,8 @@ import asyncio
 
 class Raca:
     def __init__(self,id_raca=None,nome_raca=None):
-        self._id_raca = id_raca if id_raca is not None else []
-        self._nome_raca = nome_raca if nome_raca is not None else []
+        self._id_raca = id_raca or[]
+        self._nome_raca = nome_raca or []
         
     @property
     def nome_raca(self):

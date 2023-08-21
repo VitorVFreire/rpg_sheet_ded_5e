@@ -8,7 +8,7 @@ class Personagem(Usuario):
     def __init__(self, id_usuario=None,id_personagem=None):
         super().__init__(id=id_usuario)
         self._id_personagem = id_personagem
-        self._nome_personagem=None
+        self._nome_personagem = None
         self._classe = []
         self._raca = None
         self._armas = []

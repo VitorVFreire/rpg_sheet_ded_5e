@@ -4,9 +4,9 @@ import asyncio
 
 class Pericia:
     def __init__(self,id_pericia=None,nome_pericia=None,status_uso=None):
-        self._id_pericia= id_pericia if id_pericia is not None else []
-        self._nome_pericia= nome_pericia if nome_pericia is not None else []
-        self._status_uso= status_uso if status_uso is not None else []
+        self._id_pericia = id_pericia or []
+        self._nome_pericia = nome_pericia or []
+        self._status_uso = status_uso or []
         
     @property
     def nome_pericia(self):

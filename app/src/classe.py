@@ -4,8 +4,8 @@ import asyncio
 
 class Classe:
     def __init__(self, id_classe=None, nome_classe=None):
-        self._id_classe = [] if id_classe is None else id_classe
-        self._nome_classe = nome_classe if nome_classe is not None else []
+        self._id_classe = id_classe or []
+        self._nome_classe = nome_classe or []
         
     @property
     def nome_classe(self):

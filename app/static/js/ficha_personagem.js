@@ -274,8 +274,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const atributo = id.substring(posicao + 3);
 
       $.ajax({
-        url: `/update/atributos/${id_personagem}`,
-        type: 'POST',
+        url: `/atributos/${id_personagem}`,
+        type: 'PUT',
         data: {
           chave: atributo,
           valor: this.value,
@@ -303,16 +303,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const id = input.id;
       const posicao = id.search('da_');
       const salvaguarda = id.substring(posicao + 3);
-      let tipo = 'adicionar';
+      let tipo = 'POST';
       if (!this.checked) {
-        tipo = 'remover';
+        tipo = 'DELETE'
       }
       $.ajax({
-        url: `/update/salvaguarda/${id_personagem}`,
-        type: 'POST',
+        url: `/salvaguardas/${id_personagem}`,
+        type: tipo,
         data: {
           chave: salvaguarda,
-          tipo: tipo,
         },
         success: function(response) {
           var result = response.result;
@@ -334,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const status_base = id.substring(posicao+2);
 
       $.ajax({
-        url: `/update/status_base/${id_personagem}`,
+        url: `/status_base/${id_personagem}`,
         type: 'POST',
         data: {
             chave: status_base,
@@ -356,16 +355,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const id = input.id;
       const posicao=id.search('a_')
       const pericia = id.substring(posicao+2);
-      let tipo = 'adicionar';
+      let tipo = 'POST';
       if (!this.checked) {
-        tipo = 'remover';
+        tipo = 'DELETE';
       }
       $.ajax({
-        url: `/update/nova_pericia/${id_personagem}`,
-        type: 'POST',
+        url: `/pericias/${id_personagem}`,
+        type: tipo,
         data: {
           chave: pericia,
-          tipo: tipo,
         },
         success: function(response) {
           var result = response.result;
@@ -387,8 +385,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const caracteristica = id.substring(posicao+1);
 
       $.ajax({
-        url: `/update/caracteristicas_personagem/${id_personagem}`,
-        type: 'POST',
+        url: `/caracteristicas/${id_personagem}`,
+        type: 'PUT',
         data: {
             chave: caracteristica,
             valor: this.value,
@@ -410,10 +408,10 @@ function capitalizeFirstLetter(str) {
 //FUNCAO PARA ATUALIZAR PERICIAS:
 function atualizar_pericias() {
   $.ajax({
-    url: `/valores/pericias/${id_personagem}`,
+    url: `/pericias/${id_personagem}`,
     type: 'GET',
     success: function(response) {
-      for (const [key, value] of Object.entries(response)) {
+      for (const [key, value] of Object.entries(response.pericias)) {
         $(`#pericia_${key}`).text(value);
       }
     }
