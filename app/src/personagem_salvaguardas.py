@@ -96,9 +96,9 @@ class PersonagemSalvaguardas(PersonagemAtributos):
     async def get_salvaguardas(self,chave):
         await self.carregar_salvaguardas_do_banco()
         if any(d.get('nome_salvaguarda') == chave for d in self._salvaguardas):
-            return attributes.loc[self._atributos[chave]] + self.bonus_proficiencia
+            return int(attributes.loc[self._atributos[chave]] + self.bonus_proficiencia)
         else:
-            return attributes.loc[self._atributos[chave]]
+            return int(attributes.loc[self._atributos[chave]])
         
     @property
     def salvaguardas(self):
@@ -116,35 +116,35 @@ class PersonagemSalvaguardas(PersonagemAtributos):
     @property
     def resistencia_forca(self):
         if any(d.get('nome_salvaguarda') == 'forca' for d in self._salvaguardas) and self.bonus_forca is not None:
-            return int(self.bonus_forca + self._bonus_proficiencia)
+            return int(self.bonus_forca + self.bonus_proficiencia)
         return int(self.bonus_forca) if self.bonus_forca is not None else None
     
     @property
     def resistencia_destreza(self):
         if any(d.get('nome_salvaguarda') == 'destreza' for d in self._salvaguardas) and self.bonus_destreza is not None:
-            return int(self.bonus_destreza + self._bonus_proficiencia)
+            return int(self.bonus_destreza + self.bonus_proficiencia)
         return int(self.bonus_destreza) if self.bonus_destreza is not None else None
     
     @property
     def resistencia_constituicao(self):
         if any(d.get('nome_salvaguarda') == 'constituicao' for d in self._salvaguardas) and self.bonus_constituicao is not None:
-            return int(self.bonus_constituicao + self._bonus_proficiencia)
+            return int(self.bonus_constituicao + self.bonus_proficiencia)
         return int(self.bonus_constituicao) if self.bonus_constituicao is not None else None
     
     @property
     def resistencia_inteligencia(self):
         if any(d.get('nome_salvaguarda') == 'inteligencia' for d in self._salvaguardas) and self.bonus_inteligencia is not None:
-            return int(self.bonus_inteligencia + self._bonus_proficiencia)
+            return int(self.bonus_inteligencia + self.bonus_proficiencia)
         return int(self.bonus_inteligencia) if self.bonus_inteligencia is not None else None
     
     @property
     def resistencia_sabedoria(self):
         if any(d.get('nome_salvaguarda') == 'sabedoria' for d in self._salvaguardas) and self.bonus_sabedoria is not None:
-            return int(self.bonus_sabedoria + self._bonus_proficiencia)
+            return int(self.bonus_sabedoria + self.bonus_proficiencia)
         return int(self.bonus_sabedoria) if self.bonus_sabedoria is not None else None
     
     @property
     def resistencia_carisma(self):
         if any(d.get('nome_salvaguarda') == 'carisma' for d in self._salvaguardas) and self.bonus_carisma is not None:
-            return int(self.bonus_carisma + self._bonus_proficiencia)
+            return int(self.bonus_carisma + self.bonus_proficiencia)
         return int(self.bonus_carisma) if self.bonus_carisma is not None else None

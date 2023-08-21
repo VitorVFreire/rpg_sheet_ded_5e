@@ -88,7 +88,7 @@ class PersonagemAtributos(Personagem):
             return False
 
     
-    async def update_atributos_banco(self,chave,valor):
+    async def update_atributos_banco(self, chave, valor):
         try:
             possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
             if self._id_personagem and chave in possibilidade_chave:
@@ -106,19 +106,19 @@ class PersonagemAtributos(Personagem):
             print(e)
             return False
         
-    async def get_bonus(self,chave):
+    async def get_bonus(self, chave):
         await self.carregar_atributos_do_banco()
         if self._atributos[chave] is None:
             return 0
-        return attributes.loc[self._atributos[chave]]
+        return int(attributes.loc[self._atributos[chave]])
         
     @property
     def bonus_proficiencia(self):
-        return int(self._bonus_proficiencia) if self._bonus_proficiencia is not None else None
+        return int(self._bonus_proficiencia) if self._bonus_proficiencia is not None else 0
     
     @bonus_proficiencia.setter
-    def bonus_proficiencia(self,value):
-        self._bonus_proficiencia=value
+    def bonus_proficiencia(self, value):
+        self._bonus_proficiencia = value
     
     @property
     def forca(self):
@@ -140,7 +140,7 @@ class PersonagemAtributos(Personagem):
         return int(attributes.loc[self.destreza]) if self._atributos['destreza'] is not None else None
     
     def set_destreza(self,value):
-        self._atributos['destreza']=value
+        self._atributos['destreza'] = value
     
     @property
     def constituicao(self):
@@ -151,7 +151,7 @@ class PersonagemAtributos(Personagem):
         return int(attributes.loc[self.constituicao]) if self._atributos['constituicao'] is not None else None
            
     def set_constituicao(self,value):
-        self._atributos['constituicao']=value
+        self._atributos['constituicao'] = value
     
     @property
     def inteligencia(self):
@@ -162,7 +162,7 @@ class PersonagemAtributos(Personagem):
         return int(attributes.loc[self.inteligencia]) if self._atributos['inteligencia'] is not None else None
     
     def set_inteligencia(self,value):
-        self._atributos['inteligencia']=value
+        self._atributos['inteligencia'] = value
     
     @property
     def sabedoria(self):
@@ -173,7 +173,7 @@ class PersonagemAtributos(Personagem):
         return int(attributes.loc[self.sabedoria]) if self._atributos['sabedoria'] is not None else None
      
     def set_sabedoria(self,value):
-        self._atributos['sabedoria']=value
+        self._atributos['sabedoria'] = value
     
     @property
     def carisma(self):
@@ -184,4 +184,4 @@ class PersonagemAtributos(Personagem):
         return int(attributes.loc[self.carisma]) if self._atributos['carisma'] is not None else None
     
     def set_carisma(self,value):
-        self._atributos['carisma']=value
+        self._atributos['carisma'] = value

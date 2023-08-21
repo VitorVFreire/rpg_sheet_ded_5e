@@ -39,7 +39,7 @@ class PersonagemHabilidades(Personagem):
             print(e)
             return False
         
-    async def carregar_feitico_do_banco(self):
+    async def carregar_feiticos_do_banco(self):
         try:
             if self._id_personagem:
                 async with await get_connection() as conn:
