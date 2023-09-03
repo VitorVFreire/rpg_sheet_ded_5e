@@ -1,4 +1,4 @@
-from data import get_connection
+from data import get_connection, attributes
 from src import Usuario
 import pandas
 import pymysql
@@ -96,9 +96,9 @@ class PersonagemPericias(PersonagemAtributos):
         if len(self._pericias) <= 0:
             await self.carregar_pericias_do_banco()
         if any(d.get('nome_pericia') == chave for d in self._pericias):
-            return attributes.loc[self._atributos[status_uso]] + self.bonus_proficiencia
+            return int(attributes.loc[self._atributos[status_uso]] + self.bonus_proficiencia)
         else:
-            return attributes.loc[self._atributos[status_uso]]
+            return int(attributes.loc[self._atributos[status_uso]]) if self._atributos[status_uso] is not None else ''
 
     @property
     def lista_nome_pericias(self):

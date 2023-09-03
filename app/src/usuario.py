@@ -32,8 +32,6 @@ class Usuario:
     
     @property
     def id(self):
-        if self._id is None:
-            self.get_usuario()
         return self._id
     
     @id.setter
