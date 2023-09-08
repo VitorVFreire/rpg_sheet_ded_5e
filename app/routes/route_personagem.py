@@ -7,7 +7,7 @@ from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade
 from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
 from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase
 
-@app.route('/insert_personagem',methods = ['POST'])
+@app.post('/insert_personagem')
 async def insert_personagem():
     try:
         id_usuario = session.get('id_usuario')
@@ -21,6 +21,19 @@ async def insert_personagem():
         print(e)
         return jsonify({'result':False})
     
+@app.delete('/personagem/<id_personagem>')
+async def deletepersonagem(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+                
+        return jsonify({'result': await personagem.delete_personagem_banco()})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
 @app.get('/caracteristicas/<id_personagem>')
 async def caracteristicas_personagem_get(id_personagem):
     try:
@@ -28,6 +41,7 @@ async def caracteristicas_personagem_get(id_personagem):
         personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
             
         await personagem.personagem_pertence_usuario()
+        
         if await personagem.carregar_caracteristicas_do_banco():
             return jsonify({
                 'idade': personagem.idade,

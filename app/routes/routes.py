@@ -21,7 +21,6 @@ async def cadastro_login():
     usuario = Usuario(email=request.form.get('email'), senha=request.form.get('senha'))
     if await usuario.valid_usuario():
         session['id_usuario'] = usuario.id
-        print(f"ID: {session.get('id_usuario')}")
         return render_template('index.html', titulo = 'home', msg = 'Logado')
     return redirect(url_for('login'))
 

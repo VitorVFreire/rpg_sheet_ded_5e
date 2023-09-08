@@ -165,21 +165,13 @@ async function pericias() {
 
 function html_pericias(periciasData, periciasDoPersonagem) {
   const periciasSection = document.querySelector('[data-pericias-lista]');
-  periciasSection.innerHTML += '<h3>Pericias</h3>'
-  periciasSection.classList.add('row', 'justify-content')
-  let contador = 0;
   for (const pericia in periciasData) {
     if (periciasData.hasOwnProperty(pericia)) {
       const valor = periciasData[pericia];
       const periciaElement = document.createElement('div');
-      if (contador == 3) {
-        contador = 0;
-        periciasSection.classList.add('row', 'justify-content')
-      } else {
-        periciasSection.classList.add('col')
-      }
+      periciaElement.classList.add('col')
       periciaElement.innerHTML = `
-            <label for="check_pericia_${pericia}">${capitalizeFirstLetter(pericia)}</label> 
+            <label for="check_pericia_${pericia}">${capitalizeFirstLetter(pericia)}</label> <br>
             <input type="checkbox" class="form-check-input" id="check_pericia_${pericia}" required/>
             <div id='pericia_${pericia}'>${valor}</div>
         </div>
@@ -359,7 +351,7 @@ inputs_status_base.forEach(input => {
 
     $.ajax({
       url: `/status_base/${id_personagem}`,
-      type: 'POST',
+      type: 'PUT',
       data: {
         chave: status_base,
         valor: this.value,

@@ -97,7 +97,7 @@ class Usuario:
             if self._nome and self._email and self._senha and self._data_nascimento:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrão'))
+                        await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'admin'))
                         await conn.commit()
                         self._id = mycursor.lastrowid    
                         return True
