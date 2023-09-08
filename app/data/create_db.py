@@ -155,4 +155,40 @@ CREATE TABLE classe_personagem (
 );
 """)
 
+cursor.execute("""
+INSERT INTO classe(nome_classe) VALUES('mago');
+""")
+
+cursor.execute("""
+INSERT INTO pericia (nome_pericia, status_uso)
+VALUES
+    ('acrobacia', 'destreza'),
+    ('arcanismo', 'inteligencia'),
+    ('atletismo', 'forca'),
+    ('atuacao', 'carisma'),
+    ('enganacao', 'carisma'),
+    ('furtividade', 'destreza'),
+    ('historia', 'inteligencia'),
+    ('intimidacao', 'carisma'),
+    ('intuicao', 'sabedoria'),
+    ('investigacao', 'inteligencia'),
+    ('lidar_com_animais', 'sabedoria'),
+    ('medicina', 'sabedoria'),
+    ('natureza', 'inteligencia'),
+    ('percepcao', 'sabedoria'),
+    ('persuassao', 'carisma'),
+    ('prestidigitacao', 'destreza'),
+    ('religiao', 'inteligencia'),
+    ('sobrevivencia', 'sabedoria');
+""")
+
+cursor.execute("""
+INSERT INTO raca(nome_raca) VALUES('humano'),('elfo');
+""")
+
+cursor.execute("""
+INSERT INTO salvaguarda(nome_salvaguarda) VALUES('forca'),('inteligencia'),('sabedoria'),
+('destreza'),('carisma'),('constituicao')
+""")
+
 connection.commit()
