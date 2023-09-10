@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify, abort
 from flask_session import Session
 import asyncio
 
@@ -16,8 +16,9 @@ def login():
         if session.get('id_usuario'):
             return render_template('index.html',titulo = 'home')
         return render_template('login.html',titulo = 'login', msg = 'Erro no Login')
-    except:
-        return 404
+    except EOFError as e:
+        print(e)
+        abort(404)
 
 @app.post('/login')
 async def cadastro_login():
@@ -27,16 +28,18 @@ async def cadastro_login():
             session['id_usuario'] = usuario.id
             return render_template('index.html', titulo = 'home', msg = 'Logado')
         return redirect(url_for('login'))
-    except:
-        return 500
+    except EOFError as e:
+        print(e)
+        abort(500)
 
 @app.route('/logout')
 def logout():
     try:
         session['id_usuario'] = None
         return render_template('index.html', titulo = 'home', msg = 'Logout')
-    except:
-        return 404
+    except EOFError as e:
+        print(e)
+        abort(404)
 
 @app.route('/cadastro_usuario')
 def criar_usuario():
@@ -44,8 +47,9 @@ def criar_usuario():
         if session.get('id_usuario'):
             return render_template('index.html', titulo = 'home')
         return render_template('cadastro_usuario.html', titulo = 'cadastro de usuario')
-    except:
-        return 404
+    except EOFError as e:
+        print(e)
+        abort(404)
 
 @app.post('/cadastro_usuario')
 async def cadastro_usuario():
@@ -84,22 +88,34 @@ async def criar_personagem():
         racas = Raca()
         classes = Classe()
         return render_template('create_personagem.html', titulo = 'Criar Personagem', racas= await racas.racas, classes = await classes.classes)
-    except:
-        return 404
+    except EOFError as e:
+        print(e)
+        abort(404)
+        
 @app.route('/personagens')
 async def personagens():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        id_usuario = session.get('id_usuario')
+        
+        if id_usuario is None:
+            abort(403)
+        
+        usuario = Usuario(id=id_usuario)
+        
         return render_template('personagens.html', titulo = 'Personagens', personagens = await usuario.personagens)
-    except:
-        return 404
+    except EOFError as e:
+        print(e)
+        abort(403, "Deve ser Feito Login para acessar essa pagina")
     
 @app.route('/personagem/<id_personagem>')
 async def personagem(id_personagem):
     try:
-        personagem = Personagem(id_usuario=session.get('id_usuario'), id_personagem=id_personagem)
+        id_usuario = session.get('id_usuario')
+        
+        personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
 
         await personagem.personagem_pertence_usuario()
+        
         await personagem.carregar_personagem_banco()
         await personagem.carregar_classe_do_banco()
         
@@ -112,8 +128,9 @@ async def personagem(id_personagem):
             id_personagem = personagem.id_personagem,
             nome_personagem = await personagem.nome_personagem,
         )
-    except:
-        return 403
+    except EOFError as e:
+        print(e)
+        abort(403, 'Error: 403\nAcesso Negado')
     
 @app.route('/personagem/adicionar_habilidade/<id_personagem>')
 async def adicionar_habilidade_personagem(id_personagem):
@@ -122,5 +139,6 @@ async def adicionar_habilidade_personagem(id_personagem):
         await habilidades.carregar_habilidades()
         await habilidades.carregar_habilidades_personagem_do_banco(id_personagem)
         return render_template('adicionar_habilidade_personagem.html', habilidades = await habilidades.habilidades, id_personagem = id_personagem)
-    except:
-        return 404
+    except EOFError as e:
+        print(e)
+        abort(404)

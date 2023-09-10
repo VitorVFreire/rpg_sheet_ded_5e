@@ -22,7 +22,7 @@ class Usuario:
     async def usuario_admin(self):
         if self.__tipo_usuario is None:
             await self.get_usuario()
-        return self.__tipo_usuario=='admin'   
+        return self.__tipo_usuario == 'admin'   
     
     @property
     async def personagens(self):
@@ -70,7 +70,7 @@ class Usuario:
         return None
     
     @data_nascimento.setter
-    def data_nascimento(self,value):
+    def data_nascimento(self, value):
         self._data_nascimento = value
             
     async def delete_usuario(self):
@@ -97,7 +97,7 @@ class Usuario:
             if self._nome and self._email and self._senha and self._data_nascimento:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'admin'))
+                        await mycursor.execute('INSERT INTO usuario (nome,email,senha,data_nascimento,tipo_usuario) values(%s,%s,%s,%s,%s)',(self._nome,self._email,self._senha,self._data_nascimento,'padrao'))
                         await conn.commit()
                         self._id = mycursor.lastrowid    
                         return True

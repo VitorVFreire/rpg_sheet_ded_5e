@@ -10,13 +10,28 @@ class PersonagemHabilidades(Personagem):
         super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._habilidade = []
     
-    async def exists_habilidade_banco(self, id_habilidade):
+    async def exists_habilidade_especifica_banco(self, id_habilidade):
         try:
             if self._id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_habilidade_personagem FROM habilidade_personagem WHERE id_habilidade = %s and id_personagem = %s)"
                         await mycursor.execute(query, (id_habilidade,self._id_personagem,))
+                        result = await mycursor.fetchone()
+                        if result[0] == 1:
+                            return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+        
+    async def exists_habilidade_banco(self):
+        try:
+            if self._id_personagem:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "SELECT EXISTS (SELECT id_habilidade_personagem FROM habilidade_personagem WHERE id_personagem = %s)"
+                        await mycursor.execute(query, (self._id_personagem,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True

@@ -264,8 +264,11 @@ function html_caracteristicas(idade, altura, peso, cor_dos_olhos, cor_da_pele, c
 
 async function habilidades() {
   const conexao_habilidades = await fetch(`http://localhost:8085/habilidades/${id_personagem}`)
-  const data = await conexao_habilidades.json();
-  html_habilidades(data)
+
+  if (conexao_habilidades.status === 200){
+    const data = await conexao_habilidades.json()
+    html_habilidades(data)
+  }  
 }
 
 function html_habilidades(habilidades) {
