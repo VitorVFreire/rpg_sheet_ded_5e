@@ -1,0 +1,18 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<br>
+    <form id="form">
+        <input placeholder="nome da habilidade" type="text" class="form-control" id="nome_habilidade" name="nome_habilidade" required/>
+        <input placeholder="nome da atributo" type="text" class="form-control" id="nome_atributo" name="nome_atributo" required/>
+        <input placeholder="lados dados" type="number" class="form-control" id="lados_dados" name="lados_dados" required/>
+        <input placeholder="link de detalhes" type="url" class="form-control" id="link_detalhes" name="link_detalhes" required/>
+        <input placeholder="tipo dano" type="text" class="form-control" id="tipo_dano" name="tipo_dano" required/>
+        <input placeholder="quantidade de dados" type="number" class="form-control" id="qtd_dados" name="qtd_dados" required/>
+        <input placeholder="nivel da habilidade" type="number" class="form-control" id="nivel_habilidade" name="nivel_habilidade" required/>
+        <input placeholder="adicional por nivel" type="number" class="form-control" id="adicional_por_nivel" name="adicional_por_nivel" required/>
+
+        <button type="submit" id="btn-cadastrar" class="btn-dark">Cadastrar</button>
+    </form>
+    <div id="result-container"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/admin/criar_habilidade.js')}}"></script>
+{% endblock %}

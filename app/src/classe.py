@@ -20,7 +20,7 @@ class Classe:
         if (type(self._id_classe) is list and len(self._id_classe)<=0) or (self._id_classe is None):
             await self.carregar_classes()
         classes=[]
-        for id_classe,nome_classe in zip(self._id_classe,self._nome_classe):
+        for id_classe,nome_classe in zip(self._id_classe, self._nome_classe):
             classes.append({'id_classe':id_classe,'nome_classe':nome_classe})
         return classes
     

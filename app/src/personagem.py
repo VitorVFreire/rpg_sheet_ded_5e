@@ -125,7 +125,7 @@ class Personagem(Usuario):
                         await mycursor.execute(query, (self._id_personagem,))
                         result = await mycursor.fetchall()
                         if result:
-                            await self._classe.clear()
+                            self._classe.clear()
                             for row in result:
                                 self._classe.append({'id_classe_personagem': row[2], 'id_classe': row[0], 'nome_classe': row[1]})
                             return True
@@ -136,6 +136,13 @@ class Personagem(Usuario):
         
     @property
     async def classe(self):
+        if len(self._classe)<=0:
+            await self.carregar_classe_do_banco()
+        return self._classe[0]['nome_classe'] if len(self._classe) > 0 else ''
+    
+    @property
+    async def classes(self):
+        print(self._classe)
         if len(self._classe)<=0:
             await self.carregar_classe_do_banco()
         return self._classe

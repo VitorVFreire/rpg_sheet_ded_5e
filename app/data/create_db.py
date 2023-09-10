@@ -156,6 +156,40 @@ CREATE TABLE classe_personagem (
 """)
 
 cursor.execute("""
+CREATE TABLE habilidade (
+    id_habilidade INT PRIMARY KEY AUTO_INCREMENT,
+    nome_atributo VARCHAR(20) NOT NULL,
+    nome_habilidade VARCHAR(45) NOT NULL,
+    nivel_habilidade INT NOT NULL,
+    tipo_dano VARCHAR(20),
+    qtd_dados INT NOT NULL,
+    lados_dados INT NOT NULL,
+    adicional_por_nivel INT NOT NULL,
+    link_detalhes VARCHAR(300)
+);
+""")
+
+cursor.execute("""
+CREATE TABLE habilidade_classe (
+    id_habilidade_classe INT PRIMARY KEY AUTO_INCREMENT,
+    id_classe INT NOT NULL,
+    id_habilidade INT NOT NULL,
+    FOREIGN KEY (id_classe) REFERENCES classe(id_classe) ON DELETE CASCADE,
+    FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade) ON DELETE CASCADE
+);
+""")
+
+cursor.execute("""
+CREATE TABLE habilidade_personagem (
+    id_habilidade_personagem INT PRIMARY KEY AUTO_INCREMENT,
+    id_personagem INT NOT NULL,
+    id_habilidade INT NOT NULL,
+    FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE,
+    FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade) ON DELETE CASCADE
+);
+""")
+
+cursor.execute("""
 INSERT INTO classe(nome_classe) VALUES('mago');
 """)
 
@@ -189,6 +223,12 @@ INSERT INTO raca(nome_raca) VALUES('humano'),('elfo');
 cursor.execute("""
 INSERT INTO salvaguarda(nome_salvaguarda) VALUES('forca'),('inteligencia'),('sabedoria'),
 ('destreza'),('carisma'),('constituicao')
+""")
+
+#SENHA: 123
+cursor.execute("""
+INSERT INTO usuario(nome, email, senha, data_nascimento, tipo_usuario)
+VALUES('user_teste', 'teste@teste', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=', '2023-09-08', 'admin')               
 """)
 
 connection.commit()

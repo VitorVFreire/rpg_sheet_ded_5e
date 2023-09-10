@@ -3,7 +3,7 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Usuario, Personagem, Classe, Raca, Pericia, Salvaguarda
+from src import Usuario, Personagem, Classe, Raca, Pericia, Salvaguarda, Habilidade
 
 @app.route('/admin')
 async def admin():
@@ -21,7 +21,7 @@ async def nova_classe():
         return render_template('admin/add_classe.html',titulo='Nova Classe')
     return redirect(url_for('index'))
     
-@app.route('/criar_classe',methods=['POST'])
+@app.post('/criar_classe')
 async def insert_classe():
     try:
         usuario = Usuario(id=session.get('id_usuario'))
@@ -42,7 +42,7 @@ async def nova_raca():
         return render_template('admin/add_raca.html',titulo='Nova raca')
     return redirect(url_for('index'))
     
-@app.route('/criar_raca',methods=['POST'])
+@app.post('/criar_raca')
 async  def insert_raca():
     try:
         usuario = Usuario(id=session.get('id_usuario'))
@@ -66,7 +66,7 @@ async def nova_pericia():
         return render_template('admin/add_pericia.html',titulo='Nova pericia')
     return redirect(url_for('index'))
     
-@app.route('/criar_pericia',methods=['POST'])
+@app.post('/criar_pericia')
 async def insert_pericia():
     try:
         usuario = Usuario(id=session.get('id_usuario'))
@@ -91,7 +91,7 @@ async def nova_salvaguarda():
         return render_template('admin/add_salvaguarda.html',titulo='Nova salvaguarda')
     return redirect(url_for('index'))
     
-@app.route('/criar_salvaguarda',methods=['POST'])
+@app.post('/criar_salvaguarda')
 async def insert_salvaguarda():
     try:
         usuario = Usuario(id=session.get('id_usuario'))
@@ -102,6 +102,46 @@ async def insert_salvaguarda():
             salvaguarda = Salvaguarda(nome_salvaguarda=nome_salvaguarda)
             
             return jsonify({'result': await salvaguarda.insert_salvaguarda_banco()})
+        return jsonify({'result':False})
+    except EOFError as e:
+        print(e)
+        return jsonify({'result':False})
+    
+@app.route('/criar_habilidade')
+async def nova_habilidade():
+    usuario = Usuario(id=session.get('id_usuario'))
+    
+    if await usuario.usuario_admin():
+        return render_template('admin/add_habilidade.html',titulo='Nova habilidade')
+    return redirect(url_for('index'))
+    
+@app.post('/criar_habilidade')
+async def insert_habilidade():
+    try:
+        usuario = Usuario(id=session.get('id_usuario'))
+        
+        if await usuario.usuario_admin():
+            nome_habilidade = request.form.get('nome_habilidade')
+            nome_atributo = request.form.get('nome_atributo')
+            lados_dados = request.form.get('lados_dados')
+            link_detalhes = request.form.get('link_detalhes')
+            tipo_dano = request.form.get('tipo_dano')
+            qtd_dados = request.form.get('qtd_dados')
+            nivel_habilidade = request.form.get('nivel_habilidade')
+            adicional_por_nivel = request.form.get('adicional_por_nivel')
+            
+            habilidade = Habilidade(
+                nome_atributo=nome_atributo,
+                lados_dados=lados_dados,
+                link_detalhes=link_detalhes,
+                nome_habilidade=nome_habilidade,
+                tipo_dano=tipo_dano,
+                qtd_dados=qtd_dados,
+                nivel_habilidade=nivel_habilidade,
+                adicional_por_nivel=adicional_por_nivel
+                )
+            
+            return jsonify({'result': await habilidade.insert_habilidade_banco()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)

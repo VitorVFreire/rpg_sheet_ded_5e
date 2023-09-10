@@ -5,6 +5,7 @@ atributos()
 pericias()
 salvaguardas()
 caracteristicas()
+habilidades()
 
 async function status_base() {
   const conexao_status_base = await fetch(`http://localhost:8085/status_base/${id_personagem}`)
@@ -248,17 +249,42 @@ function html_caracteristicas(idade, altura, peso, cor_dos_olhos, cor_da_pele, c
   const status_peso = document.getElementById('caracteristicas_peso')
   status_peso.value = peso
 
-  const status_cor_dos_olhos = document.getElementById('caracteristicas_cor_dos_olhos')
+  const status_cor_dos_olhos = document.getElementById('caracteristicas_cor_olhos')
   status_cor_dos_olhos.value = cor_dos_olhos
 
-  const status_cor_da_pele = document.getElementById('caracteristicas_cor_da_pele')
+  const status_cor_da_pele = document.getElementById('caracteristicas_cor_pele')
   status_cor_da_pele.value = cor_da_pele
 
-  const status_cor_do_cabelo = document.getElementById('caracteristicas_cor_do_cabelo')
+  const status_cor_do_cabelo = document.getElementById('caracteristicas_cor_cabelo')
   status_cor_do_cabelo.value = cor_do_cabelo
 
   const status_imagem_personagem = document.getElementById('caracteristicas_imagem_personagem')
   status_imagem_personagem.value = imagem_personagem
+}
+
+async function habilidades() {
+  const conexao_habilidades = await fetch(`http://localhost:8085/habilidades/${id_personagem}`)
+  const data = await conexao_habilidades.json();
+  html_habilidades(data)
+}
+
+function html_habilidades(habilidades) {
+  const habilidadesSection = document.querySelector('[data-habilidades]');
+  for (const valor in habilidades) {
+    if (habilidades.hasOwnProperty(valor)) {
+      const habilidade = habilidades[valor]
+      const habilidadeElement = document.createElement('div');
+      habilidadeElement.classList.add('row')
+      habilidadeElement.classList.add('justify-content')
+      habilidadeElement.innerHTML = `
+        <label>Habilidade: ${habilidade.nome_habilidade}</label>
+        <label>Tipo de dano: ${habilidade.tipo_dano} | ${habilidade.qtd_dados}d${habilidade.lados_dados}</label>
+        <a href="${habilidade.link_detalhes}" target="_blank" class="link-warning link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0">Detalhes</a>
+        </div>
+      `;
+      habilidadesSection.appendChild(habilidadeElement);
+    }
+  }
 }
 
 const input_nome = document.querySelectorAll('#nome_personagem');

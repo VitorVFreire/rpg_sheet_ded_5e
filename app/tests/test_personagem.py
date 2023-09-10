@@ -23,7 +23,7 @@ class PersonagemTest(unittest.TestCase):
         await cls.raca_teste.insert_raca_banco()
         # CRIA RACA UPDATE TESTE:
         cls.raca_teste_UPDATE = Raca(nome_raca='raca_Teste_UPDATE')
-        awaitcls.raca_teste_UPDATE.insert_raca_banco()
+        await cls.raca_teste_UPDATE.insert_raca_banco()
         # CRIA PERSONAGEM:
         cls.personagem_teste=Personagem(id_usuario=cls.usuario_teste.id)
         await cls.personagem_teste.adicionar_personagem_banco(id_raca=cls.raca_teste.id_raca,nome_personagem='nome personagem teste')

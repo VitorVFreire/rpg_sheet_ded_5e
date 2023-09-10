@@ -4,6 +4,7 @@ $(document).ready(function() {
         e.preventDefault();
         
         var id_raca = $('#id_raca').val();
+        var id_classe = $('#id_classe').val();
         var nome_personagem = $('#nome_personagem').val();
 
         $.ajax({
@@ -12,6 +13,7 @@ $(document).ready(function() {
             data: {
                 id_raca: id_raca,
                 nome_personagem: nome_personagem,
+                id_classe: id_classe
             },
             success: function(response) {
                 var result = response.result;

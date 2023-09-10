@@ -60,6 +60,9 @@ Nome do Jogador: {{nome}}
         <div class="col">
             Raça: <a href="">{{raca}}</a>
         </div>
+        <div class="col">
+            Classe: <a href="">{{classe}}</a>
+        </div>
     </div>
 </div>
 
@@ -162,13 +165,13 @@ Nome do Jogador: {{nome}}
         </div>
         <div class="row justify-content">
             <div class="col">
-                <h3>Cor dos Olhos</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_dos_olhos" required/>
+                <h3>Cor dos Olhos</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_olhos" required/>
             </div>
             <div class="col">
-                <h3>Cor da Pele</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_da_pele" required/>
+                <h3>Cor da Pele</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_pele" required/>
             </div>
             <div class="col">
-                <h3>Cor do Cabelo</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_do_cabelo" required/>
+                <h3>Cor do Cabelo</h3> <input type="text" class="form-control text-center" id="caracteristicas_cor_cabelo" required/>
             </div>
         </div>
         <div class="row justify-content">
@@ -177,6 +180,10 @@ Nome do Jogador: {{nome}}
             </div>
         </div>
     </div>
+</section>
+<a href="{{url_for('adicionar_habilidade_personagem', id_personagem=id_personagem)}}">Adicionar Habilidades</a>
+<section data-habilidades>
+
 </section>
 
 <div id="result-container"></div>

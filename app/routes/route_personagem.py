@@ -14,12 +14,17 @@ async def insert_personagem():
         personagem = Personagem(id_usuario=id_usuario)
         
         id_raca = request.form.get('id_raca')
+        id_classe = request.form.get('id_classe')
         nome_personagem = request.form.get('nome_personagem')
-                
-        return jsonify({'result': await personagem.adicionar_personagem_banco(id_raca,nome_personagem)})
+        
+        return jsonify({'result': (
+            await personagem.adicionar_personagem_banco(id_raca=id_raca,nome_personagem=nome_personagem) 
+            and 
+            await personagem.adicionar_classe_banco(id_classe=id_classe)
+            )})     
     except EOFError as e:
         print(e)
-        return jsonify({'result':False})
+        return 404
     
 @app.delete('/personagem/<id_personagem>')
 async def deletepersonagem(id_personagem):
@@ -32,7 +37,7 @@ async def deletepersonagem(id_personagem):
         return jsonify({'result': await personagem.delete_personagem_banco()})
     except EOFError as e:
         print(e)
-        return jsonify({'result':False})
+        return 404
     
 @app.get('/caracteristicas/<id_personagem>')
 async def caracteristicas_personagem_get(id_personagem):
@@ -55,7 +60,7 @@ async def caracteristicas_personagem_get(id_personagem):
         return jsonify({'result': False})            
     except EOFError as e:
         print(e)
-        return jsonify({'result': False}) 
+        return 404 
 
 @app.put('/caracteristicas/<id_personagem>')
 async def caracteristicas_personagem_put(id_personagem):
@@ -73,7 +78,7 @@ async def caracteristicas_personagem_put(id_personagem):
             return jsonify({'result': await personagem.adicionar_caracteristicas_banco(chave=chave,valor=valor)})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})     
+        return 404     
 
 @app.get('/atributos/<id_personagem>')
 async def atributos_personagem_get(id_personagem):
@@ -116,7 +121,7 @@ async def atributos_personagem_get(id_personagem):
             }) 
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
     
 @app.put('/atributos/<id_personagem>')
 async def atributos_personagem_put(id_personagem):
@@ -145,7 +150,7 @@ async def atributos_personagem_put(id_personagem):
                         'resistencia': bonus_valor_adicao})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False}) 
+        return 404
 
 @app.get('/salvaguardas/<id_personagem>')
 async def salvaguardas_personagem_get(id_personagem):
@@ -176,7 +181,7 @@ async def salvaguardas_personagem_get(id_personagem):
             })
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.post('/salvaguardas/<id_personagem>')
 async def salvaguardas_personagem_post(id_personagem):
@@ -196,7 +201,7 @@ async def salvaguardas_personagem_post(id_personagem):
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})   
+        return 404  
     
 @app.delete('/salvaguardas/<id_personagem>')
 async def salvaguardas_personagem(id_personagem):
@@ -216,7 +221,7 @@ async def salvaguardas_personagem(id_personagem):
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.get('/status_base/<id_personagem>')
 async def status_base_personagem_get(id_personagem):
@@ -244,7 +249,7 @@ async def status_base_personagem_get(id_personagem):
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
    
 @app.put('/status_base/<id_personagem>')
 async def status_base_personagem_put(id_personagem):
@@ -263,7 +268,7 @@ async def status_base_personagem_put(id_personagem):
             return jsonify({'result': await personagem.adicionar_status_base_banco(chave=chave,valor=valor)})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.get('/pericias/<id_personagem>')
 async def pericias_personagem_get(id_personagem):
@@ -321,7 +326,7 @@ async def pericias_personagem_get(id_personagem):
             })
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.post('/pericias/<id_personagem>')
 async def pericias_personagem_post(id_personagem):
@@ -341,7 +346,7 @@ async def pericias_personagem_post(id_personagem):
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.delete('/pericias/<id_personagem>')
 async def pericias_personagem_delete(id_personagem):
@@ -362,7 +367,7 @@ async def pericias_personagem_delete(id_personagem):
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.get('/habilidades/<id_personagem>')
 async def habilidades_personagem_get(id_personagem):
@@ -372,13 +377,13 @@ async def habilidades_personagem_get(id_personagem):
         
         await personagem.personagem_pertence_usuario()
         
-        if await personagem.carregar_feiticos_do_banco():
-            return jsonify(personagem.feiticos)
+        if await personagem.carregar_habilidades_do_banco():
+            return jsonify(personagem.habilidades)
         
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
     
 @app.post('/habilidades/<id_personagem>')
 async def habilidades_personagem_post(id_personagem):
@@ -388,17 +393,12 @@ async def habilidades_personagem_post(id_personagem):
         
         await personagem.personagem_pertence_usuario()
         
-        chave = request.form.get('chave')
-
-        habilidade = Habilidade(nome_habilidade=chave)
+        id_habilidade = request.form.get('id_habilidade')
             
-        if await habilidade.carregar_habilidade_nome() and await personagem.carregar_atributos_do_banco():
-            return jsonify({'result': await personagem.adicionar_habilidades_banco(id_habilidade=habilidade.id_habilidade)})
-        
-        return jsonify({'result': False})
+        return jsonify({'result': await personagem.adicionar_habilidade_banco(id_habilidade=id_habilidade)})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
 
 @app.delete('/habilidades/<id_personagem>')
 async def habilidades_personagem_delete(id_personagem):
@@ -408,16 +408,14 @@ async def habilidades_personagem_delete(id_personagem):
         
         await personagem.personagem_pertence_usuario()
         
-        chave = request.form.get('chave')
-
-        habilidade = Habilidade(nome_habilidade=chave)
+        id_habilidade = request.form.get('id_habilidade')
             
-        if await habilidade.carregar_habilidade_nome() and await personagem.exists_habilidade_banco(id_habilidade=habilidade.id_habilidade):
-            return jsonify({'result': await personagem.delete_habilidades_banco(id_habilidade=habilidade.id_habilidade)})
+        if await personagem.exists_habilidade_banco(id_habilidade=id_habilidade):
+            return jsonify({'result': await personagem.delete_habilidade_banco(id_habilidade_personagem=id_habilidade)})
         return jsonify({'result': False})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
         
 @app.put('/update/base/<id_personagem>')
 async def update_base_db(id_personagem):
@@ -433,4 +431,4 @@ async def update_base_db(id_personagem):
         return jsonify({'result': await personagem.update_personagem_banco(chave=chave,valor=valor)})
     except EOFError as e:
         print(e)
-        return jsonify({'result': False})
+        return 404
