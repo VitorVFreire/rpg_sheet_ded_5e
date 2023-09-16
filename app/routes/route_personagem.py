@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
+from flask import request, redirect, session, jsonify
 from flask_session import Session
 import asyncio
 
@@ -69,6 +69,7 @@ async def caracteristicas_personagem_put(id_personagem):
         personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
             
         await personagem.personagem_pertence_usuario()
+        
         chave = request.form.get('chave')
         valor = request.form.get('valor')
 
@@ -159,6 +160,7 @@ async def salvaguardas_personagem_get(id_personagem):
         personagem = PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
         
         await personagem.personagem_pertence_usuario()
+        
         if await personagem.exists_atributos_banco() and await personagem.carregar_atributos_do_banco() and await personagem.carregar_salvaguardas_do_banco():
             return jsonify({
                 'forca': personagem.resistencia_forca,

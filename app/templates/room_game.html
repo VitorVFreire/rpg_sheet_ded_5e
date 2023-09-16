@@ -1,0 +1,47 @@
+{% extends "template.html" %}
+{% block script %}
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+{% endblock %}
+{% block conteudo %}
+<h1>Chat</h1>
+    
+<div id="messages"></div>
+
+<input id="message" type="text" placeholder="Message">
+<button id="sendButton">Send Message</button>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        var socket = io();
+        var messagesContainer = document.getElementById('messages');
+        var messageInput = document.getElementById('message');
+        var sendButton = document.getElementById('sendButton');
+
+        var room = {{room}};
+        var id_personagem = {{id_personagem}};
+
+        console.log(id_personagem);    
+        socket.emit('join', { id_personagem: id_personagem, room: room });
+        
+        sendButton.addEventListener('click', () => {
+            console.log('Botão de envio clicado');
+            var message = messageInput.value;
+            console.log('Mensagem: ' + message);
+            socket.emit('message', { id_personagem: id_personagem, message: message, room: room });
+        });
+        
+        
+        socket.on('message', (data) => {
+            console.log(data);
+            var li = document.createElement('li');
+            if (data.name){
+                li.textContent = data.hora + " - " + data.name + ": " + data.message;
+            }else{
+                li.textContent = data.message;
+            }
+            messagesContainer.appendChild(li);
+        });
+    });
+</script>
+{% endblock %}
+

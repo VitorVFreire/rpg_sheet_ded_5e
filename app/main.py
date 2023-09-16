@@ -12,6 +12,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+#from flask_socketio import SocketIO
+#import websockets
+#socketio = SocketIO(app)
+
 from routes import *
 
 if __name__ == '__main__':

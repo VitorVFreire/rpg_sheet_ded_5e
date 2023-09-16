@@ -1,7 +1,7 @@
 import base64
 from hashlib import sha256
 
-def criptografar(senha):
+def criptografar(senha = None):
     if senha is None:
         return None
     hash_senha = sha256(senha.encode())

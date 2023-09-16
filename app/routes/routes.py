@@ -15,7 +15,7 @@ def login():
     try:
         if session.get('id_usuario'):
             return render_template('index.html',titulo = 'home')
-        return render_template('login.html',titulo = 'login', msg = 'Erro no Login')
+        return render_template('login.html',titulo = 'login')
     except EOFError as e:
         print(e)
         abort(404)
@@ -87,6 +87,7 @@ async def criar_personagem():
     try:
         racas = Raca()
         classes = Classe()
+        
         return render_template('create_personagem.html', titulo = 'Criar Personagem', racas= await racas.racas, classes = await classes.classes)
     except EOFError as e:
         print(e)
@@ -136,9 +137,19 @@ async def personagem(id_personagem):
 async def adicionar_habilidade_personagem(id_personagem):
     try:
         habilidades = Habilidade()
+        
         await habilidades.carregar_habilidades()
         await habilidades.carregar_habilidades_personagem_do_banco(id_personagem)
+        
         return render_template('adicionar_habilidade_personagem.html', habilidades = await habilidades.habilidades, id_personagem = id_personagem)
     except EOFError as e:
         print(e)
         abort(404)
+        
+"""@app.route('/room/<room>/<id_personagem>')
+def room(room, id_personagem):
+    try:
+        return render_template('room_game.html', titulo = 'Room', room = room, id_personagem = id_personagem)
+    except EOFError as e:
+        print(e)
+        abort(403, "Deve ser Feito Login para acessar essa pagina")"""
