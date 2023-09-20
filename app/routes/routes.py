@@ -118,7 +118,7 @@ async def personagem(id_personagem):
         await personagem.personagem_pertence_usuario()
         
         await personagem.carregar_personagem_banco()
-        await personagem.carregar_classe_do_banco()
+        await personagem.carregar_classes_do_banco()
         
         return render_template(
             'ficha_personagem.html',

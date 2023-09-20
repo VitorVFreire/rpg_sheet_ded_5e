@@ -114,7 +114,7 @@ class Personagem(Usuario):
             print(e)
             return False
         
-    async def carregar_classe_do_banco(self):
+    async def carregar_classes_do_banco(self):
         try:
             if self._id_personagem:
                 async with await get_connection() as conn:
@@ -137,14 +137,14 @@ class Personagem(Usuario):
     @property
     async def classe(self):
         if len(self._classe)<=0:
-            await self.carregar_classe_do_banco()
+            await self.carregar_classes_do_banco()
         return self._classe[0]['nome_classe'] if len(self._classe) > 0 else ''
     
     @property
     async def classes(self):
         print(self._classe)
         if len(self._classe)<=0:
-            await self.carregar_classe_do_banco()
+            await self.carregar_classes_do_banco()
         return self._classe
 
     @classe.setter

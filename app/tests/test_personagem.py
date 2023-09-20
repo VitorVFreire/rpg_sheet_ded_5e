@@ -6,9 +6,9 @@ import asyncio
 class PersonagemTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        conn = await get_connection()
-        mydb = await conn.cursor()
-        await mydb.connect()  # Conectar ao banco de dados
+        cls.conn = await get_connection()
+        cls.mycursor = await cls.conn.cursor()
+        await cls.mycursor.connect() 
         # CRIA USUARIO TESTE:
         cls.usuario_teste = Usuario(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
         await cls.usuario_teste.create_usuario()
@@ -45,46 +45,46 @@ class PersonagemTest(unittest.TestCase):
         await cls.raca_teste_UPDATE.delete_raca_banco()
         #DELETA USUARIO TESTE:
         await cls.usuario_teste.delete_usuario() 
-        await mydb.close()  # Fechar a conexão com o banco de dados
+        await cls.mycursor.close()  
+        await cls.conn.close()
+        await cls.conn.wait_closed()
         
     async def test_nome_personagem(self):
         # Verificar se o nome do personagem está correta
-        self.assertEqual(self.personagem_teste.nome_personagem, 'nome personagem teste')
+        self.assertEqual(await self.personagem_teste.nome_personagem, 'nome personagem teste')
         
     async def test_novo_nome_personagem(self):
         # Verificar se a mudança do nome foi efetivada
         await self.personagem_teste.update_personagem_banco(chave='nome_personagem',valor='novo nome personagem teste')
         await self.personagem_teste.carregar_personagem_banco()
-        self.assertEqual(self.personagem_teste.nome_personagem, 'novo nome personagem teste')
+        self.assertEqual(await self.personagem_teste.nome_personagem, 'novo nome personagem teste')
         
     async def test_raca_personagem(self):
         # Verificar se o raca do personagem está correta
-        self.assertEqual(self.personagem_teste.raca, 'raca_Teste')
+        self.assertEqual(await self.personagem_teste.raca, 'raca_Teste')
         
     async def test_update_raca(self):
         # Verificar se a raca é atualizada corretamente no personagem
         await self.personagem_teste.update_personagem_banco(chave='id_raca',valor=self.raca_teste_UPDATE.id_raca)
         await self.personagem_teste.carregar_personagem_banco()
-        self.assertTrue(self.personagem_teste.raca,self.raca_teste_UPDATE.nome_raca)
+        self.assertTrue(await self.personagem_teste.raca, await self.raca_teste_UPDATE.nome_raca)
     
     async def test_atribuicao_classe(self):
         # Verificar se a classe é adicionada ao personagem
-        self.personagem_teste.adicionar_classe_banco(id_classe=self.classe_teste.id_classe)
-        self.assertTrue(any(classe['id_classe'] == self.classe_teste.id_classe for classe in self.personagem_teste.classe))
+        await self.personagem_teste.adicionar_classe_banco(id_classe=self.classe_teste.id_classe)
+        self.assertTrue(any(classe['id_classe'] == self.classe_teste.id_classe for classe in await self.personagem_teste.classes))
         
     async def test_update_classe(self):
         # Verificar se a classe é atualizada corretamente no personagem
-        id_classe_personagem = self.personagem_teste.classe[0]['id_classe_personagem']
+        id_classe_personagem = self.personagem_teste.classes[0]['id_classe_personagem']
         await self.personagem_teste.update_classe_banco(id_classe_personagem=id_classe_personagem, id_classe=self.classe_teste_UPDATE.id_classe)
-        await self.personagem_teste.carregar_classe_do_banco()
-        self.assertTrue(any(classe['id_classe'] == self.classe_teste_UPDATE.id_classe for classe in self.personagem_teste.classe))
+        await self.personagem_teste.carregar_classes_do_banco()
+        self.assertTrue(any(classe['id_classe'] == self.classe_teste_UPDATE.id_classe for classe in await self.personagem_teste.classes))
 
     async def test_carregar_classes_usuarios_banco(self):
         # Carregar as classes do usuario do banco de dados
-        self.personagem_teste
-        self.assertTrue(self.personagem_teste.carregar_classe_do_banco())
+        self.assertTrue(self.personagem_teste.carregar_classes_do_banco())
         self.assertGreater(len(self.personagem_teste.classe), 0)
     
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(unittest.main())
+    asyncio.run(unittest.main())

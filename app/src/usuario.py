@@ -49,9 +49,9 @@ class Usuario:
         self._nome = value
     
     @property
-    def email(self):
+    async def email(self):
         if self._email is None:
-            self.get_usuario()
+            await self.get_usuario()
         return self._email
     
     @email.setter
@@ -59,9 +59,9 @@ class Usuario:
         self._email = value
     
     @property
-    def data_nascimento(self):
+    async def idade(self):
         if self._data_nascimento is None:
-            self.get_usuario()  
+            await self.get_usuario()  
         if self._data_nascimento:
             today = datetime.date.today()
             data_nascimento_str = self._data_nascimento.strftime('%Y-%m-%d')
@@ -69,8 +69,8 @@ class Usuario:
             return dif.days // 365
         return None
     
-    @data_nascimento.setter
-    def data_nascimento(self, value):
+    @idade.setter
+    def idade(self, value):
         self._data_nascimento = value
             
     async def delete_usuario(self):
@@ -139,7 +139,7 @@ class Usuario:
                         self.nome = result[1]
                         self.email = result[2]
                         self.senha = result[3]
-                        self.data_nascimento = result[4]
+                        self.idade = result[4]
                         self.__tipo_usuario = result[5]
             return None
         except EOFError as e:
