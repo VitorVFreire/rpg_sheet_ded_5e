@@ -11,3 +11,8 @@ async def get_connection():
     conn = await aiomysql.connect(host="localhost", user=os.getenv('USER_BASE'), password=os.getenv('PASSWORD_BASE'), db="RPG", loop=loop)
     
     return conn
+
+def get_connection_without_async():
+    conn = aiomysql.connect(host="localhost", user=os.getenv('USER_BASE'), password=os.getenv('PASSWORD_BASE'), db="RPG")
+    
+    return conn

@@ -11,3 +11,4 @@ from .personagem_habilidades import PersonagemHabilidades
 from .personagem_pericias import PersonagemPericias
 from .personagem_salvaguardas import PersonagemSalvaguardas
 from .personagem_status_base import PersonagemStatusBase
+from .message import Message

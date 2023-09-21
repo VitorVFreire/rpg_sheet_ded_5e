@@ -19,23 +19,21 @@
 
         var room = {{room}};
         var id_personagem = {{id_personagem}};
+        const nome_personagem = '{{nome_personagem}}';
 
-        console.log(id_personagem);    
-        socket.emit('join', { id_personagem: id_personagem, room: room });
+        socket.emit('join', { id_personagem: id_personagem, room: room , nome_personagem: nome_personagem});
         
         sendButton.addEventListener('click', () => {
-            console.log('Botão de envio clicado');
             var message = messageInput.value;
-            console.log('Mensagem: ' + message);
-            socket.emit('message', { id_personagem: id_personagem, message: message, room: room });
+            socket.emit('message', { id_personagem: id_personagem, message: message, room: room , nome_personagem: nome_personagem});
         });
         
         
         socket.on('message', (data) => {
-            console.log(data);
             var li = document.createElement('li');
+            console.log(data)
             if (data.name){
-                li.textContent = data.hora + " - " + data.name + ": " + data.message;
+                li.textContent = data.time + " - " + data.name + ": " + data.message;
             }else{
                 li.textContent = data.message;
             }
