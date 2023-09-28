@@ -3,8 +3,8 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade
-from src import Personagem
+from src import Pericia, Raca, Classe, Salvaguarda, Habilidade
+from src import Personagem, Usuario, Room
 
 @app.route('/')
 def index():
@@ -146,11 +146,3 @@ async def adicionar_habilidade_personagem(id_personagem):
         print(e)
         abort(404)
         
-@app.route('/room/<room>/<id_personagem>')
-async def room(room, id_personagem):
-    try:
-        personagem = Personagem(id_usuario=session.get('id_usuario'), id_personagem=id_personagem)
-        return render_template('room_game.html', titulo = 'Room', room = room, id_personagem = id_personagem, nome_personagem = await personagem.nome_personagem)
-    except EOFError as e:
-        print(e)
-        abort(403, "Deve ser Feito Login para acessar essa pagina")

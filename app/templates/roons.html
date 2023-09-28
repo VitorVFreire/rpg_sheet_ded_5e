@@ -1,0 +1,20 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    {% if roons %}
+        <div class="container text-center">
+            {% for room in roons %}
+            <div class="row">
+                <div class="col">
+                    {{room['id_room']}}
+                </div>
+                <div class="col">
+                    Nome:{{room['name_room']}}
+                </div>
+                <div class="col">
+                    <a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('room', code_room = room['id_room'], id_personagem = id_personagem)}}">Entrar Sala</a>
+                </div>             
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

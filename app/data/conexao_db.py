@@ -2,6 +2,7 @@ import asyncio
 import aiomysql
 import os
 from dotenv import load_dotenv
+import mysql.connector
 
 load_dotenv()
 
@@ -13,6 +14,6 @@ async def get_connection():
     return conn
 
 def get_connection_without_async():
-    conn = aiomysql.connect(host="localhost", user=os.getenv('USER_BASE'), password=os.getenv('PASSWORD_BASE'), db="RPG")
+    conn = mysql.connector.connect(host="localhost", user=os.getenv('USER_BASE'), password=os.getenv('PASSWORD_BASE'), db="RPG")
     
     return conn

@@ -12,3 +12,5 @@ from .personagem_pericias import PersonagemPericias
 from .personagem_salvaguardas import PersonagemSalvaguardas
 from .personagem_status_base import PersonagemStatusBase
 from .message import Message
+from .room import Room
+from .messages import Messages

@@ -3,7 +3,7 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade
+from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room
 from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
 from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase
 
@@ -433,3 +433,13 @@ async def update_base_db(id_personagem):
     except EOFError as e:
         print(e)
         return 404, "Error"
+    
+@app.post('/insert/room/<id_personagem>/<code_room>')
+async def room_personagem_post(id_personagem, code_room):
+    try:
+        room = Room(id_room=code_room ,id_personagem=id_personagem)
+
+        return jsonify({'result': room.insert_character_room_bank()}), 200
+    except EOFError as e:
+        print(e)
+        return 404

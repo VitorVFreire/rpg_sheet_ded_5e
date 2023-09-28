@@ -19,8 +19,9 @@ class Message:
         self.__result_total = 0
         self.__command = None
         self.__math_account = ""
-        self.__time = datetime.datetime.now().strftime('%d/%m/%Y - %H:%M')
-        #self.insert_message_bank()
+        self.__message_treated = {}
+        
+        self.insert_message_bank()
         if self.__exists_command != -1:
             self.filtering_message()
             
@@ -32,41 +33,49 @@ class Message:
         self.__math_account += f'{sum(results)} '
                     
     def filtering_message(self):
-        self.__command = self.__message[self.__exists_command + 3:]
-        self.__parts = self.__command.split(' ')
-        for part in self.__parts:
-            location_d = part.find('d')
-            bonus = re.search(r"[-+*/]\s*\d+", part)
-            if location_d != -1:
-                self.__amount_dices.append(int(part[:location_d]))
-                self.__amount_sides.append(int(part[location_d + 1:]))
-                self.roll_dice()
-            elif part in ['+', '-', '*', '/']:
-                self.__math_account += f'{part} '
-            elif bonus is not None:
-                self.__math_account += f'{bonus.group(0)} '
-        self.__result_total = eval(self.__math_account)
+        try:
+            self.__command = self.__message[self.__exists_command + 3:]
+            self.__parts = self.__command.split(' ')
+            for part in self.__parts:
+                location_d = part.find('d')
+                bonus = re.search(r"[-+*/]\s*\d+", part)
+                if location_d != -1:
+                    self.__amount_dices.append(int(part[:location_d]))
+                    self.__amount_sides.append(int(part[location_d + 1:]))
+                    self.roll_dice()
+                elif part in ['+', '-', '*', '/']:
+                    self.__math_account += f'{part} '
+                elif bonus is not None:
+                    self.__math_account += f'{bonus.group(0)} '
+            self.__result_total = eval(self.__math_account)
+        except:
+            print('AAAAAAAAAAA')
+            self.__message = 'Erro na rolagem dos dados!'
+            self.__exists_command = -1
+            print(self.__message)
             
     @property
     def message(self):
         try:
-            message = {
-                'message': self.__message,
-                'time': self.__time        
-            }
+            self.__message_treated['message'] = self.__message
+                
+            self.__message_treated['time'] = datetime.datetime.now().strftime('%d-%m-%Y %H:%M')       
             
             if self.__name_character is not None:
-                message['name'] = self.__name_character
+                self.__message_treated['name'] = self.__name_character
             
             if self.__exists_command != -1:
-                message['dices'] = {}
-                message['dices']['amount_dices'] = self.__amount_dices
-                message['dices']['amount_sides'] = self.__amount_sides
+                self.__message_treated['dices'] = {}
+                self.__message_treated['dices']['amount_dices'] = self.__amount_dices
+                self.__message_treated['dices']['amount_sides'] = self.__amount_sides
                                 
-                message['dices']['results'] = self.__results
-                message['dices']['result_total'] = self.__result_total
-                                
-            return message
+                self.__message_treated['dices']['results'] = self.__results[0]
+                self.__message_treated['dices']['result_total'] = self.__result_total
+                
+                self.__message = f"ROLL: {self.__result_total} -- rolls: {self.__results[0]}"
+                self.insert_message_bank()
+                
+            return self.__message_treated
         except EOFError as e:
             print(e)
             return False  
@@ -79,7 +88,7 @@ class Message:
                         query = """INSERT INTO message
                             (id_personagem, message, id_room, time) 
                             VALUES(%s,%s,%s,%s);"""
-                        mycursor.execute(query, (self.__id_personagem, self.__message, self.__room, self.__time))
+                        mycursor.execute(query, (self.__id_personagem, self.__message, self.__room, datetime.datetime.now()))
                         self.__id_message = mycursor.lastrowid  
                         conn.commit()
                         return True

@@ -18,4 +18,3 @@ from routes import *
 
 if __name__ == '__main__':
     socketio.run(app, port=8085, host='0.0.0.0', debug=True)
-

@@ -8,18 +8,44 @@
 <div id="messages"></div>
 
 <input id="message" type="text" placeholder="Message">
-<button id="sendButton">Send Message</button>
+<button id="sendButton">Send Message</button><br>
 
 <script type="text/javascript">
+    var room = {{room}};
+    var id_personagem = {{id_personagem}};
+    const nome_personagem = '{{nome_personagem}}';
+
+    const messagesContainer = document.getElementById('messages');
+
+    $.ajax({
+        url: `/messages/room=${room}&id_personagem=${id_personagem}`,
+        type: 'GET',
+        success: function (response) {
+            var messages = response.messages;
+            messages.forEach(message => {
+                var li = document.createElement('li');
+                li.innerHTML = `${message.time} - ${message.name} - ${message.message}`;
+                messagesContainer.appendChild(li);
+            });
+
+            const inputHiddenOffset = document.createElement('input');
+            inputHiddenOffset.type = 'hidden';
+            inputHiddenOffset.name = 'offset';
+            inputHiddenOffset.value = response.offset;
+            document.body.appendChild(inputHiddenOffset);
+
+            const inputHiddenLimit = document.createElement('input');
+            inputHiddenLimit.type = 'hidden';
+            inputHiddenLimit.name = 'limit';
+            inputHiddenLimit.value = response.limit;
+            document.body.appendChild(inputHiddenLimit);
+        }
+    });      
+
     document.addEventListener('DOMContentLoaded', () => {
         var socket = io();
-        var messagesContainer = document.getElementById('messages');
         var messageInput = document.getElementById('message');
         var sendButton = document.getElementById('sendButton');
-
-        var room = {{room}};
-        var id_personagem = {{id_personagem}};
-        const nome_personagem = '{{nome_personagem}}';
 
         socket.emit('join', { id_personagem: id_personagem, room: room , nome_personagem: nome_personagem});
         
@@ -28,13 +54,14 @@
             socket.emit('message', { id_personagem: id_personagem, message: message, room: room , nome_personagem: nome_personagem});
         });
         
-        
         socket.on('message', (data) => {
             var li = document.createElement('li');
-            console.log(data)
-            if (data.name){
+            if (data.name && !data.dices){
                 li.textContent = data.time + " - " + data.name + ": " + data.message;
-            }else{
+            }else if(data.dices){
+                li.innerHTML = `${data.time} - ${data.name} - ROLL: ${data.dices.result_total} -- rolls: ${data.dices.results}`;
+            }
+            else{
                 li.textContent = data.message;
             }
             messagesContainer.appendChild(li);

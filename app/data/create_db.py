@@ -40,6 +40,15 @@ CREATE TABLE raca (
 """)
 
 cursor.execute("""
+CREATE TABLE room (
+    id_room INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    nome_room VARCHAR(25),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+);
+""")
+
+cursor.execute("""
 CREATE TABLE personagem (
     id_personagem INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
@@ -47,6 +56,32 @@ CREATE TABLE personagem (
     nome_personagem VARCHAR(45) NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_raca) REFERENCES raca(id_raca) ON DELETE CASCADE
+);
+""")
+
+#permissao
+#1 - admin
+#0 - padrao
+cursor.execute("""
+CREATE TABLE room_personagem (
+    id_room_personagem INT PRIMARY KEY AUTO_INCREMENT,
+    id_personagem INT NOT NULL,
+    id_room INT NOT NULL,
+    permissao INT,
+    FOREIGN KEY (id_room) REFERENCES room(id_room) ON DELETE CASCADE,
+    FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE
+);
+""")
+
+cursor.execute("""
+CREATE TABLE message (
+    id_message INT PRIMARY KEY AUTO_INCREMENT,
+    id_personagem INT NOT NULL,
+    id_room INT NOT NULL,
+    message VARCHAR(200) NOT NULL,
+    time DATETIME,
+    FOREIGN KEY (id_room) REFERENCES room(id_room) ON DELETE CASCADE,
+    FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE
 );
 """)
 
@@ -229,6 +264,22 @@ INSERT INTO salvaguarda(nome_salvaguarda) VALUES('forca'),('inteligencia'),('sab
 cursor.execute("""
 INSERT INTO usuario(nome, email, senha, data_nascimento, tipo_usuario)
 VALUES('user_teste', 'teste@teste', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=', '2023-09-08', 'admin')               
+""")
+
+
+cursor.execute("""
+INSERT INTO room(id_usuario, nome_room)
+VALUES(1, 'teste_room')               
+""")
+
+cursor.execute("""
+INSERT INTO personagem(id_usuario, id_raca, nome_personagem)
+VALUES(1, 1, 'teste')              
+""")
+
+cursor.execute("""
+INSERT INTO room_personagem(id_personagem, id_room, permissao)
+VALUES(1, 1, 1)               
 """)
 
 connection.commit()
