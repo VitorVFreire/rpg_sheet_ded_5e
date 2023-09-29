@@ -1,23 +1,16 @@
 import unittest
 import asyncio
-from data import get_connection
 from src import Classe
 
 class ClasseTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.conn = await get_connection()
-        cls.mycursor = await cls.conn.cursor()
-        await cls.mycursor.connect()  
         cls.classe_teste = Classe(nome_classe='Classe_Teste')
         await cls.classe_teste.insert_classe_banco()  
         
     @classmethod
     async def tearDown(cls):
         await cls.classe_teste.delete_classe_banco()  
-        await cls.mycursor.close()  
-        await cls.conn.close()
-        await cls.conn.wait_closed()
 
     async def test_nome_classe(self):
         self.assertEqual(self.classe_teste.nome_classe, 'Classe_Teste')

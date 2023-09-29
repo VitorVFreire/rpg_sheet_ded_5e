@@ -6,18 +6,12 @@ from src import Pericia
 class PericiaTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.conn = await get_connection()
-        cls.mycursor = await cls.conn.cursor()
-        await cls.mycursor.connect()  
         cls.pericia_teste = Pericia(nome_pericia='pericia_Teste', status_uso='status_teste')
         await cls.pericia_teste.insert_pericia_banco()
 
     @classmethod
     async def tearDown(cls):
         await cls.pericia_teste.delete_pericia_banco() 
-        await cls.mycursor.close()  
-        await cls.conn.close()
-        await cls.conn.wait_closed()
 
     async def test_nome_pericia(self):
         self.assertEqual(self.pericia_teste.nome_pericia, 'pericia_Teste')

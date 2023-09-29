@@ -1,15 +1,10 @@
 import unittest
-from data import get_connection
 from src import PersonagemAtributos, Usuario, Raca
 import asyncio
 
 class PersonagemAtributosTest(unittest.TestCase):
     @classmethod
-    async def setUp(cls):#DELETA OS ATRIBUTOS DE TESTE:
-        cls.conn = await get_connection()
-        cls.mycursor = await cls.conn.cursor()
-
-        # Cria um personagem de teste com valores não nulos
+    async def setUp(cls):
         cls.usuario_teste = Usuario(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
         await cls.usuario_teste.create_usuario()
         cls.raca_teste = Raca(nome_raca='raca_Teste')
@@ -25,15 +20,9 @@ class PersonagemAtributosTest(unittest.TestCase):
         
     @classmethod
     async def tearDown(cls):
-        # Exclui o personagem de teste
         await cls.personagem_teste.delete_personagem_banco()
         await cls.usuario_teste.delete_usuario()
         await cls.raca_teste.delete_raca_banco()
-                
-        # Fecha a conexão e o cursor
-        await cls.mycursor.close()
-        await cls.conn.close()
-        await cls.conn.wait_closed()
         
     async def test_adiciona_atributo_forca_10_personagem(self):
         if await self.personagem_teste.exists_atributos_banco():
@@ -44,7 +33,6 @@ class PersonagemAtributosTest(unittest.TestCase):
         self.assertEqual(self.personagem_teste.forca,10)
     
     async def test_existencia_atributos_espera_True(self):
-        # Espera receber False pela não existencia de atributos do personagem
         self.assertTrue(await self.personagem_teste.exists_atributos_banco())
         
     async def test_bonus_forca_personagem_espera_0(self):

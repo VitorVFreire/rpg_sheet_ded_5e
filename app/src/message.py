@@ -49,10 +49,8 @@ class Message:
                     self.__math_account += f'{bonus.group(0)} '
             self.__result_total = eval(self.__math_account)
         except:
-            print('AAAAAAAAAAA')
             self.__message = 'Erro na rolagem dos dados!'
             self.__exists_command = -1
-            print(self.__message)
             
     @property
     def message(self):
@@ -74,6 +72,7 @@ class Message:
                 
                 self.__message = f"ROLL: {self.__result_total} -- rolls: {self.__results[0]}"
                 self.insert_message_bank()
+                self.__message_treated['message'] = self.__message
                 
             return self.__message_treated
         except EOFError as e:

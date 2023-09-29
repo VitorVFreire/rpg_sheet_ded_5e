@@ -16,6 +16,14 @@ class Room:
         for id_room, name_room in zip(self.__id_room, self.__name_room):
             roons.append({'id_room': id_room, 'name_room': name_room})
         return roons      
+    
+    @property
+    def id_room(self):
+        return self.__id_room
+    
+    @property
+    def name_room(self):
+        return self.__name_room
         
     def exists_character_room_bank(self):
         try:
@@ -98,3 +106,41 @@ class Room:
         except pymysql.Error as e:
             print(e)
             abort(500, 'Erro na inserção ao banco')
+            
+    def delete_room_bank(self):
+        try:
+            with get_connection_without_async() as conn:
+                with conn.cursor() as mycursor:    
+                    query = """DELETE FROM room WHERE id_room = %s"""
+                    mycursor.execute(query, (self.__id_room,))
+                    conn.commit()
+                    return True
+        except pymysql.Error as e:
+            print(e)
+            abort(500, 'Erro na exclusão da sala')
+    
+    def update_room_bank(self):
+        try:
+            with get_connection_without_async() as conn:
+                with conn.cursor() as mycursor:    
+                    query = """UPDATE room SET nome_room = %s WHERE id_room = %s"""
+                    mycursor.execute(query, (self.__name_room,self.__id_room,))
+                    conn.commit()
+                    return True
+        except pymysql.Error as e:
+            print(e)
+            abort(500, 'Erro na exclusão da sala')
+            
+    def delete_character_room_bank(self):
+        try:
+            if self.__id_usuario:
+                with get_connection_without_async() as conn:
+                    with conn.cursor() as mycursor:    
+                        query = """DELETE FROM room_personagem WHERE id_room = %s and id_personagem = %s"""
+                        mycursor.execute(query, (self.__id_room, self.__id_personagem))
+                        conn.commit()
+                        return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            abort(500, 'Erro na exclusão da sala')

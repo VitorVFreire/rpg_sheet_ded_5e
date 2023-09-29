@@ -1,23 +1,16 @@
 import unittest
-from data import get_connection
 from src import Raca
 import asyncio
 
 class RacaTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.conn = await get_connection()
-        cls.mycursor = await cls.conn.cursor()
-        await cls.mycursor.connect()  
         cls.raca_teste = Raca(nome_raca='raca_Teste')
         await cls.raca_teste.insert_raca_banco()
     
     @classmethod
     async def tearDown(cls):
-        await cls.raca_teste.delete_raca_banco()        
-        await cls.mycursor.close()  
-        await cls.conn.close()
-        await cls.conn.wait_closed()    
+        await cls.raca_teste.delete_raca_banco()          
 
     async def test_nome_raca(self):
         self.assertEqual(self.raca_teste.nome_raca, 'raca_Teste')

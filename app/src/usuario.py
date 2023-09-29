@@ -1,14 +1,16 @@
-from tools import criptografar
 from data import get_connection
 import datetime
 import asyncio
+import base64
+from hashlib import sha256
 
 class Usuario:
     def __init__(self,id=None,nome=None,email=None,senha=None,data_nascimento=None):
         self._id = id
         self._nome = nome
         self._email = email
-        self._senha = criptografar(senha)
+        self._senha = senha
+        self.criptografar()
         self.__tipo_usuario = None
         self._data_nascimento  =  data_nascimento
         self._personagens = []
@@ -72,6 +74,13 @@ class Usuario:
     @idade.setter
     def idade(self, value):
         self._data_nascimento = value
+        
+    def criptografar(self):
+        if self._senha is None:
+            return None
+        hash_senha = sha256(self._senha.encode())
+        senha_digest = hash_senha.digest()
+        self._senha = base64.b64encode(senha_digest).decode('utf-8')
             
     async def delete_usuario(self):
         try:
