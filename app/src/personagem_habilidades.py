@@ -101,7 +101,7 @@ class PersonagemHabilidades(Personagem):
             print(e)
             return False
         
-    async def update_habilidade_banco(self,novo_habilidade,id_habilidade_personagem):
+    async def update_habilidade_banco(self,id_habilidade,id_habilidade_personagem):
         try:
             if self._id_personagem:
                 async with await get_connection() as conn:
@@ -109,7 +109,7 @@ class PersonagemHabilidades(Personagem):
                         query = """UPDATE habilidade_personagem
                         SET id_habilidade=%s
                         WHERE id_habilidade_personagem=%s;"""
-                        await mycursor.execute(query, (novo_habilidade,id_habilidade_personagem))
+                        await mycursor.execute(query, (id_habilidade,id_habilidade_personagem))
                         await conn.commit()
                         return True
             return False

@@ -74,7 +74,6 @@ def on_join(data):
         room = data.get('room')
         if id_usuario and id_personagem and room:
             nome_personagem = data['nome_personagem']
-            messages = Messages(id_room=room)
             leave_room(room)
             join_room(room)
             socketio.emit('message', {'message': f'{nome_personagem} join to room'}, room=room)
