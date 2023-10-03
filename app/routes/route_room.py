@@ -1,7 +1,7 @@
 from flask_socketio import join_room, leave_room
-from flask import session, abort, render_template, request, jsonify
+from flask import session, abort, render_template, request, jsonify, redirect, url_for
 
-from src import Personagem, Message, Messages, Room  
+from src import Personagem, Message, Messages, Room, Usuario 
 from main import socketio, app
 
 @app.route('/roons/<id_personagem>')
@@ -13,13 +13,38 @@ async def roons(id_personagem):
         
         room.load_character_room()
         
-        return render_template('roons.html', titulo = 'Roons', id_personagem = id_personagem, roons = room.roons)
+        return render_template('roons.html', titulo = 'Roons', id_personagem = id_personagem, roons = room.roons), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
         
+@app.route('/room')
+async def room():
+    try:
+        id_usuario = session.get('id_usuario')
+        personagens = Usuario(id=id_usuario)
+        await personagens.carregar_personagens_banco()
+        return render_template('room.html', titulo = 'Room', personagens = await personagens.personagens), 200
+    except Exception as e:
+        print(e)
+        
+@app.post('/room')
+async def insert_room():
+    try:
+        id_usuario = session.get('id_usuario')
+        id_personagem = request.form.get('id_personagem')
+        code_room = request.form.get('id_room')
+        print(id_personagem, code_room)
+        room = Room(id_personagem=id_personagem, id_usuario=id_usuario, id_room=code_room)
+        
+        if room.insert_character_room_bank():
+            return redirect(url_for('room_personagem', code_room=code_room, id_personagem=id_personagem))
+        return render_template('index.html', msg = 'Erro em adicionar sala'), 500      
+    except Exception as e:
+        print(e)
+        
 @app.route('/room/<code_room>/<id_personagem>')
-async def room(code_room, id_personagem):
+async def room_personagem(code_room, id_personagem):
     try:
         if session.get('id_usuario') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")

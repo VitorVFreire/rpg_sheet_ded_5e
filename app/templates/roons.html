@@ -11,7 +11,7 @@
                     Nome:{{room['name_room']}}
                 </div>
                 <div class="col">
-                    <a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('room', code_room = room['id_room'], id_personagem = id_personagem)}}">Entrar Sala</a>
+                    <a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('room_personagem', code_room = room['id_room'], id_personagem = id_personagem)}}">Entrar Sala</a>
                 </div>             
             </div>
             {% endfor %}
