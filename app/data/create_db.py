@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Connect to the MySQL database server
 connection = mysql.connector.connect(
     host='localhost',
     user=os.getenv('USER_BASE'),
@@ -83,6 +82,39 @@ CREATE TABLE message (
     FOREIGN KEY (id_room) REFERENCES room(id_room) ON DELETE CASCADE,
     FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE
 );
+""")
+
+cursor.execute("""
+CREATE TABLE tipo_equipamento (
+    id_tipo_equipamento INT PRIMARY KEY AUTO_INCREMENT,
+    nome_tipo_equipamento VARCHAR(50) NOT NULL  
+);
+""")
+
+cursor.execute("""
+CREATE TABLE equipamento (
+    id_equipamento INT PRIMARY KEY AUTO_INCREMENT,
+    id_tipo_equipamento INT NOT NULL,
+    nome_equipamento VARCHAR(100) NOT NULL,
+    descricao VARCHAR(250),
+    preco FLOAT,
+    peso FLOAT,
+    ca INT,
+    dado VARCHAR(25),
+    bonus VARCHAR(25),
+    FOREIGN KEY (id_tipo_equipamento) REFERENCES tipo_equipamento(id_tipo_equipamento) ON DELETE CASCADE
+);           
+""")
+
+cursor.execute("""
+CREATE TABLE equipamento_personagem (
+    id_equipamento_personagem INT PRIMARY KEY AUTO_INCREMENT,
+    id_equipamento INT NOT NULL,
+    id_personagem INT NOT NULL,
+    qtd INT,
+    FOREIGN KEY (id_equipamento) REFERENCES equipamento(id_equipamento) ON DELETE CASCADE,
+    FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE
+);           
 """)
 
 cursor.execute("""
