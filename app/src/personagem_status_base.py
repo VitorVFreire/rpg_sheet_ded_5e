@@ -1,5 +1,4 @@
 from data import get_connection
-from src import Usuario
 import pymysql
 import asyncio
 

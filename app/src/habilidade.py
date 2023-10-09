@@ -131,13 +131,15 @@ class Habilidade:
 
     async def delete_habilidade_banco(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = """DELETE from habilidade
-                    WHERE id_habilidade=%s;"""
-                    await mycursor.execute(query, (self._id_habilidade,))
-                    await conn.commit()
-                    return True
+            if self._id_habilidade:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """DELETE from habilidade
+                        WHERE id_habilidade=%s;"""
+                        await mycursor.execute(query, (self._id_habilidade,))
+                        await conn.commit()
+                        return True
+            return False
         except pymysql.Error as e:
             print(e)
             return False
@@ -145,13 +147,14 @@ class Habilidade:
     async def update_habilidade_banco(self, chave, valor):
         try:
             possiveis_chave = ['id_habilidade', 'nome_atributo', 'nome_habilidade', 'nivel_habilidade', 'tipo_dano', 'qtd_dados', 'lados_dados', 'adicional_por_nivel', 'link_detalhes']
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    if chave in possiveis_chave:
+            if chave in possiveis_chave:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
                         query = f"""UPDATE habilidade SET {chave}=%s WHERE id_habilidade=%s"""
                         await mycursor.execute(query, (valor, self._id_habilidade))
                         await conn.commit()
                         return True
+            return False
         except pymysql.Error as e:
             print(e)
             return False 

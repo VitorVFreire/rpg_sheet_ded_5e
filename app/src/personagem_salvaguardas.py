@@ -1,5 +1,4 @@
 from data import get_connection, attributes
-from src import Usuario
 import pymysql
 import asyncio
 
@@ -69,7 +68,7 @@ class PersonagemSalvaguardas(PersonagemAtributos):
                         if result:
                             self._salvaguardas.clear()
                             for row in result:
-                                self._salvaguardas.append({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[1]})
+                                self.salvaguardas({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[1]})
                             return True
                 return True
             return False

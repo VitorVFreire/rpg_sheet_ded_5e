@@ -1,5 +1,4 @@
 from data import get_connection, attributes
-from src import Usuario
 import pymysql
 import asyncio
 
@@ -114,6 +113,10 @@ class PersonagemAtributos(Personagem):
         
     @property
     def bonus_proficiencia(self):
+        return int(self._bonus_proficiencia) if self._bonus_proficiencia is not None else 0
+    
+    @property
+    def bonus_proficiencia_externa(self):
         return int(self._bonus_proficiencia) if self._bonus_proficiencia is not None else 0
     
     @bonus_proficiencia.setter

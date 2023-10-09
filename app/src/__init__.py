@@ -14,3 +14,5 @@ from .personagem_status_base import PersonagemStatusBase
 from .message import Message
 from .room import Room
 from .messages import Messages
+from .equipamento import Equipamento
+from .personagem_equipamentos import PersonagemEquipamento

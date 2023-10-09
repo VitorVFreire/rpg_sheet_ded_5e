@@ -104,7 +104,7 @@ async def atributos_personagem_get(id_personagem):
                 'bonus_sabedoria': personagem.bonus_sabedoria,
                 'carisma': personagem.carisma,
                 'bonus_carisma': personagem.bonus_carisma,
-                'bonus_proficiencia': personagem.bonus_proficiencia}), 200  
+                'bonus_proficiencia': personagem.bonus_proficiencia_externa}), 200  
         else:
             return jsonify({
                 'forca': None,
