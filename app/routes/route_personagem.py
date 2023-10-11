@@ -1,8 +1,10 @@
-from flask import request, redirect, session, jsonify
+from flask import request, redirect, session, jsonify, send_from_directory, send_file
 from flask_session import Session
 import asyncio
+import pathlib 
 
 from main import app
+from tools import img_reserva
 from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room
 from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
 from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase
@@ -56,7 +58,7 @@ async def caracteristicas_personagem_get(id_personagem):
                 'cor_dos_olhos': personagem.cor_olhos,
                 'cor_da_pele': personagem.cor_pele,
                 'cor_do_cabelo': personagem.cor_cabelo,
-                'imagem_personagem': personagem.imagem_personagem
+                'imagem_personagem': personagem.url_img
             }), 200
         return jsonify({'result': False}), 404            
     except Exception as e:
@@ -74,13 +76,28 @@ async def caracteristicas_personagem_put(id_personagem):
         chave = request.form.get('chave')
         valor = request.form.get('valor')
 
+        if request.files:
+            file_upload = request.files.get('img_personagem')
+            return jsonify({'result': await personagem.save_file(file=file_upload), 'img_personagem': personagem.url_img}), 200 
+
         if await personagem.exists_caracteristicas_banco():
             return jsonify({'result': await personagem.update_caracteristicas_banco(chave=chave,valor=valor)}), 200
-        else:
+        else:               
             return jsonify({'result': await personagem.adicionar_caracteristicas_banco(chave=chave,valor=valor)}), 200
     except Exception as e:
         print(e)
-        return 404     
+        return 404  
+    
+@app.get('/openimg/<img>')
+def open_img(img): 
+    try:  
+        directory=pathlib.Path('data/img')
+        arquivo = list(directory.glob(img))
+        file = arquivo[0] if arquivo[0] is not None else img_reserva()
+        return send_file(file)   
+    except Exception as e:
+        print(e)
+        return send_file(img_reserva()) 
 
 @app.get('/atributos/<id_personagem>')
 async def atributos_personagem_get(id_personagem):

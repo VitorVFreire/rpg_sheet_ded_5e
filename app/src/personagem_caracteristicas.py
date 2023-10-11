@@ -1,6 +1,11 @@
 from data import get_connection
 import pymysql
+from flask import url_for
+
 import asyncio
+import time
+import os
+import pathlib
 
 from src import Personagem
 
@@ -16,6 +21,7 @@ class PersonagemCaracteristicas(Personagem):
             'cor do cabelo': None,
             'imagem_personagem': None
         } 
+        self.directory=pathlib.Path('data/img')
         
     async def exists_caracteristicas_banco(self):
         try:
@@ -103,6 +109,51 @@ class PersonagemCaracteristicas(Personagem):
         except pymysql.Error as e:
             print(e)
             return False
+        
+    async def exists_image_banco(self):
+        try:
+            if self._id_personagem:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = "SELECT EXISTS (SELECT id_caracteristicas_personagem FROM caracteristicas_personagem WHERE id_personagem = %s and imagem_personagem IS NOT NULL)"
+                        await mycursor.execute(query, (self._id_personagem))
+                        result = await mycursor.fetchone()
+                        if result[0] == 1:
+                            return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
+    async def save_file(self, file):
+        try:
+            name_base = f'{self.id_personagem}{self.id}{file.filename.replace(" ","")}'
+            if await self.exists_image_banco():
+                await self.remove_file()
+            exist_caracteristica = await self.exists_caracteristicas_banco()
+            time_now = int(time.time())
+            name = f'{time_now}{name_base}'  
+            route = f'{self.directory}/{name}'   
+            file.save(route)
+            self.set_imagem_personagem(name)
+            return (
+                await self.adicionar_caracteristicas_banco(chave='imagem_personagem', valor=name)
+                if not exist_caracteristica
+                else await self.update_caracteristicas_banco(chave='imagem_personagem', valor=name)
+            )
+        except Exception as e:
+            print(e)
+            return False
+
+    async def remove_file(self):
+        try:           
+            await self.carregar_caracteristicas_do_banco()
+            arquivo = list(self.directory.glob(self.imagem_personagem))
+            os.remove(arquivo[0])
+            return True
+        except Exception as e:
+            print(e)
+            return False
     
     @property
     def idade(self):
@@ -152,3 +203,7 @@ class PersonagemCaracteristicas(Personagem):
     @property
     def imagem_personagem(self):
         return self._caracteristicas['imagem_personagem']
+    
+    @property
+    def url_img(self):
+        return url_for('open_img', img=self.imagem_personagem, _external=True) if self.imagem_personagem is not None else None

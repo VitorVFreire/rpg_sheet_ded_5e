@@ -68,7 +68,7 @@ class PersonagemSalvaguardas(PersonagemAtributos):
                         if result:
                             self._salvaguardas.clear()
                             for row in result:
-                                self.salvaguardas({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[1]})
+                                self._salvaguardas.append({'id_salvaguarda_personagem':row[2],'id_salvaguarda':row[0],'nome_salvaguarda':row[1]})
                             return True
                 return True
             return False
@@ -102,10 +102,6 @@ class PersonagemSalvaguardas(PersonagemAtributos):
     @property
     def salvaguardas(self):
         return self._salvaguardas
-
-    @salvaguardas.setter
-    def salvaguardas(self, value):
-        self._salvaguardas.append(value)
         
     @property
     def lista_nome_salvaguardas(self):

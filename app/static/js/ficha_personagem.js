@@ -229,7 +229,6 @@ function html_salvaguardas(forca, destreza, inteligencia, sabedoria, carisma, co
 async function caracteristicas() {
   const conexao_caracteristicas = await fetch(`http://localhost:8085/caracteristicas/${id_personagem}`)
   const caracteristicas = await conexao_caracteristicas.json()
-
   html_caracteristicas(caracteristicas.idade,
     caracteristicas.altura,
     caracteristicas.peso,
@@ -257,9 +256,22 @@ function html_caracteristicas(idade, altura, peso, cor_dos_olhos, cor_da_pele, c
 
   const status_cor_do_cabelo = document.getElementById('caracteristicas_cor_cabelo')
   status_cor_do_cabelo.value = cor_do_cabelo
+  if (imagem_personagem !== null) {
+    const inputImagemPersonagem = document.getElementById('caracteristicas_imagem_personagem_upload');
+    inputImagemPersonagem.style = "display: none;";
 
-  const status_imagem_personagem = document.getElementById('caracteristicas_imagem_personagem')
-  status_imagem_personagem.value = imagem_personagem
+    const imgElement = document.createElement('img');
+    
+    imgElement.src = imagem_personagem;
+    imgElement.style = "width: 12rem;";
+    imgElement.id = "img_personagem";
+    const imagemContainer = document.getElementById('imagemContainer');
+    imagemContainer.appendChild(imgElement);
+    const image = document.getElementById('img_personagem');
+    image.addEventListener('click', function() {
+      inputImagemPersonagem.click();
+    });
+  }
 }
 
 async function habilidades() {
@@ -415,6 +427,35 @@ inputs_caracteristicas.forEach(input => {
       }
     });
   });
+});
+
+const inputImagemPersonagem = document.getElementById('caracteristicas_imagem_personagem_upload');
+
+inputImagemPersonagem.addEventListener('change', function () {
+    const file = inputImagemPersonagem.files[0]; 
+
+    if (file) {
+        const formData = new FormData(); 
+
+        formData.append('img_personagem', file); 
+
+        $.ajax({
+            url: `/caracteristicas/${id_personagem}`,
+            type: 'PUT',
+            data: formData,
+            processData: false, 
+            contentType: false, 
+            success: function (response) {
+                var result = response.result;
+                $('#result-container').text('Resultado: ' + result);
+                const image = document.getElementById('img_personagem');
+                image.src = response.img_personagem;
+            },
+            error: function (error) {
+                console.error('Erro ao enviar a imagem: ', error);
+            }
+        });
+    }
 });
 
 

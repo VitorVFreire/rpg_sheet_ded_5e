@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify, abort
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify, abort, make_response
 from flask_session import Session
 import asyncio
 
@@ -137,7 +137,7 @@ async def personagem(id_personagem):
     except Exception as e:
         print(e)
         abort(403, 'Error: 403\nAcesso Negado')
-    
+                 
 @app.route('/personagem/adicionar_habilidade/<id_personagem>')
 async def adicionar_habilidade_personagem(id_personagem):
     try:

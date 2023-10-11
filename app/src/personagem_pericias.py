@@ -68,7 +68,7 @@ class PersonagemPericias(PersonagemAtributos):
                         if result:
                             self._pericias.clear()
                             for row in result:
-                                self.set_pericias({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
+                                self._pericias.append({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
                         return True
             return False
         except pymysql.Error as e:
@@ -107,10 +107,6 @@ class PersonagemPericias(PersonagemAtributos):
     @property
     def pericias(self):
         return self._pericias
-
-    @pericias.setter
-    def set_pericias(self, value):
-        self._pericias.append(value)
         
     @property
     def acrobacia(self):
