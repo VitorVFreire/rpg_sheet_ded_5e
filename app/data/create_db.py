@@ -97,6 +97,7 @@ CREATE TABLE equipamento (
     id_tipo_equipamento INT NOT NULL,
     nome_equipamento VARCHAR(100) NOT NULL,
     descricao VARCHAR(250),
+    imagem_equipamento VARCHAR(100),
     preco FLOAT,
     peso FLOAT,
     ca INT,
@@ -258,6 +259,11 @@ CREATE TABLE habilidade_personagem (
 
 cursor.execute("""
 INSERT INTO classe(nome_classe) VALUES('mago');
+""")
+
+cursor.execute("""
+INSERT INTO tipo_equipamento(nome_tipo_equipamento) 
+VALUES ('espada'), ('escudo'), ('armadura');
 """)
 
 cursor.execute("""

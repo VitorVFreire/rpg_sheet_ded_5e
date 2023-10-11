@@ -6,4 +6,3 @@ flask_session
 .pytest_cache
 comandos.txt
 .gitignore
-data/img/*

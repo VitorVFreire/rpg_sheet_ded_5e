@@ -1,11 +1,9 @@
 from flask import request, redirect, session, jsonify, send_from_directory, send_file
 from flask_session import Session
 import asyncio
-import pathlib 
 
 from main import app
-from tools import img_reserva
-from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room
+from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room, Image
 from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
 from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase
 
@@ -46,7 +44,7 @@ async def deletepersonagem(id_personagem):
 async def caracteristicas_personagem_get(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
+        personagem = PersonagemCaracteristicas(id_personagem=id_personagem,id_usuario=id_usuario)
             
         await personagem.personagem_pertence_usuario()
         
@@ -78,7 +76,7 @@ async def caracteristicas_personagem_put(id_personagem):
 
         if request.files:
             file_upload = request.files.get('img_personagem')
-            return jsonify({'result': await personagem.save_file(file=file_upload), 'img_personagem': personagem.url_img}), 200 
+            return jsonify({'result': await personagem.save_img_personagem(file=file_upload), 'img_personagem': personagem.url_img}), 200 
 
         if await personagem.exists_caracteristicas_banco():
             return jsonify({'result': await personagem.update_caracteristicas_banco(chave=chave,valor=valor)}), 200
@@ -91,13 +89,10 @@ async def caracteristicas_personagem_put(id_personagem):
 @app.get('/openimg/<img>')
 def open_img(img): 
     try:  
-        directory=pathlib.Path('data/img')
-        arquivo = list(directory.glob(img))
-        file = arquivo[0] if arquivo[0] is not None else img_reserva()
-        return send_file(file)   
+        return send_file(Image(name=img).file)   
     except Exception as e:
         print(e)
-        return send_file(img_reserva()) 
+        return send_file(Image().img_default) 
 
 @app.get('/atributos/<id_personagem>')
 async def atributos_personagem_get(id_personagem):

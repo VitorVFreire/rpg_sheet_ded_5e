@@ -1,4 +1,5 @@
 const id_personagem = parseInt(document.querySelector('#id_personagem').value, 10);
+const host = 'http://localhost:8085';
 
 status_base()
 atributos()
@@ -8,7 +9,7 @@ caracteristicas()
 habilidades()
 
 async function status_base() {
-  const conexao_status_base = await fetch(`http://localhost:8085/status_base/${id_personagem}`)
+  const conexao_status_base = await fetch(`${host}/status_base/${id_personagem}`)
   const status_base = await conexao_status_base.json()
 
   html_status_base(status_base.nivel,
@@ -64,7 +65,7 @@ function html_status_base(nivel, alinhamento, faccao, antecendente, xp, deslocam
 }
 
 async function atributos() {
-  const conexao_atributos = await fetch(`http://localhost:8085/atributos/${id_personagem}`)
+  const conexao_atributos = await fetch(`${host}/atributos/${id_personagem}`)
   const atributos = await conexao_atributos.json()
 
   html_atributos(atributos.forca,
@@ -127,7 +128,7 @@ function html_bonus_atributos(bonus_forca, bonus_inteligencia, bonus_carisma, bo
 }
 
 async function pericias() {
-  const conexao_pericias = await fetch(`http://localhost:8085/pericias/${id_personagem}`)
+  const conexao_pericias = await fetch(`${host}/pericias/${id_personagem}`)
   const data = await conexao_pericias.json();
 
   const pericias = data.pericias;
@@ -188,7 +189,7 @@ function html_pericias(periciasData, periciasDoPersonagem) {
 }
 
 async function salvaguardas() {
-  const conexao_salvaguardas = await fetch(`http://localhost:8085/salvaguardas/${id_personagem}`)
+  const conexao_salvaguardas = await fetch(`${host}/salvaguardas/${id_personagem}`)
   const salvaguardas = await conexao_salvaguardas.json()
   html_salvaguardas(salvaguardas.forca,
     salvaguardas.destreza,
@@ -227,7 +228,7 @@ function html_salvaguardas(forca, destreza, inteligencia, sabedoria, carisma, co
 }
 
 async function caracteristicas() {
-  const conexao_caracteristicas = await fetch(`http://localhost:8085/caracteristicas/${id_personagem}`)
+  const conexao_caracteristicas = await fetch(`${host}/caracteristicas/${id_personagem}`)
   const caracteristicas = await conexao_caracteristicas.json()
   html_caracteristicas(caracteristicas.idade,
     caracteristicas.altura,
@@ -275,7 +276,7 @@ function html_caracteristicas(idade, altura, peso, cor_dos_olhos, cor_da_pele, c
 }
 
 async function habilidades() {
-  const conexao_habilidades = await fetch(`http://localhost:8085/habilidades/${id_personagem}`)
+  const conexao_habilidades = await fetch(`${host}/habilidades/${id_personagem}`)
 
   if (conexao_habilidades.status === 200){
     const data = await conexao_habilidades.json()

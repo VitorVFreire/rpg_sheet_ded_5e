@@ -117,7 +117,6 @@ async def personagens():
 async def personagem(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        
         personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
 
         await personagem.personagem_pertence_usuario()

@@ -1,9 +1,13 @@
 from data import get_connection
 import pymysql
 import asyncio
+from flask import url_for
 
-class Equipamento:
-    def __init__(self, id_equipamento = None, id_tipo_equipamento = None, nome_tipo_equipoamento = None, nome_equipamento = None, descricao = None, preco = None, peso = None, ca = None, dado = None, bonus = None):
+from src import Image
+
+class Equipamento(Image):
+    def __init__(self, id_equipamento = None, id_tipo_equipamento = None, nome_tipo_equipoamento = None, nome_equipamento = None, descricao = None, preco = None, peso = None, ca = None, dado = None, bonus = None, name = None, imagem_equipamento = None):
+        super().__init__(parametro=id_equipamento,name=name)
         self.__id_tipo_equipamento = id_tipo_equipamento or []
         self.__nome_tipo_equipoamento = nome_tipo_equipoamento or []
         self.__id_equipamento = id_equipamento or []
@@ -14,11 +18,26 @@ class Equipamento:
         self.__ca = ca or []
         self.__dado = dado or []
         self.__bonus = bonus or []
+        self.__imagem_equipamento = imagem_equipamento or []
+        
+    @property
+    def imagem_equipamento(self):
+        return self.__imagem_equipamento
+        
+    @imagem_equipamento.setter
+    def imagem_equipamento(self, value):
+        self.name = value
+        self.__imagem_equipamento = self.url_img
+    
+    @imagem_equipamento.setter
+    def imagem_equipamentos(self, value):
+        self.name = value
+        self.__imagem_equipamento.append(self.url_img)
         
     @property
     def equipamentos(self):
         equipamentos = []
-        for id_tipo_equipamento, nome_tipo_equipamento, id_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus in zip(self.__id_tipo_equipamento, self.__nome_tipo_equipamento, self.__id_equipamento, self.__nome_equipamento, self.__descricao, self.__preco, self.__peso, self.__ca, self.__dado, self.__bonus):
+        for id_tipo_equipamento, nome_tipo_equipamento, id_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus, imagem_equipamento in zip(self.__id_tipo_equipamento, self.__nome_tipo_equipamento, self.__id_equipamento, self.__nome_equipamento, self.__descricao, self.__preco, self.__peso, self.__ca, self.__dado, self.__bonus, self.imagem_equipamento):
             equipamentos.append({
                 'id_tipo_equipamento': id_tipo_equipamento, 
                 'nome_tipo_equipamento': nome_tipo_equipamento,
@@ -29,7 +48,8 @@ class Equipamento:
                 'peso': peso, 
                 'ca': ca,
                 'dado': dado,
-                'bonus': bonus
+                'bonus': bonus,
+                'imagem_equipamento': imagem_equipamento
             })
         return equipamentos
     
@@ -45,7 +65,8 @@ class Equipamento:
             'peso': self.__peso, 
             'ca': self.__ca,
             'dado': self.__dado,
-            'bonus': self.__bonus
+            'bonus': self.__bonus,
+            'imagem_equipamento': self.imagem_equipamento
         }
         return equipamento
    
@@ -53,7 +74,7 @@ class Equipamento:
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
-                    query = "SELECT eq.id_tipo_equipamento, eq.nome_equipamento, eq.descricao, eq.preco, eq.peso, eq.ca, eq.dado, eq.bonus, eq.id_equipamento, te.nome_tipo_equipamento FROM equipamento eq, tipo_equipamento te WHERE eq.id_tipo_equipamento = te.id_tipo_equipamento;"
+                    query = "SELECT eq.id_tipo_equipamento, eq.nome_equipamento, eq.descricao, eq.preco, eq.peso, eq.ca, eq.dado, eq.bonus, eq.id_equipamento, te.nome_tipo_equipamento, eq.imagem_equipamento FROM equipamento eq, tipo_equipamento te WHERE eq.id_tipo_equipamento = te.id_tipo_equipamento;"
                     await mycursor.execute(query)
                     result = await mycursor.fetchall() 
                     if result:
@@ -68,6 +89,7 @@ class Equipamento:
                             self.__bonus.append(row[7])
                             self.__id_equipamento.append(row[8])
                             self.__nome_tipo_equipoamento.append(row[9])
+                            self.imagem_equipamentos(row[10])
                         return True
             return False
         except Exception as e:
@@ -78,7 +100,7 @@ class Equipamento:
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
-                    query = "SELECT id_tipo_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus FROM equipamento WHERE id_equipamento=%s;"
+                    query = "SELECT id_tipo_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus, imagem_equipamento FROM equipamento WHERE id_equipamento=%s;"
                     await mycursor.execute(query,(self._id_equipamento,))
                     result = await mycursor.fetchone() 
                     if result:
@@ -90,6 +112,7 @@ class Equipamento:
                         self.__ca = result[5]
                         self.__dado = result[6]
                         self.__bonus = result[7]
+                        self.imagem_equipamento(result[8])
                         return True
             return False
         except Exception as e:
@@ -101,8 +124,9 @@ class Equipamento:
             if self.__id_tipo_equipamento:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        query = "INSERT INTO equipamento (id_tipo_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-                        await mycursor.execute(query, (self.__id_tipo_equipamento, self.__nome_equipamento, self.__descricao, self.__preco, self.__peso, self.__ca, self.__dado, self.__bonus))
+                        self.__imagem_equipamento = self.save_img_equipamento(self.__imagem_equipamento) if self.__imagem_equipamento is not None else None
+                        query = "INSERT INTO equipamento (id_tipo_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus, imagem_equipamento) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+                        await mycursor.execute(query, (self.__id_tipo_equipamento, self.__nome_equipamento, self.__descricao, self.__preco, self.__peso, self.__ca, self.__dado, self.__bonus, self.__imagem_equipamento))
                         self.__id_equipamento = mycursor.lastrowid   
                         await conn.commit()
                         return True
@@ -128,7 +152,7 @@ class Equipamento:
         
     async def update_equipamento_banco(self, chave, valor):
         try:
-            possiveis_chave = ['id_tipo_equipamento', 'nome_equipamento', 'descricao', 'preco', 'peso', 'ca', 'dado', 'bonus']
+            possiveis_chave = ['id_tipo_equipamento', 'nome_equipamento', 'descricao', 'preco', 'peso', 'ca', 'dado', 'bonus', 'imagem_equipamento']
             if chave in possiveis_chave:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
@@ -140,3 +164,13 @@ class Equipamento:
         except pymysql.Error as e:
             print(e)
             return False 
+    
+    def save_img_equipamento(self, file):
+        try:
+            self.parametro = 'equipamento'
+            result, name = self.save_file(file) 
+            return name if result is True else None
+        except Exception as e:
+            print(e)
+            return False       
+    

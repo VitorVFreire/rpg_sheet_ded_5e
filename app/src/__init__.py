@@ -5,6 +5,7 @@ from .classe import Classe
 from .habilidade import Habilidade
 from .salvaguarda import Salvaguarda
 from .personagem import Personagem
+from .image import Image
 from .personagem_atributos import PersonagemAtributos
 from .personagem_caracteristicas import PersonagemCaracteristicas
 from .personagem_habilidades import PersonagemHabilidades
