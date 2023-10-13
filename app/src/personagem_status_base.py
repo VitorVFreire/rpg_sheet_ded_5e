@@ -114,6 +114,23 @@ class PersonagemStatusBase(Personagem):
             return False
     
     @property
+    def status_base(self):
+        return {
+            'nivel': self.nivel,
+            'alinhamento': self.alinhamento,
+            'faccao': self.faccao,
+            'antecendente': self.antecendente,
+            'xp': self.xp,
+            'deslocamento': self.deslocamento,
+            'iniciativa': self.iniciativa,
+            'vida': self.vida,
+            'vida_atual': self.vida_atual,
+            'vida_temporaria': self.vida_temporaria,
+            'inspiracao': self.inspiracao,
+            'ca': self.ca
+        }
+    
+    @property
     def nivel(self):
         return int(self._nivel) if self._nivel is not None else None 
     

@@ -8,14 +8,38 @@ class PersonagemAtributos(Personagem):
     def __init__(self, id_usuario=None,id_personagem=None):
         super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
         self._atributos = {
-            'forca': 0,
-            'destreza': 0,
-            'constituicao': 0,
-            'inteligencia': 0,
-            'sabedoria': 0,
-            'carisma': 0
+            'forca': None,
+            'destreza': None,
+            'constituicao': None,
+            'inteligencia': None,
+            'sabedoria': None,
+            'carisma': None
         }
         self._bonus_proficiencia = None
+        
+    def verifica_valor(self, valor, chave):
+        valor = int(valor)
+        possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
+        condicao = 0 < valor <= 30 if chave != 'bonus_proficiencia' else valor > 0
+        return condicao and chave in possibilidade_chave
+        
+    @property
+    def atributos(self):
+        return {
+            'forca': self.forca,
+            'bonus_forca': self.bonus_forca,
+            'destreza': self.destreza,
+            'bonus_destreza': self.bonus_destreza,
+            'inteligencia': self.inteligencia,
+            'bonus_inteligencia': self.bonus_inteligencia,
+            'constituicao': self.constituicao,
+            'bonus_constituicao': self.bonus_constituicao,
+            'sabedoria': self.sabedoria,
+            'bonus_sabedoria': self.bonus_sabedoria,
+            'carisma': self.carisma,
+            'bonus_carisma': self.bonus_carisma,
+            'bonus_proficiencia': self.bonus_proficiencia_externa
+        }
         
     async def exists_atributos_banco(self):
         try:
@@ -34,8 +58,7 @@ class PersonagemAtributos(Personagem):
     
     async def adicionar_atributo_banco(self,chave,valor):
         try:
-            possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
-            if self._id_personagem and chave in possibilidade_chave:
+            if self._id_personagem and self.verifica_valor(chave=chave, valor=valor):
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"INSERT INTO atributos(id_personagem,{chave}) VALUES(%s,%s);"
@@ -89,8 +112,7 @@ class PersonagemAtributos(Personagem):
     
     async def update_atributos_banco(self, chave, valor):
         try:
-            possibilidade_chave=['forca','destreza','constituicao','inteligencia','sabedoria','carisma','bonus_proficiencia' ]
-            if self._id_personagem and chave in possibilidade_chave:
+            if self._id_personagem and self.verifica_valor(chave=chave, valor=valor):
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE atributos
@@ -107,9 +129,7 @@ class PersonagemAtributos(Personagem):
         
     async def get_bonus(self, chave):
         await self.carregar_atributos_do_banco()
-        if self._atributos[chave] is None:
-            return 0
-        return int(attributes.loc[self._atributos[chave]])
+        return getattr(self, f'bonus_{chave}')
         
     @property
     def bonus_proficiencia(self):

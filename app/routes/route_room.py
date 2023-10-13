@@ -4,6 +4,16 @@ from flask import session, abort, render_template, request, jsonify, redirect, u
 from src import Personagem, Message, Messages, Room, Usuario 
 from main import socketio, app
 
+@app.post('/insert/room/<id_personagem>/<code_room>')
+async def room_personagem_post(id_personagem, code_room):
+    try:
+        room = Room(id_room=code_room ,id_personagem=id_personagem)
+
+        return jsonify({'result': room.insert_character_room_bank()}), 200
+    except Exception as e:
+        print(e)
+        return 404
+
 @app.route('/roons/<id_personagem>')
 async def roons(id_personagem):
     try:

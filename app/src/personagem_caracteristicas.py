@@ -17,6 +17,18 @@ class PersonagemCaracteristicas(Personagem, Image):
             'cor da pele': None,
             'cor do cabelo': None
         } 
+    
+    @property
+    def caracteristica(self):
+        return {
+            'idade': self.idade,
+            'altura': self.altura,
+            'peso': self.peso,
+            'cor_dos_olhos': self.cor_olhos,
+            'cor_da_pele': self.cor_pele,
+            'cor_do_cabelo': self.cor_cabelo,
+            'imagem_personagem': self.url_img
+        }
         
     async def exists_caracteristicas_banco(self):
         try:

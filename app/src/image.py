@@ -50,8 +50,7 @@ class Image:
     
     @property
     def file(self):
-        directory=pathlib.Path('data/img')
-        arquivo = list(directory.glob(self.name))
+        arquivo = list(self.directory.glob(self.name))
         return arquivo[0] if arquivo[0] is not None else self.img_default
     
     @property
