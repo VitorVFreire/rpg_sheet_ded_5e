@@ -93,7 +93,6 @@ class PersonagemPericias(PersonagemAtributos):
 
     async def get_pericias(self,chave):
         await self.carregar_pericias_do_banco()
-        print(chave)
         return getattr(self, chave)
         
         

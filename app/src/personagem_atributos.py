@@ -129,6 +129,8 @@ class PersonagemAtributos(Personagem):
         
     async def get_bonus(self, chave):
         await self.carregar_atributos_do_banco()
+        if chave == 'bonus_proficiencia':
+            chave = 'proficiencia_externa'
         return getattr(self, f'bonus_{chave}')
         
     @property

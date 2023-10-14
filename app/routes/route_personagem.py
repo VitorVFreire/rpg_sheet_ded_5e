@@ -31,11 +31,11 @@ async def insert_personagem():
 async def deletepersonagem(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
+        personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
         
         await personagem.personagem_pertence_usuario()
                 
-        return jsonify({'result': await personagem.delete_personagem_banco()}), 200
+        return jsonify({'result': (await personagem.delete_caracteristicas_banco() and await personagem.delete_personagem_banco())}), 200
     except Exception as e:
         print(e)
         return 404

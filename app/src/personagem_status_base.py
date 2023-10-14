@@ -19,6 +19,10 @@ class PersonagemStatusBase(Personagem):
         self._vida_atual = None
         self._vida_temporaria = None
         self._xp = None
+    
+    def verifica_chave(self, chave):
+        possibilidade_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
+        return chave in possibilidade_chave
         
     async def exists_status_base_banco(self):
         try:
@@ -37,8 +41,7 @@ class PersonagemStatusBase(Personagem):
     
     async def adicionar_status_base_banco(self,chave,valor):
         try:
-            possibilidade_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
-            if self._id_personagem and chave in possibilidade_chave:
+            if self._id_personagem and self.verifica_chave(chave):
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"INSERT INTO status_base(id_personagem,{chave}) VALUES(%s,%s);"
@@ -76,18 +79,18 @@ class PersonagemStatusBase(Personagem):
                         await mycursor.execute(query, (self._id_personagem,))
                         result = await mycursor.fetchone()
                         if result:
-                            self.vida=result[0]
-                            self.xp=result[1]
-                            self.nivel=result[2]
-                            self.alinhamento=result[3] 
-                            self.antecendente=result[4] 
-                            self.faccao=result[5]  
-                            self.inspiracao=result[6]
-                            self.ca=result[7]
-                            self.iniciativa=result[8]
-                            self.deslocamento=result[9]
-                            self.vida_atual=result[10]
-                            self.vida_temporaria=result[11]     
+                            self.vida = result[0]
+                            self.xp = result[1]
+                            self.nivel = result[2]
+                            self.alinhamento = result[3] 
+                            self.antecendente = result[4] 
+                            self.faccao = result[5]  
+                            self.inspiracao = result[6]
+                            self.ca = result[7]
+                            self.iniciativa = result[8]
+                            self.deslocamento = result[9]
+                            self.vida_atual = result[10]
+                            self.vida_temporaria = result[11]     
                             return True
                 return True
             return False
@@ -97,8 +100,7 @@ class PersonagemStatusBase(Personagem):
         
     async def update_status_base_banco(self,chave,valor):
         try:
-            possibilidades_chave=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
-            if self._id_personagem and chave in possibilidades_chave:
+            if self._id_personagem and self.verifica_chave(chave):
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE status_base

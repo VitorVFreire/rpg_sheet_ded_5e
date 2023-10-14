@@ -11,11 +11,11 @@ class PersonagemHabilidades(Personagem):
     
     async def exists_habilidade_especifica_banco(self, id_habilidade):
         try:
-            if self._id_personagem:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_habilidade_personagem FROM habilidade_personagem WHERE id_habilidade = %s and id_personagem = %s)"
-                        await mycursor.execute(query, (id_habilidade,self._id_personagem,))
+                        await mycursor.execute(query, (id_habilidade,self.id_personagem,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -26,11 +26,11 @@ class PersonagemHabilidades(Personagem):
         
     async def exists_habilidade_banco(self):
         try:
-            if self._id_personagem:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_habilidade_personagem FROM habilidade_personagem WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self._id_personagem,))
+                        await mycursor.execute(query, (self.id_personagem,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -41,11 +41,11 @@ class PersonagemHabilidades(Personagem):
     
     async def adicionar_habilidade_banco(self,id_habilidade):
         try:
-            if self._id_personagem:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO habilidade_personagem(id_personagem,id_habilidade) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self._id_personagem,id_habilidade))
+                        await mycursor.execute(query, (self.id_personagem,id_habilidade))
                         await conn.commit()
                         return True
             return False
@@ -55,12 +55,12 @@ class PersonagemHabilidades(Personagem):
         
     async def delete_habilidade_banco(self,id_habilidade_personagem):
         try:
-            if self._id_personagem:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from habilidade_personagem
                         WHERE id_habilidade=%s and id_personagem = %s;"""
-                        await mycursor.execute(query, (id_habilidade_personagem, self._id_personagem))
+                        await mycursor.execute(query, (id_habilidade_personagem, self.id_personagem))
                         await conn.commit()
                         return True
             return False
@@ -70,14 +70,14 @@ class PersonagemHabilidades(Personagem):
         
     async def carregar_habilidades_do_banco(self):
         try:
-            if self._id_personagem:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT hb.id_habilidade, hb.nome_habilidade, hb.nome_atributo, hb.nivel_habilidade, hb.tipo_dano, hb.qtd_dados, hb.lados_dados, hb.adicional_por_nivel, hb.link_detalhes, hp.id_habilidade_personagem
                         FROM habilidade_personagem hp
                         JOIN habilidade hb ON hp.id_habilidade = hb.id_habilidade
                         WHERE hp.id_personagem = %s;"""
-                        await mycursor.execute(query, (self._id_personagem,))
+                        await mycursor.execute(query, (self.id_personagem,))
                         result = await mycursor.fetchall()
                         if result:
                             for row in result:
@@ -102,7 +102,7 @@ class PersonagemHabilidades(Personagem):
         
     async def update_habilidade_banco(self,id_habilidade,id_habilidade_personagem):
         try:
-            if self._id_personagem:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """UPDATE habilidade_personagem

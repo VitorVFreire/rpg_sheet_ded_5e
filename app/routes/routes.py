@@ -108,7 +108,9 @@ async def personagens():
         
         usuario = Usuario(id=id_usuario)
         
-        return render_template('personagens.html', titulo = 'Personagens', personagens = await usuario.personagens), 200
+        await usuario.carregar_personagens_banco()
+        
+        return render_template('personagens.html', titulo = 'Personagens', personagens = usuario.personagens), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
@@ -121,17 +123,18 @@ async def personagem(id_personagem):
 
         await personagem.personagem_pertence_usuario()
         
+        await personagem.get_usuario()
         await personagem.carregar_personagem_banco()
         await personagem.carregar_classes_do_banco()
-        
+                
         return render_template(
             'ficha_personagem.html',
-            titulo = await personagem.nome_personagem,
-            raca = await personagem.raca,
-            nome = await personagem.nome,
-            classe = await personagem.classe,
+            titulo = personagem.nome_personagem,
+            raca = personagem.raca,
+            nome = personagem.nome,
+            classe = personagem.classe,
             id_personagem = personagem.id_personagem,
-            nome_personagem = await personagem.nome_personagem,
+            nome_personagem = personagem.nome_personagem,
         ), 200
     except Exception as e:
         print(e)

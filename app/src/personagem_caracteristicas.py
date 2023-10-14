@@ -65,6 +65,8 @@ class PersonagemCaracteristicas(Personagem, Image):
     async def delete_caracteristicas_banco(self):
         try:
             if self.id_personagem:
+                await self.carregar_caracteristicas_do_banco()
+                self.remove_file()
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from caracteristicas_personagem
