@@ -3,9 +3,9 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room, Image
+from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room, Image, Equipamento
 from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
-from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase
+from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase, PersonagemEquipamento
 
 @app.post('/insert_personagem')
 async def insert_personagem():
@@ -36,6 +36,22 @@ async def deletepersonagem(id_personagem):
         await personagem.personagem_pertence_usuario()
                 
         return jsonify({'result': (await personagem.delete_caracteristicas_banco() and await personagem.delete_personagem_banco())}), 200
+    except Exception as e:
+        print(e)
+        return 404
+
+@app.put('/update/base/<id_personagem>')
+async def update_base_db(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        personagem = Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+        
+        chave = request.form.get('chave')
+        valor = request.form.get('valor')
+                
+        return jsonify({'result': await personagem.update_personagem_banco(chave=chave,valor=valor)}), 200
     except Exception as e:
         print(e)
         return 404
@@ -325,19 +341,48 @@ async def habilidades_personagem_delete(id_personagem):
     except Exception as e:
         print(e)
         return 404
-        
-@app.put('/update/base/<id_personagem>')
-async def update_base_db(id_personagem):
+    
+@app.get('/equipamentos/<id_personagem>')
+async def equipamentos_personagem_get(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        personagem = Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        personagem = PersonagemEquipamento(id_usuario=id_usuario, id_personagem=id_personagem)
         
         await personagem.personagem_pertence_usuario()
-        
-        chave = request.form.get('chave')
-        valor = request.form.get('valor')
                 
-        return jsonify({'result': await personagem.update_personagem_banco(chave=chave,valor=valor)}), 200
+        if await personagem.exists_equipamento_banco() and await personagem.carregar_equipamentos_do_banco():
+            return jsonify(personagem.equipamentos_lista), 200
+        return jsonify({'result': False}), 404
+    except Exception as e:
+        print(e)
+        return 404
+    
+@app.post('/equipamentos/<id_personagem>')
+async def equipamentos_personagem_post(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        id_equipamento = request.form.get('id_equipamento')
+        personagem = PersonagemEquipamento(id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+                    
+        return jsonify({'result': await personagem.adicionar_equipamento_banco()}), 200
+    except Exception as e:
+        print(e)
+        return 404
+
+@app.delete('/equipamentos/<id_personagem>')
+async def equipamentos_personagem_delete(id_personagem):
+    try:
+        id_usuario = session.get('id_usuario')
+        id_equipamento = request.form.get('id_equipamento')
+        personagem = PersonagemEquipamento(id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
+        
+        await personagem.personagem_pertence_usuario()
+            
+        if await personagem.exists_equipamento_especifica_banco():
+            return jsonify({'result': await personagem.delete_equipamento_banco()}), 200
+        return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404

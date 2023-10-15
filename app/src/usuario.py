@@ -18,7 +18,8 @@ class Usuario:
     def tipo_usuario(self):
         return self.__tipo_usuario   
     
-    def usuario_admin(self):
+    async def usuario_admin(self):
+        await self.get_usuario()
         return self.tipo_usuario == 'admin'   
     
     @property

@@ -3,7 +3,7 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Pericia, Raca, Classe, Salvaguarda, Habilidade
+from src import Pericia, Raca, Classe, Salvaguarda, Habilidade, Equipamento
 from src import Personagem, Usuario, Room
 
 @app.route('/')
@@ -153,3 +153,14 @@ async def adicionar_habilidade_personagem(id_personagem):
         print(e)
         abort(404)
         
+@app.route('/personagem/adicionar_equipamento/<id_personagem>')
+async def adicionar_equipamento_personagem(id_personagem):
+    try:
+        equipamentos = Equipamento()
+        
+        await equipamentos.carregar_equipamentos()
+        await equipamentos.carregar_equiapamentos_personagem_do_banco(id_personagem=id_personagem)
+        return render_template('adicionar_equipamento_personagem.html', equipamentos = equipamentos.equipamentos, id_personagem = id_personagem), 200
+    except Exception as e:
+        print(e)
+        abort(404)

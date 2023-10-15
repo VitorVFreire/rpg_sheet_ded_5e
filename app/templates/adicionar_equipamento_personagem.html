@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<input type="hidden" id="id_personagem" value="{{id_personagem}}">
+    <label for="equipamentos">Selecione Equipamentos:</label><br>
+    <div class="container text-center"></div>
+        {% for equipamento in equipamentos %}
+            <div class="row justify-content">
+                <div class="col">
+                    {% if equipamento['personagem_possui'] %}
+                        <input type="checkbox" class="form-check-input" id="equipamento_{{equipamento['id_equipamento']}}" required checked/>
+                    {% else %}
+                        <input type="checkbox" class="form-check-input" id="equipamento_{{equipamento['id_equipamento']}}" required />
+                    {% endif %}
+                    {{equipamento['nome_equipamento']}}
+                </div>
+                <div class="col">
+                    <img src="{{equipamento['imagem_equipamento']}}" alt="img_{{equipamento['nome_equipamento']}}" style="width: 25%;">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="result-container"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/adicionar_equipamento_personagem.js')}}"></script>
+{% endblock %}
