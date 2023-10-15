@@ -1,4 +1,5 @@
 from .usuario import Usuario
+from .moeda import Moeda
 from .pericia import Pericia
 from .raca import Raca
 from .classe import Classe

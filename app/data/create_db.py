@@ -58,6 +58,24 @@ CREATE TABLE personagem (
 );
 """)
 
+cursor.execute("""
+CREATE TABLE moeda (
+  id_moeda INT PRIMARY KEY AUTO_INCREMENT,
+  nome_moeda VARCHAR(50) NOT NULL  
+);
+""")
+
+cursor.execute("""
+CREATE TABLE moedas_personagem (
+  id_moeda_personagem INT PRIMARY KEY AUTO_INCREMENT,
+  id_moeda INT NOT NULL,
+  id_personagem INT NOT NULL,
+  qtd_moeda FLOAT NOT NULL,
+  FOREIGN KEY (id_moeda) REFERENCES moeda(id_moeda) ON DELETE CASCADE,
+  FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE
+);               
+""")
+
 #permissao
 #1 - admin
 #0 - padrao
@@ -99,11 +117,13 @@ CREATE TABLE equipamento (
     descricao VARCHAR(250),
     imagem_equipamento VARCHAR(100),
     preco FLOAT,
+    id_moeda INT,
     peso FLOAT,
     ca INT,
     dado VARCHAR(25),
     bonus VARCHAR(25),
-    FOREIGN KEY (id_tipo_equipamento) REFERENCES tipo_equipamento(id_tipo_equipamento) ON DELETE CASCADE
+    FOREIGN KEY (id_tipo_equipamento) REFERENCES tipo_equipamento(id_tipo_equipamento) ON DELETE CASCADE,
+    FOREIGN KEY (id_moeda) REFERENCES moeda(id_moeda) ON DELETE CASCADE
 );           
 """)
 
@@ -259,6 +279,10 @@ CREATE TABLE habilidade_personagem (
 
 cursor.execute("""
 INSERT INTO classe(nome_classe) VALUES('mago');
+""")
+
+cursor.execute("""
+INSERT INTO moeda(nome_moeda) VALUES('po'),('pp'),('pc'),('pl'),('da'),('pe');
 """)
 
 cursor.execute("""

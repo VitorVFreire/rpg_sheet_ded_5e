@@ -8,7 +8,7 @@ $(document).ready(function() {
         var nome_personagem = $('#nome_personagem').val();
 
         $.ajax({
-            url: '/insert_personagem',
+            url: '/personagem',
             type: 'POST',
             data: {
                 id_raca: id_raca,

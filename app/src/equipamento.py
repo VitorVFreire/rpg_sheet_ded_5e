@@ -48,7 +48,7 @@ class Equipamento(Image):
                 'imagem_equipamento': imagem_equipamento,
                 'personagem_possui': id_equipamento in self.__equiapamentos_personagem
             })
-        return equipamentos
+        return equipamentos if equipamentos[0]['id_equipamento'] is not None else None
     
     @property
     def equipamento(self):
@@ -66,10 +66,10 @@ class Equipamento(Image):
             'imagem_equipamento': self.imagem_equipamento,
             'personagem_possui': self.__id_equipamento in self.__equiapamentos_personagem
         }
-        return equipamento
+        return equipamento if equipamento['id_equipamento'] is not None else None
     
     def clear_equipamentos(self):
-        if self.__id_tipo_equipamento[0] is None:
+        if self.__id_equipamento[0] is None:
             self.__id_tipo_equipamento.clear()
             self.__nome_tipo_equipamento.clear()
             self.__id_equipamento.clear()

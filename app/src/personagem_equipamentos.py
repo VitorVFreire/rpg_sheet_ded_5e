@@ -96,7 +96,7 @@ class PersonagemEquipamento(Personagem, Image):
                                     'id_equipamento': row[8],
                                     'nome_tipo_equipoamento': row[9],
                                     'id_equipamento_personagem': row[10],
-                                    'qtd': row[11],
+                                    'qtd': row[11] if row[11] is not None else '',
                                     'imagem_equipamento': self.url_img
                                 }
                             return True
@@ -105,17 +105,15 @@ class PersonagemEquipamento(Personagem, Image):
             print(e)
             return False
         
-    async def update_equipamento_banco(self, id_equipamento_personagem, chave):
+    async def update_equipamento_banco(self):
         try:
-            possibilidade_chave = ['id_equipamento', 'qtd']
-            if self.id_personagem and chave in possibilidade_chave:
+            if self.id_personagem:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        valor = getattr(self, f"__{chave}")
                         query = f"""UPDATE equipamento_personagem
-                        SET {chave}=%s
+                        SET qtd=%s
                         WHERE id_equipamento_personagem=%s;"""
-                        await mycursor.execute(query, (valor, id_equipamento_personagem))
+                        await mycursor.execute(query, (self.__qtd, self.__id_equipamento))
                         await conn.commit()
                         return True
             return False

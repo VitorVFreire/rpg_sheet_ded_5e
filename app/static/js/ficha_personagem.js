@@ -7,6 +7,7 @@ pericias()
 salvaguardas()
 caracteristicas()
 habilidades()
+equipamentos()
 
 async function status_base() {
   const conexao_status_base = await fetch(`${host}/status_base/${id_personagem}`)
@@ -258,20 +259,7 @@ function html_caracteristicas(idade, altura, peso, cor_dos_olhos, cor_da_pele, c
   const status_cor_do_cabelo = document.getElementById('caracteristicas_cor_cabelo')
   status_cor_do_cabelo.value = cor_do_cabelo
   if (imagem_personagem !== null) {
-    const inputImagemPersonagem = document.getElementById('caracteristicas_imagem_personagem_upload');
-    inputImagemPersonagem.style = "display: none;";
-
-    const imgElement = document.createElement('img');
-    
-    imgElement.src = imagem_personagem;
-    imgElement.style = "width: 12rem;";
-    imgElement.id = "img_personagem";
-    const imagemContainer = document.getElementById('imagemContainer');
-    imagemContainer.appendChild(imgElement);
-    const image = document.getElementById('img_personagem');
-    image.addEventListener('click', function() {
-      inputImagemPersonagem.click();
-    });
+    create_img_personagem(imagem_personagem)
   }
 }
 
@@ -303,14 +291,81 @@ function html_habilidades(habilidades) {
   }
 }
 
+async function equipamentos() {
+  const conexao_equipamentos = await fetch(`${host}/equipamentos/${id_personagem}`)
+
+  if (conexao_equipamentos.status === 200){
+    const data = await conexao_equipamentos.json()
+    html_equipamentos(data)
+  }  
+}
+
+function html_equipamentos(equipamentos) {
+  const equipamentosSection = document.querySelector('[data-equipamentos]');
+  for (const valor in equipamentos) {
+    if (equipamentos.hasOwnProperty(valor)) {
+      let text_condicao = "";
+
+      const equipamento = equipamentos[valor];
+      
+      if (equipamento.nome_tipo_equipamento === 'espada') {
+        text_condicao = `dado: ${equipamento.dado}\nbonus: ${equipamento.bonus}`;
+      } else if (equipamento.nome_tipo_equipamento === 'escudo') {
+        text_condicao = `ca: ${equipamento.ca}\nbonus: ${equipamento.bonus}`;
+      } else {
+        text_condicao = `ca: ${equipamento.ca}`;
+      }
+
+      const equipamentoElement = document.createElement('div');
+      equipamentoElement.classList.add('row');
+      equipamentoElement.classList.add('justify-content');
+      equipamentoElement.innerHTML = `
+        <img src="${equipamento.imagem_equipamento}" alt="img_${equipamento['nome_equipamento']}" style="width: 25%;">
+        <label>equipamento: ${equipamento.nome_equipamento}</label>
+        <label>${equipamento.descricao}</label>
+        <label>${text_condicao}</label>
+        <label>${equipamento.peso}</label><label>${equipamento.preco} po</label>
+        <input type="text" class="form-control text-center" id="equipamento_${equipamento.id_equipamento}" value="${equipamento.qtd}" required/>
+      </div>
+      `;
+      equipamentosSection.appendChild(equipamentoElement);
+    }
+  }
+  detectar_mudanca_input_qtd_equipamento()
+}
+
+function detectar_mudanca_input_qtd_equipamento(){
+  const input_qtd_equipamento = document.querySelectorAll('input[id^="equipamento_"]');
+
+  input_qtd_equipamento.forEach(input => {
+    input.addEventListener('blur', function () {
+      const id = input.id;
+      const posicao = id.search('to_');
+      const id_equipamento = id.substring(posicao + 3);
+      $.ajax({
+        url: `/equipamentos/${id_personagem}`,
+        type: 'PUT',
+        data: {
+          id_equipamento: id_equipamento,
+          qtd: this.value,
+        },
+        success: function (response) {
+          var result = response.result;
+          $('#result-container').text('Resultado: ' + result);
+        }
+      });
+    });
+  });
+}
+
 const input_nome = document.querySelectorAll('#nome_personagem');
 
 input_nome.forEach(input => {
   input.addEventListener('blur', function () {
     const id = input.id;
     $.ajax({
-      url: `/update/base/${id_personagem}`,
-      type: 'POST',
+      url: `/personagem/${id_personagem}`,
+      type: 'PUT',
       data: {
         chave: id,
         valor: this.value,
@@ -450,7 +505,11 @@ inputImagemPersonagem.addEventListener('change', function () {
                 var result = response.result;
                 $('#result-container').text('Resultado: ' + result);
                 const image = document.getElementById('img_personagem');
-                image.src = response.img_personagem;
+                if (image) {
+                  image.src = response.img_personagem;
+                }else{
+                  create_img_personagem(response.img_personagem)
+                }
             },
             error: function (error) {
                 console.error('Erro ao enviar a imagem: ', error);
@@ -491,4 +550,21 @@ function atualizar_salvaguardas() {
         response.constituicao)
     }
   });
+}
+
+function create_img_personagem(img_personagem){
+  const inputImagemPersonagem = document.getElementById('caracteristicas_imagem_personagem_upload');
+    inputImagemPersonagem.style = "display: none;";
+
+    const imgElement = document.createElement('img');
+    
+    imgElement.src = img_personagem;
+    imgElement.style = "width: 12rem;";
+    imgElement.id = "img_personagem";
+    const imagemContainer = document.getElementById('imagemContainer');
+    imagemContainer.appendChild(imgElement);
+    const image = document.getElementById('img_personagem');
+    image.addEventListener('click', function() {
+      inputImagemPersonagem.click();
+    });
 }

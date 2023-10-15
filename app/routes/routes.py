@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify, abort, make_response
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify, abort, make_response, send_file
 from flask_session import Session
 import asyncio
 
 from main import app
 from src import Pericia, Raca, Classe, Salvaguarda, Habilidade, Equipamento
-from src import Personagem, Usuario, Room
+from src import Personagem, Usuario, Room, Image
 
 @app.route('/')
 def index():
@@ -164,3 +164,11 @@ async def adicionar_equipamento_personagem(id_personagem):
     except Exception as e:
         print(e)
         abort(404)
+        
+@app.get('/openimg/<img>')
+def open_img(img): 
+    try:  
+        return send_file(Image(name=img).file)   
+    except Exception as e:
+        print(e)
+        return send_file(Image().img_default) 
