@@ -1,57 +1,57 @@
 from data import get_connection
-from src import Usuario, Moeda
+from src import User, Moeda
 import pymysql
 import asyncio
 from flask import abort
 
-class Personagem(Usuario, Moeda):
-    def __init__(self, id_usuario=None, id_personagem=None, valor=None):
-        super().__init__(id=id_usuario)
-        Moeda().__init__(self, valor=valor)
-        self._id_personagem = id_personagem
-        self._nome_personagem = None
-        self._classe = []
-        self._raca = None
+class Character(User, Moeda):
+    def __init__(self, id_user=None, id_character=None, value=None):
+        super().__init__(id=id_user)
+        Moeda().__init__(self, valor=value)
+        self._id_character = id_character
+        self._character_name = None
+        self._classes = []
+        self._race = None
     
     @property
-    def id_personagem(self):
-        return self._id_personagem 
+    def id_character(self):
+        return self._id_character 
     
     @property
     def classe(self):
-        return self._classe[0]['nome_classe'] if len(self._classe) > 0 else ''
+        return self._classes[0]['nome_classe'] if len(self._classes) > 0 else ''
     
     @property
     def classes(self):
-        return self._classe
+        return self._classes
 
     @classe.setter
     def classe(self, value):
-        self._classe.append(value)
+        self._classes.append(value)
         
     @property
-    def nome_personagem(self):
-        return self._nome_personagem
+    def character_name(self):
+        return self._character_name
         
-    @nome_personagem.setter
-    def nome_personagem(self,value):
-        self._nome_personagem=value 
+    @character_name.setter
+    def character_name(self,value):
+        self._character_name=value 
         
     @property
-    def raca(self):
-        return self._raca
+    def race(self):
+        return self._race
     
-    @raca.setter
-    def raca(self,value):
-        self._raca=value   
+    @race.setter
+    def race(self,value):
+        self._race=value   
         
-    async def personagem_pertence_usuario(self):
+    async def character_belongs_user(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_personagem FROM personagem WHERE id_personagem = %s and id_usuario = %s)"
-                        await mycursor.execute(query, (self.id_personagem, self.id))
+                        await mycursor.execute(query, (self.id_character, self.id_user))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -60,9 +60,9 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False      
 
-    async def adicionar_classe_banco(self,id_classe):
+    async def insert_character_class(self,id_class):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """
@@ -70,7 +70,7 @@ class Personagem(Usuario, Moeda):
                             (`id_personagem`, `id_classe`)
                             VALUES (%s, %s)
                         """
-                        await mycursor.execute(query, (self.id_personagem,id_classe))
+                        await mycursor.execute(query, (self.id_character,id_class))
                         await conn.commit()
                         return True
             return False
@@ -78,14 +78,14 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False
         
-    async def delete_classe_banco(self,id_classe_personagem):
+    async def delete_character_class(self,id_character_class):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from classe_personagem
                         WHERE id_classe_personagem=%s;"""
-                        await mycursor.execute(query, (id_classe_personagem,))
+                        await mycursor.execute(query, (id_character_class,))
                         await conn.commit()
                         return True
             return False
@@ -93,16 +93,16 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False
     
-    async def adicionar_personagem_banco(self,id_raca,nome_personagem):
+    async def insert_character(self,id_race,character_name):
         try:
-            if self.id:
+            if self.id_user:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """INSERT INTO personagem
                         (id_usuario,id_raca,nome_personagem) 
                         VALUES(%s,%s,%s);"""
-                        await mycursor.execute(query, (self.id,id_raca,nome_personagem))
-                        self._id_personagem = mycursor.lastrowid  
+                        await mycursor.execute(query, (self.id_user,id_race,character_name))
+                        self._id_character = mycursor.lastrowid  
                         await conn.commit()
                         return True
             return False
@@ -110,14 +110,14 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False
     
-    async def delete_personagem_banco(self):
+    async def delete_character(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from personagem
                         WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         await conn.commit()
                         return True
             return False
@@ -125,9 +125,9 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False
         
-    async def update_classe_banco(self,id_classe,id_classe_personagem):
+    async def update_character_class(self,id_classe,id_classe_personagem):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """UPDATE classe_personagem
@@ -141,55 +141,55 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False
         
-    async def carregar_classes_do_banco(self):
+    async def load_character_classes(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT cp.id_classe, cl.nome_classe,cp.id_classe_personagem
                         FROM classe_personagem cp, classe cl
                         WHERE cp.id_personagem = %s and cp.id_classe=cl.id_classe;"""
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchall()
                         if result:
-                            self._classe.clear()
+                            self._classes.clear()
                             for row in result:
-                                self._classe.append({'id_classe_personagem': row[2], 'id_classe': row[0], 'nome_classe': row[1]})
+                                self._classes.append({'id_classe_personagem': row[2], 'id_classe': row[0], 'nome_classe': row[1]})
                             return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    async def carregar_personagem_banco(self):
+    async def load_character(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT pr.nome_personagem,rc.nome_raca
                         FROM personagem pr,raca rc
                         WHERE pr.id_personagem = %s and pr.id_raca=rc.id_raca;"""
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchone()
                         if result:
-                            self.nome_personagem=result[0]
-                            self.raca=result[1]
+                            self.character_name=result[0]
+                            self.race=result[1]
                             return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    async def update_personagem_banco(self,chave,valor):
+    async def update_character(self,chave,valor):
         try:
             possibilidades_chave=['id_raca','nome_personagem']
-            if self.id_personagem and chave in possibilidades_chave:
+            if self.id_character and chave in possibilidades_chave:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE personagem
                         SET {chave}=%s
                         WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (valor,self.id_personagem))
+                        await mycursor.execute(query, (valor,self.id_character))
                         await conn.commit()
                         return True
             return False
@@ -197,13 +197,13 @@ class Personagem(Usuario, Moeda):
             print(e)
             return False
      
-    async def exists_moeda_banco(self, moeda):
+"""    async def exists_moeda_banco(self, moeda):
         try:
-            if self._id_personagem:
+            if self._id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_moedas_personagem FROM moeda WHERE id_personagem = %s AND moeda = %s)"
-                        await mycursor.execute(query, (self._id_personagem, moeda,))
+                        await mycursor.execute(query, (self._id_character, moeda,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -214,15 +214,15 @@ class Personagem(Usuario, Moeda):
         
     async def banco_moeda_personagem(self, moeda):
         try:
-            if self._id_personagem and self.verifica_moeda(moeda):
+            if self._id_character and self.verifica_moeda(moeda):
                 async with await get_connection() as conn:
                         async with conn.cursor() as mycursor:
                             if await self.exists_moeda_banco(moeda):
                                 query = f"UPDATE moedas_personagem SET qtd=%s WHERE id_personagem=%s AND moeda=%s;"
-                                parametros = (self.valor, self.id_personagem, moeda,)
+                                parametros = (self.valor, self.id_character, moeda,)
                             else:
                                 query = f"INSERT INTO moedas_personagem(id_personagem,moeda,qtd) VALUES(%s,%s,%s);"
-                                parametros = (self._id_personagem, moeda, self.valor)
+                                parametros = (self._id_character, moeda, self.valor)
                             await mycursor.execute(query, parametros)
                             await conn.commit()
                             return True
@@ -233,7 +233,7 @@ class Personagem(Usuario, Moeda):
         
     async def gasto_moeda(self):
         try:
-            if self._id_personagem:
+            if self._id_character:
                 async with await get_connection() as conn:
                         async with conn.cursor() as mycursor:
                             deposito, saque = self.converter_moedas()
@@ -242,11 +242,11 @@ class Personagem(Usuario, Moeda):
                             else:
                                 query = "INSERT INTO moedas_personagem (qtd_moeda, moeda, id_personagem) VALUES(%s,%s,%s);"                            
                             query += "UPDATE moedas_personagem SET qtd=%s WHERE id_personagem=%s AND moeda=%s;"
-                            parametros = (deposito, self.destino, self.id_personagem, saque, self.id_personagem, self.origem,)
+                            parametros = (deposito, self.destino, self.id_character, saque, self.id_character, self.origem,)
                             await mycursor.execute(query, parametros)
                             await conn.commit()
                             return True
             return False
         except pymysql.Error as e:
             print(e)
-            return False
+            return False"""

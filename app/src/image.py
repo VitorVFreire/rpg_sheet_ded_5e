@@ -4,9 +4,9 @@ import pathlib
 from flask import url_for
 
 class Image:
-    def __init__(self, parametro = None, name = None):
+    def __init__(self, parameters = None, name = None):
         self.directory = pathlib.Path('data/img')
-        self.__parametro = parametro
+        self.__parameter = parameters
         self.__name = name
     
     @property
@@ -18,16 +18,16 @@ class Image:
         self.__name = value
             
     @property
-    def parametro(self):
-        return self.__parametro
+    def parameter(self):
+        return self.__parameter
     
-    @parametro.setter
-    def parametro(self, value):
-        self.__parametro = value
+    @parameter.setter
+    def parameter(self, value):
+        self.__parameter = value
     
     def save_file(self, file):
         try:
-            name_base = f'{self.parametro}{file.filename.replace(" ","")}'
+            name_base = f'{self.parameter}{file.filename.replace(" ","")}'
             if self.name is not None:
                 self.remove_file()
             time_now = int(time.time())

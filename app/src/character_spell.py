@@ -2,20 +2,20 @@ from data import get_connection
 import pymysql
 import asyncio
 
-from src import Personagem
+from src import Character
 
-class PersonagemHabilidades(Personagem):
-    def __init__(self, id_usuario=None,id_personagem=None):
-        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
-        self._habilidade = []
+class CharacterSpell(Character):
+    def __init__(self, id_user=None, id_character=None):
+        super().__init__(id_user=id_user, id_character=id_character)
+        self._spells = []
     
-    async def exists_habilidade_especifica_banco(self, id_habilidade):
+    async def exists_specific_spell(self, id_spell):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_habilidade_personagem FROM habilidade_personagem WHERE id_habilidade = %s and id_personagem = %s)"
-                        await mycursor.execute(query, (id_habilidade,self.id_personagem,))
+                        await mycursor.execute(query, (id_spell,self.id_character,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -24,13 +24,13 @@ class PersonagemHabilidades(Personagem):
             print(e)
             return False
         
-    async def exists_habilidade_banco(self):
+    async def exists_spell(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_habilidade_personagem FROM habilidade_personagem WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -39,28 +39,44 @@ class PersonagemHabilidades(Personagem):
             print(e)
             return False
     
-    async def adicionar_habilidade_banco(self,id_habilidade):
+    async def insert_spell(self,id_spell):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO habilidade_personagem(id_personagem,id_habilidade) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self.id_personagem,id_habilidade))
+                        await mycursor.execute(query, (self.id_character,id_spell))
                         await conn.commit()
                         return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
-        
-    async def delete_habilidade_banco(self,id_habilidade_personagem):
+    
+    async def update_spell(self,id_spell,id_character_spell):
         try:
-            if self.id_personagem:
+            if self.id_character:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = """UPDATE habilidade_personagem
+                        SET id_habilidade=%s
+                        WHERE id_habilidade_personagem=%s;"""
+                        await mycursor.execute(query, (id_spell,id_character_spell))
+                        await conn.commit()
+                        return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False    
+        
+    async def delete_spell(self,id_character_spell):
+        try:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from habilidade_personagem
                         WHERE id_habilidade=%s and id_personagem = %s;"""
-                        await mycursor.execute(query, (id_habilidade_personagem, self.id_personagem))
+                        await mycursor.execute(query, (id_character_spell, self.id_character))
                         await conn.commit()
                         return True
             return False
@@ -68,16 +84,16 @@ class PersonagemHabilidades(Personagem):
             print(e)
             return False
         
-    async def carregar_habilidades_do_banco(self):
+    async def load_spells(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT hb.id_habilidade, hb.nome_habilidade, hb.nome_atributo, hb.nivel_habilidade, hb.tipo_dano, hb.qtd_dados, hb.lados_dados, hb.adicional_por_nivel, hb.link_detalhes, hp.id_habilidade_personagem
                         FROM habilidade_personagem hp
                         JOIN habilidade hb ON hp.id_habilidade = hb.id_habilidade
                         WHERE hp.id_personagem = %s;"""
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchall()
                         if result:
                             for row in result:
@@ -93,37 +109,21 @@ class PersonagemHabilidades(Personagem):
                                     'link_detalhes': row[8],
                                     'id_habilidade_personagem': row[9]
                                 }
-                                self.habilidade = habilidade              
+                                self.spell = habilidade              
                             return True
             return False
         except pymysql.Error as e:
             print(e)
             return False
         
-    async def update_habilidade_banco(self,id_habilidade,id_habilidade_personagem):
-        try:
-            if self.id_personagem:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """UPDATE habilidade_personagem
-                        SET id_habilidade=%s
-                        WHERE id_habilidade_personagem=%s;"""
-                        await mycursor.execute(query, (id_habilidade,id_habilidade_personagem))
-                        await conn.commit()
-                        return True
-            return False
-        except pymysql.Error as e:
-            print(e)
-            return False
-        
     @property
-    def habilidade(self, value):
-        return self._habilidade[value]
+    def spell(self, value):
+        return self._spells[value]
     
     @property
-    def habilidades(self):
-        return self._habilidade  
+    def spells(self):
+        return self._spells  
     
-    @habilidade.setter
-    def habilidade(self,value):
-        self._habilidade.append(value)
+    @spell.setter
+    def spell(self,value):
+        self._spells.append(value)

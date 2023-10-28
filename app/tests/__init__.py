@@ -7,6 +7,7 @@ from .test_personagem_status_base import PersonagemStatusBaseTest
 from .test_personagem_salvaguardas import PersonagemSalvaguardaTest
 from .test_personagem_pericias import PersonagemPericiasTest
 from .test_personagem_habilidades import PersonagemHabilidadesTest
+from .test_personagem_equipamento import PersonagemEquipamentosTest
 from .test_personagem_caracteristicas import PersonagemCaracteristicasTest
 from .test_personagem_atributos import PersonagemAtributosTest
 from .test_pericia import PericiaTest
@@ -15,4 +16,5 @@ from .test_habilidade import HabilidadeTest
 from .test_flask_personagem import TestNewPersonagemView
 from .test_flask_login import TestLoginView
 from .test_flask_cadastro_usuario import TestNewUserView
+from .test_equipamento import EquipamentoTest
 from .test_classe import ClasseTest

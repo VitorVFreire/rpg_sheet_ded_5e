@@ -1,54 +1,54 @@
 import unittest
-from src import PersonagemSalvaguardas, Salvaguarda, Usuario, Raca
+from src import CharacterSavingThrow, SavingThrow, User, Race
 import asyncio
 
 class PersonagemSalvaguardaTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.usuario_teste = Usuario(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
-        await cls.usuario_teste.create_usuario()
-        cls.raca_teste = Raca(nome_raca='raca_Teste')
-        await cls.raca_teste.insert_raca_banco()
+        cls.usuario_teste = User(name='John', email='john@example.com', password='pass123', birth_date='1990-01-01')
+        await cls.usuario_teste.insert_user()
+        cls.raca_teste = Race(race_name='raca_Teste')
+        await cls.raca_teste.insert_race()
         cls.nome_personagem_teste = 'Personagem de Teste'
 
-        cls.personagem_teste = PersonagemSalvaguardas(
-            id_usuario=cls.usuario_teste.id,
-            id_raca=cls.raca_teste.id_raca,
+        cls.personagem_teste = CharacterSavingThrow(
+            id_user=cls.usuario_teste.id_user,
+            id_raca=cls.raca_teste.id_race,
             nome_personagem=cls.nome_personagem_teste
         )
-        await cls.personagem_teste.adicionar_personagem_banco()
+        await cls.personagem_teste.insert_character()
 
-        cls.salvaguarda_teste = Salvaguarda(nome_salvaguarda='inteligencia')
-        await cls.salvaguarda_teste.carregar_salvaguarda_nome()
+        cls.salvaguarda_teste = SavingThrow(saving_throw_name='inteligencia')
+        await cls.salvaguarda_teste.load_saving_throw_by_name()
 
     @classmethod
     async def tearDown(cls):
-        await cls.personagem_teste.delete_personagem_banco()
-        await cls.usuario_teste.delete_usuario()
-        await cls.raca_teste.delete_raca_banco()
+        await cls.personagem_teste.delete_character()
+        await cls.usuario_teste.delete_user()
+        await cls.raca_teste.delete_race()
 
 
     async def test_atribuicao_salvaguarda(self):
-        self.assertEqual(self.salvaguarda_teste.nome_salvaguarda, 'inteligencia')
-        await self.personagem_teste.adicionar_atributo_banco(id_salvaguarda=self.salvaguarda_teste.id_salvaguarda)
-        await self.personagem_teste.carregar_salvaguardas_do_banco()
-        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste.id_salvaguarda for salvaguarda in await self.personagem_teste.salvaguardas))
-        self.assertEqual(self.personagem_teste.resistencia_inteligencia, (self.personagem_teste.bonus_inteligencia + self.personagem_teste.bonus_proficiencia))
+        self.assertEqual(self.salvaguarda_teste.saving_throw_name, 'inteligencia')
+        await self.personagem_teste.insert_attribute(id_salvaguarda=self.salvaguarda_teste.id_saving_throw)
+        await self.personagem_teste.load_saving_throws()
+        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste.id_saving_throw for salvaguarda in await self.personagem_teste.saving_throws))
+        self.assertEqual(self.personagem_teste.intelligence_resistance, (self.personagem_teste.intelligence_bonus + self.personagem_teste.proficiency_bonus))
 
     async def test_update_salvaguarda(self):
-        id_salvaguarda_personagem = (await self.personagem_teste.salvaguardas)[0]['id_salvaguarda_personagem']
-        self.salvaguarda_teste_UPDATE = Salvaguarda(nome_salvaguarda='forca')
-        await self.salvaguarda_teste_UPDATE.carregar_salvaguarda_nome()
+        id_salvaguarda_personagem = (await self.personagem_teste.saving_throws)[0]['id_salvaguarda_personagem']
+        self.salvaguarda_teste_UPDATE = SavingThrow(saving_throw_name='forca')
+        await self.salvaguarda_teste_UPDATE.load_saving_throw_by_name()
 
-        self.assertEqual(self.salvaguarda_teste_UPDATE.nome_salvaguarda, 'forca')
-        await self.personagem_teste.update_salvaguardas_banco(id_salvaguarda_personagem=id_salvaguarda_personagem, id_salvaguarda=self.salvaguarda_teste_UPDATE.id_salvaguarda)
-        await self.personagem_teste.carregar_salvaguardas_do_banco()
-        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste_UPDATE.id_salvaguarda for salvaguarda in await self.personagem_teste.salvaguardas))
-        self.assertEqual(self.personagem_teste.resistencia_forca, (self.personagem_teste.bonus_forca + self.personagem_teste.bonus_proficiencia))
+        self.assertEqual(self.salvaguarda_teste_UPDATE.saving_throw_name, 'forca')
+        await self.personagem_teste.update_saving_throw(id_salvaguarda_personagem=id_salvaguarda_personagem, id_salvaguarda=self.salvaguarda_teste_UPDATE.id_saving_throw)
+        await self.personagem_teste.load_saving_throws()
+        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste_UPDATE.id_saving_throw for salvaguarda in await self.personagem_teste.saving_throws))
+        self.assertEqual(self.personagem_teste.strength_resistance, (self.personagem_teste.strength_bonus + self.personagem_teste.proficiency_bonus))
 
     async def test_carregar_salvaguardas_usuarios_banco(self):
-        await self.personagem_teste.carregar_salvaguardas_do_banco()
-        self.assertGreater(len(await self.personagem_teste.salvaguardas), 0)
+        await self.personagem_teste.load_saving_throws()
+        self.assertGreater(len(await self.personagem_teste.saving_throws), 0)
 
 if __name__ == '__main__':
     asyncio.run(unittest.main())

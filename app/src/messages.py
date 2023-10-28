@@ -30,7 +30,7 @@ class Messages:
         messages['messages'].reverse()
         return messages
                                 
-    def load_messages_bank(self):
+    def load_messages(self):
         try:
             with get_connection_without_async() as conn:
                 with conn.cursor() as mycursor:    

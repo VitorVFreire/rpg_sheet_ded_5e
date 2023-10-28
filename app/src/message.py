@@ -5,12 +5,12 @@ import datetime
 import re
 
 class Message:
-    def __init__(self, id_message = None, room = None , message = None, name_character = None, id_personagem = None):
+    def __init__(self, id_message = None, room = None , message = None, name_character = None, id_character = None):
         self.__id_message = id_message
         self.__message = message
         self.__room = room
         self.__name_character = name_character
-        self.__id_personagem = id_personagem
+        self.__id_personagem = id_character
         self.__exists_command = self.__message.find('!r')
         self.__parts = []
         self.__amount_dices = []
@@ -21,7 +21,7 @@ class Message:
         self.__math_account = ""
         self.__message_treated = {}
         
-        self.insert_message_bank()
+        self.insert_message()
         if self.__exists_command != -1:
             self.filtering_message()
             
@@ -71,7 +71,7 @@ class Message:
                 self.__message_treated['dices']['result_total'] = self.__result_total
                 
                 self.__message = f"ROLL: {self.__result_total} -- rolls: {self.__results[0]}"
-                self.insert_message_bank()
+                self.insert_message()
                 self.__message_treated['message'] = self.__message
                 
             return self.__message_treated
@@ -79,7 +79,7 @@ class Message:
             print(e)
             return False  
         
-    def insert_message_bank(self):
+    def insert_message(self):
         try:
             if self.__id_personagem:
                 with get_connection_without_async() as conn:

@@ -1,32 +1,32 @@
 import unittest
-from src import Personagem, Raca, Room, Message, Messages
+from src import Character, Race, Room, Message, Messages
 import asyncio
 
 class TestMessage(unittest.TestCase):
     @classmethod
     async def setUp(cls): 
-        cls.usuario_teste = Personagem(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
-        await cls.usuario_teste.create_usuario()
-        cls.raca_teste = Raca(nome_raca='raca_Teste')
-        await cls.raca_teste.insert_raca_banco()
-        await cls.usuario_teste.adicionar_personagem_banco(id_raca=cls.raca_teste.id_raca,nome_personagem='nome personagem teste')
+        cls.usuario_teste = Character(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
+        await cls.usuario_teste.insert_user()
+        cls.raca_teste = Race(race_name='raca_Teste')
+        await cls.raca_teste.insert_race()
+        await cls.usuario_teste.insert_character(id_race=cls.raca_teste.id_race,character_name='nome personagem teste')
         
-        cls.room = Room(id_usuario = cls.usuario_teste.id, name_room = 'test_room')
-        cls.response_insert_room_bank = cls.room.insert_room_bank()
-        cls.character = Room(id_room = cls.room.id_room, id_personagem = cls.usuario_teste.id_personagem)
-        cls.character.insert_character_room_bank()
+        cls.room = Room(id_user = cls.usuario_teste.id_user, room_name = 'test_room')
+        cls.response_insert_room_bank = cls.room.insert_room()
+        cls.character = Room(id_room = cls.room.id_room, id_character = cls.usuario_teste.id_character)
+        cls.character.insert_character_room()
         
-        cls.message = Message(id_personagem=cls.usuario_teste.id_personagem, message='teste text') 
-        cls.message_roll = Message(id_personagem=cls.usuario_teste.id_personagem, message='!r 1d20')
+        cls.message = Message(id_character=cls.usuario_teste.id_character, message='teste text') 
+        cls.message_roll = Message(id_character=cls.usuario_teste.id_character, message='!r 1d20')
         
         cls.messages = Messages(id_room=cls.room.id_room)
-        cls.response_messages = cls.messages.load_messages_bank()         
+        cls.response_messages = cls.messages.load_messages()         
     
     @classmethod
     async def tearDown(cls):
-        cls.room.delete_room_bank()
-        await cls.raca_teste.delete_raca_banco()
-        await cls.usuario_teste.delete_usuario() 
+        cls.room.delete_room()
+        await cls.raca_teste.delete_race()
+        await cls.usuario_teste.delete_user() 
         
     async def test_text_basic_message(self):
         self.assertEqual('teste text', self.message.message['message'])   

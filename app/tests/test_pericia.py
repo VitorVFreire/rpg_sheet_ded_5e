@@ -1,35 +1,35 @@
 import unittest
 import asyncio
 from data import get_connection
-from src import Pericia
+from src import Skill
 
 class PericiaTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.pericia_teste = Pericia(nome_pericia='pericia_Teste', status_uso='status_teste')
-        await cls.pericia_teste.insert_pericia_banco()
+        cls.pericia_teste = Skill(skill_name='pericia_Teste', usage_status='status_teste')
+        await cls.pericia_teste.insert_skill()
 
     @classmethod
     async def tearDown(cls):
-        await cls.pericia_teste.delete_pericia_banco() 
+        await cls.pericia_teste.delete_skill() 
 
     async def test_nome_pericia(self):
-        self.assertEqual(self.pericia_teste.nome_pericia, 'pericia_Teste')
+        self.assertEqual(self.pericia_teste.skill_name, 'pericia_Teste')
 
     async def test_update_nome_pericia(self):
-        await self.pericia_teste.update_pericia_banco(chave='nome_pericia', valor="Nova pericia Teste")
-        await self.pericia_teste.carregar_pericia()
-        self.assertEqual(self.pericia_teste.nome_pericia, "Nova pericia Teste")
+        await self.pericia_teste.update_skill(chave='nome_pericia', valor="Nova pericia Teste")
+        await self.pericia_teste.load_skill()
+        self.assertEqual(self.pericia_teste.skill_name, "Nova pericia Teste")
 
     async def test_update_status_pericia(self):
-        self.assertTrue(await self.pericia_teste.update_pericia_banco(chave='status_uso', valor="novo status"))
-        await self.pericia_teste.carregar_pericia()
-        self.assertEqual(self.pericia_teste.status_uso, "novo status")
+        self.assertTrue(await self.pericia_teste.update_skill(chave='status_uso', valor="novo status"))
+        await self.pericia_teste.load_skill()
+        self.assertEqual(self.pericia_teste.usage_status, "novo status")
 
     async def test_carregar_pericias_banco(self):
-        pericias_teste = Pericia()
-        self.assertTrue(await pericias_teste.carregar_pericias())
-        pericias = await pericias_teste.pericias
+        pericias_teste = Skill()
+        self.assertTrue(await pericias_teste.load_skills())
+        pericias = await pericias_teste.skills
         self.assertGreater(len(pericias), 0)
 
 if __name__ == '__main__':

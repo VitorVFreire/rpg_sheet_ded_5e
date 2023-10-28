@@ -3,28 +3,28 @@ import pymysql
 import asyncio
 
 class Classe:
-    def __init__(self, id_classe=None, nome_classe=None):
+    def __init__(self, id_classe=None, class_name=None):
         self._id_classe = id_classe or []
-        self._nome_classe = nome_classe or []
+        self._name_class = class_name or []
         
     @property
-    def nome_classe(self):
-        return self._nome_classe
+    def name_class(self):
+        return self._name_class
     
     @property
-    def id_classe(self):
+    def id_class(self):
         return self._id_classe
 
     @property
     async def classes(self):
         if (type(self._id_classe) is list and len(self._id_classe)<=0) or (self._id_classe is None):
-            await self.carregar_classes()
+            await self.load_classes()
         classes=[]
-        for id_classe,nome_classe in zip(self._id_classe, self._nome_classe):
+        for id_classe,nome_classe in zip(self._id_classe, self._name_class):
             classes.append({'id_classe':id_classe,'nome_classe':nome_classe})
         return classes
     
-    async def carregar_classes(self):
+    async def load_classes(self):
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
@@ -34,14 +34,14 @@ class Classe:
                     if result:
                         for row in result:
                             self._id_classe.append(row[0])
-                            self._nome_classe.append(row[1])
+                            self._name_class.append(row[1])
                             return True
             return False
         except Exception as e:
             print(e)
             return False
     
-    async def carregar_classe(self):
+    async def load_class(self):
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
@@ -49,19 +49,19 @@ class Classe:
                     await mycursor.execute(query,(self._id_classe,))
                     result = await mycursor.fetchall() 
                     if result:
-                        self._nome_classe=result[0]
+                        self._name_class=result[0]
                         return True
             return False
         except Exception as e:
             print(e)
             return False
 
-    async def insert_classe_banco(self):
+    async def insert_class(self):
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
                     query = "INSERT INTO classe (nome_classe) VALUES (%s);"
-                    await mycursor.execute(query, (str(self._nome_classe),))
+                    await mycursor.execute(query, (str(self._name_class),))
                     self._id_classe = mycursor.lastrowid   
                     await conn.commit()
                     return True
@@ -69,7 +69,7 @@ class Classe:
             print(e)
             return False
 
-    async def delete_classe_banco(self):
+    async def delete_class(self):
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
@@ -82,12 +82,12 @@ class Classe:
             print(e)
             return False
         
-    async def update_classe_banco(self,valor):
+    async def update_class(self, value):
         try:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
                     query = "UPDATE classe SET nome_classe=%s WHERE id_classe=%s"
-                    await mycursor.execute(query, (valor,self._id_classe))
+                    await mycursor.execute(query, (value,self._id_classe))
                     await conn.commit()
                     return True
         except pymysql.Error as e:

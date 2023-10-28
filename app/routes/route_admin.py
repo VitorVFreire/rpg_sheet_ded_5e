@@ -3,189 +3,189 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Usuario, Personagem, Classe, Raca, Pericia, Salvaguarda, Habilidade, Equipamento
+from src import User, Character, Classe, Race, Skill, SavingThrow, Spell, Equipment
 
 @app.route('/admin')
 async def admin():
-    usuario = Usuario(id=session.get('id_usuario'))
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
+    if await user.valid_admin_user():
         return render_template('admin/admin_pag.html',titulo='ADMIN')
     return redirect(url_for('index'))
 
 @app.route('/criar_classe')
-async def nova_classe():
-    usuario = Usuario(id=session.get('id_usuario'))
+async def new_class():
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
+    if await user.valid_admin_user():
         return render_template('admin/add_classe.html',titulo='Nova Classe')
     return redirect(url_for('index'))
     
 @app.post('/criar_classe')
-async def insert_classe():
+async def insert_class():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        user = User(id=session.get('id_usuario'))
         
-        if await usuario.usuario_admin():
-            classe = Classe(nome_classe=request.form.get('nome_classe'))
-            return jsonify({'result': await classe.insert_classe_banco()})
+        if await user.valid_admin_user():
+            classe = Classe(class_name=request.form.get('nome_classe'))
+            return jsonify({'result': await classe.insert_class()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
     
 @app.route('/criar_raca')
-async def nova_raca():
-    usuario = Usuario(id=session.get('id_usuario'))
+async def new_race():
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
+    if await user.valid_admin_user():
         return render_template('admin/add_raca.html',titulo='Nova raca')
     return redirect(url_for('index'))
     
 @app.post('/criar_raca')
-async  def insert_raca():
+async  def insert_race():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        user = User(id=session.get('id_usuario'))
         
-        if await usuario.usuario_admin():
-            nome_raca = request.form.get('nome_raca')
+        if await user.valid_admin_user():
+            race_name = request.form.get('nome_raca')
             
-            raca = Raca(nome_raca=nome_raca)
+            race = Race(race_name=race_name)
             
-            return jsonify({'result': await raca.insert_raca_banco()})
+            return jsonify({'result': await race.insert_race()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
     
 @app.route('/criar_pericia')
-async def nova_pericia():
-    usuario = Usuario(id=session.get('id_usuario'))
+async def new_skill():
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
+    if await user.valid_admin_user():
         return render_template('admin/add_pericia.html',titulo='Nova pericia')
     return redirect(url_for('index'))
     
 @app.post('/criar_pericia')
-async def insert_pericia():
+async def insert_skill():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        user = User(id=session.get('id_usuario'))
         
-        if await usuario.usuario_admin():
-            nome_pericia = request.form.get('nome_pericia')
-            status_uso = request.form.get('status_uso',)
+        if await user.valid_admin_user():
+            skill_name = request.form.get('nome_pericia')
+            usage_status = request.form.get('status_uso',)
             
-            pericia = Pericia(nome_pericia=nome_pericia,status_uso=status_uso)
+            skill = Skill(skill_name=skill_name,usage_status=usage_status)
             
-            return jsonify({'result': await pericia.insert_pericia_banco()})
+            return jsonify({'result': await skill.insert_skill()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
     
 @app.route('/criar_salvaguarda')
-async def nova_salvaguarda():
-    usuario = Usuario(id=session.get('id_usuario'))
+async def new_saving_throw_name():
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
+    if await user.valid_admin_user():
         return render_template('admin/add_salvaguarda.html',titulo='Nova salvaguarda')
     return redirect(url_for('index'))
     
 @app.post('/criar_salvaguarda')
-async def insert_salvaguarda():
+async def insert_saving_throw_name():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        user = User(id=session.get('id_usuario'))
         
-        if await usuario.usuario_admin():
-            nome_salvaguarda = request.form.get('nome_salvaguarda')
+        if await user.valid_admin_user():
+            saving_throw_name = request.form.get('nome_salvaguarda')
             
-            salvaguarda = Salvaguarda(nome_salvaguarda=nome_salvaguarda)
+            saving_throw_name = SavingThrow(saving_throw_name=saving_throw_name)
             
-            return jsonify({'result': await salvaguarda.insert_salvaguarda_banco()})
+            return jsonify({'result': await saving_throw_name.insert_saving_throw()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
     
 @app.route('/criar_habilidade')
-async def nova_habilidade():
-    usuario = Usuario(id=session.get('id_usuario'))
+async def new_spell():
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
+    if await user.valid_admin_user():
         return render_template('admin/add_habilidade.html',titulo='Nova habilidade')
     return redirect(url_for('index'))
     
 @app.post('/criar_habilidade')
-async def insert_habilidade():
+async def insert_spell():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        user = User(id=session.get('id_usuario'))
         
-        if await usuario.usuario_admin():
-            nome_habilidade = request.form.get('nome_habilidade')
-            nome_atributo = request.form.get('nome_atributo')
-            lados_dados = request.form.get('lados_dados')
-            link_detalhes = request.form.get('link_detalhes')
-            tipo_dano = request.form.get('tipo_dano')
-            qtd_dados = request.form.get('qtd_dados')
-            nivel_habilidade = request.form.get('nivel_habilidade')
-            adicional_por_nivel = request.form.get('adicional_por_nivel')
+        if await user.valid_admin_user():
+            spell_name = request.form.get('nome_habilidade')
+            attribute_name = request.form.get('nome_atributo')
+            sides_dices = request.form.get('lados_dados')
+            link_details = request.form.get('link_detalhes')
+            damege_type = request.form.get('tipo_dano')
+            amount_dices = request.form.get('qtd_dados')
+            level_spell = request.form.get('nivel_habilidade')
+            additional_per_level = request.form.get('adicional_por_nivel')
             
-            habilidade = Habilidade(
-                nome_atributo=nome_atributo,
-                lados_dados=lados_dados,
-                link_detalhes=link_detalhes,
-                nome_habilidade=nome_habilidade,
-                tipo_dano=tipo_dano,
-                qtd_dados=qtd_dados,
-                nivel_habilidade=nivel_habilidade,
-                adicional_por_nivel=adicional_por_nivel
+            spell = Spell(
+                attribute_name=attribute_name,
+                sides_dices=sides_dices,
+                link_details=link_details,
+                spell_name=spell_name,
+                damege_type=damege_type,
+                amount_dices=amount_dices,
+                level_spell=level_spell,
+                additional_per_level=additional_per_level
                 )
             
-            return jsonify({'result': await habilidade.insert_habilidade_banco()})
+            return jsonify({'result': await spell.insert_spell()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)
         return jsonify({'result':False})
     
 @app.route('/criar_equipamento')
-async def novo_equipamento():
-    usuario = Usuario(id=session.get('id_usuario'))
+async def new_equipment():
+    user = User(id=session.get('id_usuario'))
     
-    if await usuario.usuario_admin():
-        tipo_equipamentos = Equipamento()
-        await tipo_equipamentos.carregar_tipo_equipamentos()
-        return render_template('admin/add_equipamento.html',titulo='Novo equipamento', tipo_equipamentos = tipo_equipamentos.tipo_equipamentos)
+    if await user.valid_admin_user():
+        equipment_type = Equipment()
+        await equipment_type.load_type_equipment()
+        return render_template('admin/add_equipamento.html',titulo='Novo equipamento', tipo_equipamentos = equipment_type.type_equipments)
     return redirect(url_for('index'))
     
 @app.post('/criar_equipamento')
-async def insert_equipamento():
+async def insert_equipment():
     try:
-        usuario = Usuario(id=session.get('id_usuario'))
+        user = User(id=session.get('id_usuario'))
         
-        if await usuario.usuario_admin():
-            id_tipo_equipamento = request.form.get("id_tipo_equipamento") 
-            nome_equipamento = request.form.get('nome_equipamento')
-            descricao = request.form.get('descricao')
-            preco = request.form.get('preco')
-            peso = request.form.get('peso')
+        if await user.valid_admin_user():
+            id_equipment_type = request.form.get("id_tipo_equipamento") 
+            equipment_name = request.form.get('nome_equipamento')
+            description = request.form.get('descricao')
+            price = request.form.get('preco')
+            weight = request.form.get('peso')
             ca = request.form.get('ca')
-            dado = request.form.get('dado')
+            dice = request.form.get('dado')
             bonus = request.form.get('bonus')
-            imagem_equipamento = request.files.get('imagem_equipamento')
+            equipment_image = request.files.get('imagem_equipamento')
             
-            equipamento = Equipamento(
-                id_tipo_equipamento=id_tipo_equipamento,
-                nome_equipamento=nome_equipamento,
-                descricao=descricao,
-                preco=preco,
-                peso=peso,
+            equipment = Equipment(
+                id_equipment_type=id_equipment_type,
+                equipment_name=equipment_name,
+                description=description,
+                price=price,
+                weight=weight,
                 ca=ca,
-                dado=dado,
+                dice=dice,
                 bonus=bonus,
-                imagem_equipamento=imagem_equipamento
+                equipment_image=equipment_image
             )
             
-            return jsonify({'result': await equipamento.insert_equipamento_banco()})
+            return jsonify({'result': await equipment.insert_equipment()})
         return jsonify({'result':False})
     except EOFError as e:
         print(e)

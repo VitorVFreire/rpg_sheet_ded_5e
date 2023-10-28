@@ -2,34 +2,34 @@ from data import get_connection
 import pymysql
 import asyncio
 
-class Pericia:
-    def __init__(self,id_pericia=None,nome_pericia=None,status_uso=None):
-        self._id_pericia = id_pericia or []
-        self._nome_pericia = nome_pericia or []
-        self._status_uso = status_uso or []
+class Skill:
+    def __init__(self,id_skill=None,skill_name=None,usage_status=None):
+        self._id_skill = id_skill or []
+        self._skill_name = skill_name or []
+        self._usage_status = usage_status or []
         
     @property
-    def nome_pericia(self):
-        return self._nome_pericia
+    def skill_name(self):
+        return self._skill_name
     
     @property
-    def id_pericia(self):
-        return self._id_pericia
+    def id_skill(self):
+        return self._id_skill
     
     @property
-    def status_uso(self):
-        return self._status_uso
+    def usage_status(self):
+        return self._usage_status
     
     @property
-    async def pericias(self):
-        if (type(self._id_pericia) is list and len(self._id_pericia)<=0) or (self._id_pericia is None):
-            await self.carregar_pericias()
+    async def skills(self):
+        if (type(self._id_skill) is list and len(self._id_skill)<=0) or (self._id_skill is None):
+            await self.load_skills()
         pericias=[]
-        for id_pericia,nome_pericia,status_uso in zip(self._id_pericia,self._nome_pericia,self._status_uso):
+        for id_pericia,nome_pericia,status_uso in zip(self._id_skill,self._skill_name,self._usage_status):
             pericias.append({'id_pericia':id_pericia,'nome_pericia':nome_pericia,'status_uso':status_uso})
         return pericias
     
-    async def carregar_pericias(self):
+    async def load_skills(self):
         try:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
@@ -38,54 +38,54 @@ class Pericia:
                         result = await mycursor.fetchall() 
                         if result:
                             for row in result:
-                                self._id_pericia.append(row[0])
-                                self._nome_pericia.append(row[1])
-                                self._status_uso.append(row[2])
+                                self._id_skill.append(row[0])
+                                self._skill_name.append(row[1])
+                                self._usage_status.append(row[2])
                             return True
             return False
         except Exception as e:
             print(e)
             return False
         
-    async def carregar_pericia(self):
+    async def load_skill(self):
         try:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT nome_pericia, status_uso FROM pericia WHERE id_pericia=%s;"
-                        await mycursor.execute(query,(self._id_pericia,))
+                        await mycursor.execute(query,(self._id_skill,))
                         result = await mycursor.fetchall() 
                         if result:
-                            self._nome_pericia=result[0]
-                            self._status_uso=result[1]
+                            self._skill_name=result[0]
+                            self._usage_status=result[1]
                             return True
             return False
         except Exception as e:
             print(e)
             return False
         
-    async def carregar_pericia_nome(self):
+    async def load_skill_by_name(self):
         try:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT id_pericia, status_uso FROM pericia WHERE nome_pericia=%s;"
-                        await mycursor.execute(query,(self._nome_pericia,))
+                        await mycursor.execute(query,(self._skill_name,))
                         result = await mycursor.fetchone() 
                         if result:
-                            self._id_pericia=result[0]
-                            self._status_uso=result[1]
+                            self._id_skill=result[0]
+                            self._usage_status=result[1]
                             return True
             return False
         except Exception as e:
             print(e)
             return False
         
-    async def insert_pericia_banco(self):
+    async def insert_skill(self):
         try:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO pericia(nome_pericia,status_uso) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self._nome_pericia,self._status_uso,))
-                        self._id_pericia = mycursor.lastrowid
+                        await mycursor.execute(query, (self._skill_name,self._usage_status,))
+                        self._id_skill = mycursor.lastrowid
                         await conn.commit()
                         return True
             return False
@@ -93,13 +93,13 @@ class Pericia:
             print(e)
             return False
         
-    async def delete_pericia_banco(self):
+    async def delete_skill(self):
         try:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from pericia
                         WHERE id_pericia=%s;"""
-                        await mycursor.execute(query, (self._id_pericia,))
+                        await mycursor.execute(query, (self._id_skill,))
                         await conn.commit()
                         return True
             return False
@@ -107,14 +107,14 @@ class Pericia:
             print(e)
             return False
         
-    async def update_pericia_banco(self,chave,valor):
+    async def update_skill(self,key,value):
         try:
-            possiveis_chave=['nome_pericia','status_uso']
-            if chave in possiveis_chave:
+            possiveis_key=['nome_pericia','status_uso']
+            if key in possiveis_key:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        query = f"UPDATE pericia SET {chave}=%s WHERE id_pericia=%s"
-                        await mycursor.execute(query, (valor,self._id_pericia,))
+                        query = f"UPDATE pericia SET {key}=%s WHERE id_pericia=%s"
+                        await mycursor.execute(query, (value,self._id_skill,))
                         await conn.commit()
                         return True
             return False

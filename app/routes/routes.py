@@ -3,8 +3,8 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Pericia, Raca, Classe, Salvaguarda, Habilidade, Equipamento
-from src import Personagem, Usuario, Room, Image
+from src import Skill, Race, Classe, SavingThrow, Spell, Equipment
+from src import Character, User, Room, Image
 
 @app.route('/')
 def index():
@@ -23,9 +23,9 @@ def login():
 @app.post('/login')
 async def cadastro_login():
     try:
-        usuario = Usuario(email=request.form.get('email'), senha=request.form.get('senha'))
-        if await usuario.valid_usuario():
-            session['id_usuario'] = usuario.id
+        usuario = User(email=request.form.get('email'), password=request.form.get('senha'))
+        if await usuario.valid_user():
+            session['id_usuario'] = usuario.id_user
             #return render_template('index.html', titulo = 'home', msg = 'Logado'), 200
             return redirect(url_for('index'))
         return redirect(url_for('login')), 406
@@ -61,10 +61,10 @@ async def cadastro_usuario():
         nome = request.form.get('nome')
         data_nascimento = request.form.get('data_nascimento')
         
-        usuario = Usuario(nome = nome, email = email, senha = senha, data_nascimento = data_nascimento)
+        usuario = User(name = nome, email = email, password = senha, birth_date = data_nascimento)
         
-        if await usuario.create_usuario():
-            session['id_usuario'] = usuario.id
+        if await usuario.insert_user():
+            session['id_usuario'] = usuario.id_user
             return render_template('index.html', titulo = 'home', msg = 'logado'), 200
         return render_template('login.html', titulo = 'login', msg = 'Erro no Login')
     except Exception as e:
@@ -75,9 +75,9 @@ async def cadastro_usuario():
 async def delete_usuario():
     try:
         id_usuario = session.get('id_usuario')
-        usuario = Usuario(id=id_usuario)
+        usuario = User(id=id_usuario)
                 
-        await usuario.delete_usuario()
+        await usuario.delete_user()
         
         return jsonify({'message': 'Conta Encerrada com sucesso!'}), 200
     except Exception as e:
@@ -90,10 +90,10 @@ async def criar_personagem():
         if session.get('id_usuario') is None:
             abort(403)
         
-        racas = Raca()
+        racas = Race()
         classes = Classe()
         
-        return render_template('create_personagem.html', titulo = 'Criar Personagem', racas= await racas.racas, classes = await classes.classes), 200
+        return render_template('create_personagem.html', titulo = 'Criar Personagem', racas= await racas.races, classes = await classes.classes), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -106,11 +106,11 @@ async def personagens():
         if id_usuario is None:
             abort(403)
         
-        usuario = Usuario(id=id_usuario)
+        usuario = User(id=id_usuario)
         
-        await usuario.carregar_personagens_banco()
+        await usuario.load_characters()
         
-        return render_template('personagens.html', titulo = 'Personagens', personagens = usuario.personagens), 200
+        return render_template('personagens.html', titulo = 'Personagens', personagens = usuario.characters), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
@@ -119,22 +119,22 @@ async def personagens():
 async def personagem(id_personagem):
     try:
         id_usuario = session.get('id_usuario')
-        personagem = Personagem(id_usuario=id_usuario, id_personagem=id_personagem)
+        personagem = Character(id_user=id_usuario, id_character=id_personagem)
 
-        await personagem.personagem_pertence_usuario()
+        await personagem.character_belongs_user()
         
-        await personagem.get_usuario()
-        await personagem.carregar_personagem_banco()
-        await personagem.carregar_classes_do_banco()
+        await personagem.load_user()
+        await personagem.load_character()
+        await personagem.load_character_classes()
                 
         return render_template(
             'ficha_personagem.html',
-            titulo = personagem.nome_personagem,
-            raca = personagem.raca,
-            nome = personagem.nome,
+            titulo = personagem.character_name,
+            raca = personagem.race,
+            nome = personagem.name,
             classe = personagem.classe,
-            id_personagem = personagem.id_personagem,
-            nome_personagem = personagem.nome_personagem,
+            id_personagem = personagem.id_character,
+            nome_personagem = personagem.character_name,
         ), 200
     except Exception as e:
         print(e)
@@ -143,12 +143,12 @@ async def personagem(id_personagem):
 @app.route('/personagem/adicionar_habilidade/<id_personagem>')
 async def adicionar_habilidade_personagem(id_personagem):
     try:
-        habilidades = Habilidade()
+        habilidades = Spell()
         
-        await habilidades.carregar_habilidades()
-        await habilidades.carregar_habilidades_personagem_do_banco(id_personagem)
+        await habilidades.load_spells()
+        await habilidades.load_character_spells(id_personagem)
         
-        return render_template('adicionar_habilidade_personagem.html', habilidades = await habilidades.habilidades, id_personagem = id_personagem), 200
+        return render_template('adicionar_habilidade_personagem.html', habilidades = await habilidades.spells, id_personagem = id_personagem), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -156,11 +156,11 @@ async def adicionar_habilidade_personagem(id_personagem):
 @app.route('/personagem/adicionar_equipamento/<id_personagem>')
 async def adicionar_equipamento_personagem(id_personagem):
     try:
-        equipamentos = Equipamento()
+        equipamentos = Equipment()
         
-        await equipamentos.carregar_equipamentos()
-        await equipamentos.carregar_equiapamentos_personagem_do_banco(id_personagem=id_personagem)
-        return render_template('adicionar_equipamento_personagem.html', equipamentos = equipamentos.equipamentos, id_personagem = id_personagem), 200
+        await equipamentos.load_equipments()
+        await equipamentos.load_character_equipments(id_personagem=id_personagem)
+        return render_template('adicionar_equipamento_personagem.html', equipamentos = equipamentos.equipments, id_personagem = id_personagem), 200
     except Exception as e:
         print(e)
         abort(404)

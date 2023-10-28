@@ -2,23 +2,23 @@ from data import get_connection
 import pymysql
 import asyncio
 
-from src import Personagem, Image
+from src import Character, Image
 
-class PersonagemEquipamento(Personagem, Image):
-    def __init__(self, id_usuario=None,id_personagem=None, id_equipamento = None, qtd = None):
-        super().__init__(id_usuario=id_usuario, id_personagem=id_personagem)
-        Image().__init__(parametro=None)
-        self.__id_equipamento = id_equipamento
-        self.__qtd = qtd
-        self._equipamento = []
+class CharacterEquipment(Character, Image):
+    def __init__(self, id_user=None,id_character=None, id_equipment = None, amount = None):
+        super().__init__(id_user=id_user, id_character=id_character)
+        Image().__init__(parameters=None)
+        self.__id_equipment = id_equipment
+        self.__amount = amount
+        self._equipments = []
     
-    async def exists_equipamento_especifica_banco(self):
+    async def exists_specific_equipment(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_equipamento_personagem FROM equipamento_personagem WHERE id_equipamento = %s and id_personagem = %s)"
-                        await mycursor.execute(query, (self.__id_equipamento,self.id_personagem,))
+                        await mycursor.execute(query, (self.__id_equipment,self.id_character,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -27,13 +27,13 @@ class PersonagemEquipamento(Personagem, Image):
             print(e)
             return False
         
-    async def exists_equipamento_banco(self):
+    async def exists_equipment(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_equipamento_personagem FROM equipamento_personagem WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -42,13 +42,29 @@ class PersonagemEquipamento(Personagem, Image):
             print(e)
             return False
     
-    async def adicionar_equipamento_banco(self):
+    async def insert_equipment(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO equipamento_personagem(id_equipamento, id_personagem, qtd) VALUES(%s,%s,%s);"
-                        await mycursor.execute(query, (self.__id_equipamento, self.id_personagem, self.__qtd))
+                        await mycursor.execute(query, (self.__id_equipment, self.id_character, self.__amount))
+                        await conn.commit()
+                        return True
+            return False
+        except pymysql.Error as e:
+            print(e)
+            return False
+    
+    async def update_equipment(self):
+        try:
+            if self.id_character:
+                async with await get_connection() as conn:
+                    async with conn.cursor() as mycursor:
+                        query = f"""UPDATE equipamento_personagem
+                        SET qtd=%s
+                        WHERE id_equipamento_personagem=%s;"""
+                        await mycursor.execute(query, (self.__amount, self.__id_equipment))
                         await conn.commit()
                         return True
             return False
@@ -56,14 +72,14 @@ class PersonagemEquipamento(Personagem, Image):
             print(e)
             return False
         
-    async def delete_equipamento_banco(self):
+    async def delete_equipment(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from equipamento_personagem
                         WHERE id_equipamento=%s and id_personagem = %s;"""
-                        await mycursor.execute(query, (self.__id_equipamento, self.id_personagem))
+                        await mycursor.execute(query, (self.__id_equipment, self.id_character))
                         await conn.commit()
                         return True
             return False
@@ -71,20 +87,20 @@ class PersonagemEquipamento(Personagem, Image):
             print(e)
             return False
         
-    async def carregar_equipamentos_do_banco(self):
+    async def load_equipments(self):
         try:
-            if self.id_personagem:
+            if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT eq.id_tipo_equipamento, eq.nome_equipamento, eq.descricao, eq.preco, eq.peso, eq.ca, eq.dado, eq.bonus, eq.id_equipamento, te.nome_tipo_equipamento, ep.id_equipamento_personagem, ep.qtd, eq.imagem_equipamento
                         FROM equipamento eq, tipo_equipamento te, equipamento_personagem ep 
                         WHERE eq.id_tipo_equipamento = te.id_tipo_equipamento AND ep.id_equipamento = eq.id_equipamento AND ep.id_personagem = %s;"""
-                        await mycursor.execute(query, (self.id_personagem,))
+                        await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchall() 
                         if result:
                             for row in result:
                                 self.name = row[12]
-                                self.equipamento={
+                                self.equipment={
                                     'id_tipo_equipamento': row[0],
                                     'nome_equipamento': row[1], 
                                     'descricao': row[2], 
@@ -105,30 +121,14 @@ class PersonagemEquipamento(Personagem, Image):
             print(e)
             return False
         
-    async def update_equipamento_banco(self):
-        try:
-            if self.id_personagem:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"""UPDATE equipamento_personagem
-                        SET qtd=%s
-                        WHERE id_equipamento_personagem=%s;"""
-                        await mycursor.execute(query, (self.__qtd, self.__id_equipamento))
-                        await conn.commit()
-                        return True
-            return False
-        except pymysql.Error as e:
-            print(e)
-            return False
-        
     @property
-    def equipamento(self, value):
-        return self._equipamento[value]
+    def equipment(self, value):
+        return self._equipments[value]
     
     @property
-    def equipamentos_lista(self):
-        return self._equipamento  
+    def list_equipments(self):
+        return self._equipments  
     
-    @equipamento.setter
-    def equipamento(self, value):
-        self._equipamento.append(value)
+    @equipment.setter
+    def equipment(self, value):
+        self._equipments.append(value)

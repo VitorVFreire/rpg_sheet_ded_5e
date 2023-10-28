@@ -1,29 +1,29 @@
 import unittest
-from src import Salvaguarda
+from src import SavingThrow
 import asyncio
 
 class SalvaguardaTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.salvaguarda_teste = Salvaguarda(nome_salvaguarda='inteligencia')
-        await cls.salvaguarda_teste.insert_salvaguarda_banco()
+        cls.salvaguarda_teste = SavingThrow(saving_throw_name='inteligencia')
+        await cls.salvaguarda_teste.insert_saving_throw()
         
     @classmethod
     async def tearDown(cls):
-        await cls.salvaguarda_teste.delete_salvaguarda_banco()
+        await cls.salvaguarda_teste.delete_saving_throw()
 
     async def test_nome_salvaguarda(self):
-        self.assertEqual(self.salvaguarda_teste.nome_salvaguarda, 'inteligencia')
+        self.assertEqual(self.salvaguarda_teste.saving_throw_name, 'inteligencia')
 
     async def test_update_salvaguarda(self):
-        await self.salvaguarda_teste.update_salvaguarda_banco(valor='forca')
-        await self.salvaguarda_teste.carregar_salvaguarda()
-        self.assertEqual(self.salvaguarda_teste.nome_salvaguarda, 'forca')
+        await self.salvaguarda_teste.update_saving_throw(valor='forca')
+        await self.salvaguarda_teste.load_saving_throw()
+        self.assertEqual(self.salvaguarda_teste.saving_throw_name, 'forca')
 
     async def test_carregar_salvaguardas_banco(self):
-        salvaguardas_teste = Salvaguarda()
-        self.assertTrue(await salvaguardas_teste.carregar_salvaguardas())
-        salvaguardas = salvaguardas_teste.salvaguardas
+        salvaguardas_teste = SavingThrow()
+        self.assertTrue(await salvaguardas_teste.load_saving_throws())
+        salvaguardas = salvaguardas_teste.saving_throws
         self.assertGreater(len(salvaguardas), 0)
 
 if __name__ == '__main__':

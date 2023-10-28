@@ -3,393 +3,393 @@ from flask_session import Session
 import asyncio
 
 from main import app
-from src import Usuario, Pericia, Raca, Classe, Salvaguarda, Habilidade, Room, Image, Equipamento
-from src import Personagem, PersonagemAtributos, PersonagemCaracteristicas, PersonagemHabilidades
-from src import PersonagemPericias, PersonagemSalvaguardas, PersonagemStatusBase, PersonagemEquipamento
+from src import User, Skill, Race, Classe, SavingThrow, Spell, Room, Image, Equipment
+from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell
+from src import CharacterSkills, CharacterSavingThrow, CharacterStatusBase, CharacterEquipment
 
 @app.post('/personagem')
-async def personagem_post():
+async def post_character():
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = Personagem(id_usuario=id_usuario)
+        id_user = session.get('id_usuario')
+        character = Character(id_user=id_user)
         
-        id_raca = request.form.get('id_raca')
-        id_classe = request.form.get('id_classe')
-        nome_personagem = request.form.get('nome_personagem')
+        id_race = request.form.get('id_raca')
+        id_class = request.form.get('id_classe')
+        character_name = request.form.get('nome_personagem')
         
         return jsonify({'result': (
-            await personagem.adicionar_personagem_banco(id_raca=id_raca,nome_personagem=nome_personagem) 
+            await character.insert_character(id_race=id_race,character_name=character_name) 
             and 
-            await personagem.adicionar_classe_banco(id_classe=id_classe)
+            await character.insert_character_class(id_class=id_class)
             ), 
-            'id_personagem': personagem.id_personagem}), 200     
+            'id_personagem': character.id_character}), 200     
     except Exception as e:
         print(e)
         return 404
 
-@app.put('/personagem/<id_personagem>')
-async def personagem_put(id_personagem):
+@app.put('/personagem/<id_character>')
+async def put_character(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = Personagem(id_usuario=id_usuario,id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = Character(id_user=id_user,id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
-        valor = request.form.get('valor')
+        key = request.form.get('chave')
+        value = request.form.get('valor')
                 
-        return jsonify({'result': await personagem.update_personagem_banco(chave=chave,valor=valor)}), 200
+        return jsonify({'result': await character.update_character(chave=key,valor=value)}), 200
     except Exception as e:
         print(e)
         return 404
     
-@app.delete('/personagem/<id_personagem>')
-async def personagem_delete(id_personagem):
+@app.delete('/personagem/<id_character>')
+async def delete_character(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterCharacteristics(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
                 
-        return jsonify({'result': (await personagem.delete_caracteristicas_banco() and await personagem.delete_personagem_banco())}), 200
+        return jsonify({'result': (await character.delete_characteristics() and await character.delete_character())}), 200
     except Exception as e:
         print(e)
         return 404
     
-@app.get('/caracteristicas/<id_personagem>')
-async def caracteristicas_personagem_get(id_personagem):
+@app.get('/caracteristicas/<id_character>')
+async def get_character_characteristics(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemCaracteristicas(id_personagem=id_personagem,id_usuario=id_usuario)
+        id_user = session.get('id_usuario')
+        character = CharacterCharacteristics(id_character=id_character,id_user=id_user)
             
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        if await personagem.carregar_caracteristicas_do_banco():
-            return jsonify(personagem.caracteristica), 200
+        if await character.load_characteristics():
+            return jsonify(character.characteristic), 200
         return jsonify({'result': False}), 404            
     except Exception as e:
         print(e)
         return 404 
 
-@app.put('/caracteristicas/<id_personagem>')
-async def caracteristicas_personagem_put(id_personagem):
+@app.put('/caracteristicas/<id_character>')
+async def put_character_characteristics(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemCaracteristicas(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterCharacteristics(id_user=id_user, id_character=id_character)
             
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
-        valor = request.form.get('valor')
+        key = request.form.get('chave')
+        value = request.form.get('valor')
 
         if request.files:
             file_upload = request.files.get('img_personagem')
-            return jsonify({'result': await personagem.save_img_personagem(file=file_upload), 'img_personagem': personagem.url_img}), 200 
+            return jsonify({'result': await character.save_character_image(file=file_upload), 'img_personagem': character.url_img}), 200 
 
-        if await personagem.exists_caracteristicas_banco():
-            return jsonify({'result': await personagem.update_caracteristicas_banco(chave=chave,valor=valor)}), 200
+        if await character.exists_characteristics():
+            return jsonify({'result': await character.update_characteristics(chave=key,valor=value)}), 200
         else:               
-            return jsonify({'result': await personagem.adicionar_caracteristicas_banco(chave=chave,valor=valor)}), 200
+            return jsonify({'result': await character.insert_characteristics(key=key,value=value)}), 200
     except Exception as e:
         print(e)
         return 404  
 
-@app.get('/atributos/<id_personagem>')
-async def atributos_personagem_get(id_personagem):
+@app.get('/atributos/<id_character>')
+async def get_character_attribute(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)   
+        id_user = session.get('id_usuario')
+        character = CharacterAttribute(id_user=id_user, id_character=id_character)   
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        if await personagem.exists_atributos_banco():
-            await personagem.carregar_atributos_do_banco()
+        if await character.exists_attributes():
+            await character.load_attributes()
         
-        return jsonify(personagem.atributos)              
+        return jsonify(character.attributes)              
     except Exception as e:
         print(e)
         return 404
     
-@app.put('/atributos/<id_personagem>')
-async def atributos_personagem_put(id_personagem):
+@app.put('/atributos/<id_character>')
+async def put_character_attribute(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemAtributos(id_usuario=id_usuario, id_personagem=id_personagem)   
+        id_user = session.get('id_usuario')
+        character = CharacterAttribute(id_user=id_user, id_character=id_character)   
                 
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
-        valor = request.form.get('valor')
+        key = request.form.get('chave')
+        value = request.form.get('valor')
 
-        if await personagem.exists_atributos_banco() and chave != 'bonus_proficiencia':
-            resultado_update = await personagem.update_atributos_banco(chave=chave, valor=valor)
-            bonus_valor_update = await personagem.get_bonus(chave=chave)
-            return jsonify({'result': resultado_update,
-                'bonus': bonus_valor_update,
-                'resistencia': bonus_valor_update}), 200
-        elif await personagem.exists_atributos_banco():
-            return jsonify({'result': await personagem.update_atributos_banco(chave=chave, valor=valor)}), 200
+        if await character.exists_attributes() and key != 'bonus_proficiencia':
+            update_result = await character.update_attributes(key=key, value=value)
+            update_value_bonus = await character.get_bonus(key=key)
+            return jsonify({'result': update_result,
+                'bonus': update_value_bonus,
+                'resistencia': update_value_bonus}), 200
+        elif await character.exists_attributes():
+            return jsonify({'result': await character.update_attributes(key=key, value=value)}), 200
             
-        resultado_adicao = await personagem.adicionar_atributo_banco(chave=chave,valor=valor)
-        bonus_valor_adicao = await personagem.get_bonus(chave=chave)
-        return jsonify({'result': resultado_adicao,
-                        'bonus': bonus_valor_adicao,
-                        'resistencia': bonus_valor_adicao}), 200
+        addition_result = await character.insert_attribute(key=key,value=value)
+        addition_value_bonus = await character.get_bonus(key=key)
+        return jsonify({'result': addition_result,
+                        'bonus': addition_value_bonus,
+                        'resistencia': addition_value_bonus}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.get('/salvaguardas/<id_personagem>')
-async def salvaguardas_personagem_get(id_personagem):
+@app.get('/salvaguardas/<id_character>')
+async def get_character_saving_throw(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
+        id_user = session.get('id_usuario')
+        character = CharacterSavingThrow(id_user=id_user, id_character=id_character)  
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        if await personagem.exists_atributos_banco():
-            await personagem.carregar_atributos_do_banco()
-            await personagem.carregar_salvaguardas_do_banco()
+        if await character.exists_attributes():
+            await character.load_attributes()
+            await character.load_saving_throws()
         
-        return jsonify(personagem.salvaguardas)        
+        return jsonify(character.saving_throws)        
     except Exception as e:
         print(e)
         return 404
 
-@app.post('/salvaguardas/<id_personagem>')
-async def salvaguardas_personagem_post(id_personagem):
+@app.post('/salvaguardas/<id_character>')
+async def post_character_saving_throw(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
+        id_user = session.get('id_usuario')
+        character = CharacterSavingThrow(id_user=id_user, id_character=id_character)  
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
+        key = request.form.get('chave')
             
-        salvaguarda = Salvaguarda(nome_salvaguarda=chave)
+        saving_throw = SavingThrow(saving_throw_name=key)
             
-        if await salvaguarda.carregar_salvaguarda_nome() and await personagem.carregar_atributos_do_banco():
-            return jsonify({'result': await personagem.adicionar_salvaguardas_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
-                            'resistencia': await personagem.get_salvaguardas(chave)}), 200
+        if await saving_throw.load_saving_throw_by_name() and await character.load_attributes():
+            return jsonify({'result': await character.insert_saving_throws(id_saving_throw=saving_throw.id_saving_throw),
+                            'resistencia': await character.get_saving_throws(key)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404  
     
-@app.delete('/salvaguardas/<id_personagem>')
-async def salvaguardas_personagem(id_personagem):
+@app.delete('/salvaguardas/<id_character>')
+async def delete_character_saving_throw(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemSalvaguardas(id_usuario=id_usuario, id_personagem=id_personagem)  
+        id_user = session.get('id_usuario')
+        character = CharacterSavingThrow(id_user=id_user, id_character=id_character)  
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
-        salvaguarda = Salvaguarda(nome_salvaguarda=chave)
+        key = request.form.get('chave')
+        saving_throw = SavingThrow(saving_throw_name=key)
             
-        if await salvaguarda.carregar_salvaguarda_nome() and await personagem.carregar_atributos_do_banco():
-            if await personagem.exists_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda):
-                return jsonify({'result': await personagem.delete_salvaguarda_banco(id_salvaguarda=salvaguarda.id_salvaguarda),
-                                'resistencia': await personagem.get_salvaguardas(chave)}), 200
+        if await saving_throw.load_saving_throw_by_name() and await character.load_attributes():
+            if await character.exists_saving_throw(id_saving_throw=saving_throw.id_saving_throw):
+                return jsonify({'result': await character.delete_saving_throw(id_saving_throw=saving_throw.id_saving_throw),
+                                'resistencia': await character.get_saving_throws(key)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
 
-@app.get('/status_base/<id_personagem>')
-async def status_base_personagem_get(id_personagem):
+@app.get('/status_base/<id_character>')
+async def get_character_status_base(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)          
+        id_user = session.get('id_usuario')
+        character = CharacterStatusBase(id_user=id_user, id_character=id_character)          
 
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        if await personagem.carregar_status_base_do_banco():
-            return jsonify(personagem.status_base), 200
+        if await character.load_status_base():
+            return jsonify(character.status_base), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
    
-@app.put('/status_base/<id_personagem>')
-async def status_base_personagem_put(id_personagem):
+@app.put('/status_base/<id_character>')
+async def put_character_status_base(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemStatusBase(id_usuario=id_usuario, id_personagem=id_personagem)          
+        id_user = session.get('id_usuario')
+        character = CharacterStatusBase(id_user=id_user, id_character=id_character)          
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
-        valor = request.form.get('valor')
+        key = request.form.get('chave')
+        value = request.form.get('valor')
             
-        if await personagem.exists_status_base_banco():
-            return jsonify({'result': await personagem.update_status_base_banco(chave=chave, valor=valor)}), 200
+        if await character.exists_status_base():
+            return jsonify({'result': await character.update_status_base(key=key, value=value)}), 200
         else:
-            return jsonify({'result': await personagem.adicionar_status_base_banco(chave=chave,valor=valor)}),200
+            return jsonify({'result': await character.insert_status_base(key=key,value=value)}),200
     except Exception as e:
         print(e)
         return 404
 
-@app.get('/pericias/<id_personagem>')
-async def pericias_personagem_get(id_personagem):
+@app.get('/pericias/<id_character>')
+async def get_character_skills(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterSkills(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        if await personagem.exists_atributos_banco():
-            await personagem.carregar_atributos_do_banco()
-            await personagem.carregar_pericias_do_banco()
-        return jsonify(personagem.pericia)
+        if await character.exists_attributes():
+            await character.load_attributes()
+            await character.load_skills()
+        return jsonify(character.skill)
     except Exception as e:
         print(e)
         return 404
 
-@app.post('/pericias/<id_personagem>')
-async def pericias_personagem_post(id_personagem):
+@app.post('/pericias/<id_character>')
+async def post_character_skill(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterSkills(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
+        key = request.form.get('chave')
 
-        pericia = Pericia(nome_pericia=chave)
+        skill = Skill(skill_name=key)
             
-        if await pericia.carregar_pericia_nome() and await personagem.carregar_atributos_do_banco():
-            return jsonify({'result': await personagem.adicionar_pericias_banco(id_pericia=pericia.id_pericia),
-                            'pericia': await personagem.get_pericias(chave=chave)}), 200
+        if await skill.load_skill_by_name() and await character.load_attributes():
+            return jsonify({'result': await character.insert_skill(id_pericia=skill.id_skill),
+                            'pericia': await character.get_skills(chave=key)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
 
-@app.delete('/pericias/<id_personagem>')
-async def pericias_personagem_delete(id_personagem):
+@app.delete('/pericias/<id_character>')
+async def delete_character_skill(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemPericias(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterSkills(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        chave = request.form.get('chave')
+        key = request.form.get('chave')
 
-        pericia = Pericia(nome_pericia=chave)
+        skill = Skill(skill_name=key)
             
-        if await pericia.carregar_pericia_nome() and await personagem.carregar_atributos_do_banco():
-            if await personagem.exists_pericia_banco(id_pericia=pericia.id_pericia):
-                 return jsonify({'result': await personagem.delete_pericias_banco(id_pericia=pericia.id_pericia),
-                                'pericia': await personagem.get_pericias(chave=chave)}), 200
+        if await skill.load_skill_by_name() and await character.load_attributes():
+            if await character.exists_skill(id_pericia=skill.id_skill):
+                 return jsonify({'result': await character.delete_skills(id_pericia=skill.id_skill),
+                                'pericia': await character.get_skills(chave=key)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
 
-@app.get('/habilidades/<id_personagem>')
-async def habilidades_personagem_get(id_personagem):
+@app.get('/habilidades/<id_character>')
+async def get_character_spells(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemHabilidades(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterSpell(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
                 
-        if await personagem.exists_habilidade_banco() and await personagem.carregar_habilidades_do_banco():
-            return jsonify(personagem.habilidades), 200
+        if await character.exists_spell() and await character.load_spells():
+            return jsonify(character.spells), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
     
-@app.post('/habilidades/<id_personagem>')
-async def habilidades_personagem_post(id_personagem):
+@app.post('/habilidades/<id_character>')
+async def post_character_spell(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemHabilidades(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterSpell(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        id_habilidade = request.form.get('id_habilidade')
+        id_spell = request.form.get('id_habilidade')
             
-        return jsonify({'result': await personagem.adicionar_habilidade_banco(id_habilidade=id_habilidade)}), 200
+        return jsonify({'result': await character.insert_spell(id_spell=id_spell)}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.delete('/habilidades/<id_personagem>')
-async def habilidades_personagem_delete(id_personagem):
+@app.delete('/habilidades/<id_character>')
+async def delete_character_spell(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemHabilidades(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterSpell(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
         
-        id_habilidade = request.form.get('id_habilidade')
+        id_spell = request.form.get('id_habilidade')
             
-        if await personagem.exists_habilidade_especifica_banco(id_habilidade=id_habilidade):
-            return jsonify({'result': await personagem.delete_habilidade_banco(id_habilidade_personagem=id_habilidade)}), 200
+        if await character.exists_specific_spell(id_spell=id_spell):
+            return jsonify({'result': await character.delete_spell(id_character_spell=id_spell)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
     
-@app.get('/equipamentos/<id_personagem>')
-async def equipamentos_personagem_get(id_personagem):
+@app.get('/equipamentos/<id_character>')
+async def get_character_equipment(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        personagem = PersonagemEquipamento(id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        character = CharacterEquipment(id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
                 
-        if await personagem.exists_equipamento_banco() and await personagem.carregar_equipamentos_do_banco():
-            return jsonify(personagem.equipamentos_lista), 200
+        if await character.exists_equipment() and await character.load_equipments():
+            return jsonify(character.list_equipments), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
     
-@app.post('/equipamentos/<id_personagem>')
-async def equipamentos_personagem_post(id_personagem):
+@app.post('/equipamentos/<id_character>')
+async def post_character_equipment(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        id_equipamento = request.form.get('id_equipamento')
-        qtd = request.form.get('qtd')
-        personagem = PersonagemEquipamento(qtd=qtd,id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        id_equipment = request.form.get('id_equipamento')
+        amount = request.form.get('qtd')
+        character = CharacterEquipment(amount=amount,id_equipment=id_equipment,id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
                     
-        return jsonify({'result': await personagem.adicionar_equipamento_banco()}), 200
+        return jsonify({'result': await character.insert_equipment()}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.put('/equipamentos/<id_personagem>')
-async def equipamentos_personagem_put(id_personagem):
+@app.put('/equipamentos/<id_character>')
+async def put_character_equipment(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        id_equipamento = request.form.get('id_equipamento')
-        qtd = request.form.get('qtd')
-        personagem = PersonagemEquipamento(qtd=qtd,id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        id_equipment = request.form.get('id_equipamento')
+        amount = request.form.get('qtd')
+        character = CharacterEquipment(amount=amount,id_equipment=id_equipment,id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
                     
-        return jsonify({'result': await personagem.update_equipamento_banco()}), 200
+        return jsonify({'result': await character.update_equipment()}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.delete('/equipamentos/<id_personagem>')
-async def equipamentos_personagem_delete(id_personagem):
+@app.delete('/equipamentos/<id_character>')
+async def delete_character_equipment(id_character):
     try:
-        id_usuario = session.get('id_usuario')
-        id_equipamento = request.form.get('id_equipamento')
-        personagem = PersonagemEquipamento(id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
+        id_user = session.get('id_usuario')
+        id_equipment = request.form.get('id_equipamento')
+        character = CharacterEquipment(id_equipment=id_equipment,id_user=id_user, id_character=id_character)
         
-        await personagem.personagem_pertence_usuario()
+        await character.character_belongs_user()
             
-        if await personagem.exists_equipamento_especifica_banco():
-            return jsonify({'result': await personagem.delete_equipamento_banco()}), 200
+        if await character.exists_specific_equipment():
+            return jsonify({'result': await character.delete_equipment()}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)

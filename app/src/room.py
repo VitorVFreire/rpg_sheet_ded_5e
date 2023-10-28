@@ -3,12 +3,12 @@ import pymysql
 from flask import abort
 
 class Room:
-    def __init__(self, id_room=None, id_personagem=None, id_usuario=None, name_room=None, id_room_character=None):
+    def __init__(self, id_room=None, id_character=None, id_user=None, room_name=None, id_character_room=None):
         self.__id_room = id_room or []
-        self.__name_room = name_room or []
-        self.__id_personagem = id_personagem
-        self.__id_usuario = id_usuario
-        self.__id_room_character = id_room_character
+        self.__name_room = room_name or []
+        self._id_character = id_character
+        self.__id_user = id_user
+        self.__id_character_room = id_character_room
     
     @property    
     def roons(self):
@@ -25,13 +25,13 @@ class Room:
     def name_room(self):
         return self.__name_room
         
-    def exists_character_room_bank(self):
+    def exists_character_room(self):
         try:
-            if self.__id_personagem:
+            if self._id_character:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = "SELECT EXISTS (SELECT id_room_personagem FROM room_personagem WHERE id_personagem = %s and id_room = %s)"
-                        mycursor.execute(query, (self.__id_personagem, self.__id_room,))
+                        mycursor.execute(query, (self._id_character, self.__id_room,))
                         result = mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -42,11 +42,11 @@ class Room:
         
     def character_belongs_room(self):
         try:
-            if self.__id_personagem:
+            if self._id_character:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = "SELECT EXISTS (SELECT id_room_personagem FROM room_personagem WHERE id_personagem = %s and id_room = %s)"
-                        mycursor.execute(query, (self.__id_personagem, self.__id_room,))
+                        mycursor.execute(query, (self._id_character, self.__id_room,))
                         result = mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -57,11 +57,11 @@ class Room:
         
     def load_character_room(self):
         try:
-            if self.__id_personagem:
+            if self._id_character:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = "SELECT rm.id_room, rm.nome_room  FROM room_personagem rp, room rm WHERE rp.id_personagem = %s and rp.id_room = rm.id_room;"
-                        mycursor.execute(query, (self.__id_personagem,))
+                        mycursor.execute(query, (self._id_character,))
                         result = mycursor.fetchall()
                         if result:
                             for row in result:
@@ -73,16 +73,16 @@ class Room:
             print(e)
             abort(500)
                                                                                                                                                                                                                                                                                                           
-    def insert_character_room_bank(self):
+    def insert_character_room(self):
         try:
-            if self.__id_personagem and self.exists_character_room_bank() is False:
+            if self._id_character and self.exists_character_room() is False:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """INSERT INTO room_personagem
                             (id_personagem, id_room, permissao) 
                             VALUES(%s,%s,0);"""
-                        mycursor.execute(query, (self.__id_personagem, self.__id_room))
-                        self.__id_room_character = mycursor.lastrowid  
+                        mycursor.execute(query, (self._id_character, self.__id_room))
+                        self.__id_character_room = mycursor.lastrowid  
                         conn.commit()
                         return True
             return False
@@ -90,15 +90,15 @@ class Room:
             print(e)
             abort(500, 'Erro na inserção ao banco')
         
-    def insert_room_bank(self):
+    def insert_room(self):
         try:
-            if self.__id_usuario:
+            if self.__id_user:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """INSERT INTO room
                             (id_usuario, nome_room) 
                             VALUES(%s,%s);"""
-                        mycursor.execute(query, (self.__id_usuario, self.__name_room))
+                        mycursor.execute(query, (self.__id_user, self.__name_room))
                         self.__id_room = mycursor.lastrowid  
                         conn.commit()
                         return True
@@ -107,7 +107,7 @@ class Room:
             print(e)
             abort(500, 'Erro na inserção ao banco')
             
-    def delete_room_bank(self):
+    def delete_room(self):
         try:
             with get_connection_without_async() as conn:
                 with conn.cursor() as mycursor:    
@@ -119,7 +119,7 @@ class Room:
             print(e)
             abort(500, 'Erro na exclusão da sala')
     
-    def update_room_bank(self):
+    def update_room(self):
         try:
             with get_connection_without_async() as conn:
                 with conn.cursor() as mycursor:    
@@ -131,13 +131,13 @@ class Room:
             print(e)
             abort(500, 'Erro na exclusão da sala')
             
-    def delete_character_room_bank(self):
+    def delete_character_room(self):
         try:
-            if self.__id_usuario:
+            if self.__id_user:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """DELETE FROM room_personagem WHERE id_room = %s and id_personagem = %s"""
-                        mycursor.execute(query, (self.__id_room, self.__id_personagem))
+                        mycursor.execute(query, (self.__id_room, self._id_character))
                         conn.commit()
                         return True
             return False

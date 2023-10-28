@@ -1,40 +1,40 @@
 import unittest
-from src import PersonagemPericias, Pericia, Usuario, Raca
+from src import CharacterSkills, Skill, User, Race
 import asyncio
 
 class PersonagemPericiasTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
-        cls.usuario_teste = Usuario(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
-        await cls.usuario_teste.create_usuario()
-        cls.raca_teste = Raca(nome_raca='raca_Teste')
-        await cls.raca_teste.insert_raca_banco()
+        cls.usuario_teste = User(name='John', email='john@example.com', password='pass123', birth_date='1990-01-01')
+        await cls.usuario_teste.insert_user()
+        cls.raca_teste = Race(race_name='raca_Teste')
+        await cls.raca_teste.insert_race()
         cls.nome_personagem_teste = 'Personagem de Teste'
 
-        cls.personagem_teste = PersonagemPericias(
-            id_usuario=cls.usuario_teste.id,
-            id_raca=cls.raca_teste.id_raca,
+        cls.personagem_teste = CharacterSkills(
+            id_user=cls.usuario_teste.id_user,
+            id_raca=cls.raca_teste.id_race,
             nome_personagem=cls.nome_personagem_teste
         )
-        await cls.personagem_teste.adicionar_personagem_banco()
-        cls.pericia_teste = Pericia(nome_pericia='acrobacia')
-        cls.pericia_teste.carregar_pericia_nome()
+        await cls.personagem_teste.insert_character()
+        cls.pericia_teste = Skill(skill_name='acrobacia')
+        cls.pericia_teste.load_skill_by_name()
         
     @classmethod
     async def tearDown(cls):
-        await cls.personagem_teste.delete_personagem_banco()
-        await cls.usuario_teste.delete_usuario()
-        await cls.raca_teste.delete_raca_banco()
+        await cls.personagem_teste.delete_character()
+        await cls.usuario_teste.delete_user()
+        await cls.raca_teste.delete_race()
         
-        cls.personagem_teste.delete_pericias_banco(cls.pericia_teste.id_pericia)
+        cls.personagem_teste.delete_skills(cls.pericia_teste.id_skill)
 
         
     async def test_adiciona_pericia_acrobacia_personagem(self):
-        self.assertTrue(await self.personagem_teste.adicionar_pericias_banco(self.pericia_teste.id_pericia))
-        await self.personagem_teste.carregar_pericias_do_banco()
-        self.assertTrue(any(pericia['id_pericia'] == self.pericia_teste.id_pericia for pericia in self.personagem_teste.pericias))
-        if self.personagem_teste.bonus_proficiencia is not None and self.personagem_teste.forca is not None:
-            self.assertEqual(self.personagem_teste.acrobacia,(self.personagem_teste.bonus_forca+self.personagem_teste.bonus_proficiencia))
+        self.assertTrue(await self.personagem_teste.insert_skill(self.pericia_teste.id_skill))
+        await self.personagem_teste.load_skills()
+        self.assertTrue(any(pericia['id_pericia'] == self.pericia_teste.id_skill for pericia in self.personagem_teste.skills))
+        if self.personagem_teste.proficiency_bonus is not None and self.personagem_teste.strength is not None:
+            self.assertEqual(self.personagem_teste.acrobatics,(self.personagem_teste.strength_bonus+self.personagem_teste.proficiency_bonus))
 
 if __name__ == '__main__':
     asyncio.run(unittest.main())
