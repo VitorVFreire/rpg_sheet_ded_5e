@@ -3,7 +3,7 @@ import asyncio
 from data import get_connection
 from src import Skill
 
-class PericiaTest(unittest.TestCase):
+class SkillTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         cls.pericia_teste = Skill(skill_name='pericia_Teste', usage_status='status_teste')

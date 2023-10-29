@@ -2,7 +2,7 @@ import unittest
 from src import SavingThrow
 import asyncio
 
-class SalvaguardaTest(unittest.TestCase):
+class SavingThrowTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         cls.salvaguarda_teste = SavingThrow(saving_throw_name='inteligencia')

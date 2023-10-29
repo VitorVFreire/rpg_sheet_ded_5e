@@ -2,7 +2,7 @@ import unittest
 from src import User, Character, Race, Classe
 import asyncio
 
-class PersonagemTest(unittest.TestCase):
+class CharacterTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         cls.usuario_teste = User(name='John', email='john@example.com', password='pass123', birth_date='1990-01-01')

@@ -1,7 +1,6 @@
 {% extends "template.html" %}
 {% block conteudo %}
     Personagem
-    <!--<form method="POST" action="{{ url_for('insert_personagem') }}">-->
     <form id="form">
         <select class="form-select" aria-label="Default select example" name="id_raca" id="id_raca">
             {% for raca in racas %}

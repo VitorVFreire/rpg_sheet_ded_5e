@@ -7,7 +7,7 @@ from src import User, Character, Classe, Race, Skill, SavingThrow, Spell, Equipm
 
 @app.route('/admin')
 async def admin():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         return render_template('admin/admin_pag.html',titulo='ADMIN')
@@ -15,7 +15,7 @@ async def admin():
 
 @app.route('/criar_classe')
 async def new_class():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         return render_template('admin/add_classe.html',titulo='Nova Classe')
@@ -24,7 +24,7 @@ async def new_class():
 @app.post('/criar_classe')
 async def insert_class():
     try:
-        user = User(id=session.get('id_usuario'))
+        user = User(id_user=session.get('id_user'))
         
         if await user.valid_admin_user():
             classe = Classe(class_name=request.form.get('nome_classe'))
@@ -36,7 +36,7 @@ async def insert_class():
     
 @app.route('/criar_raca')
 async def new_race():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         return render_template('admin/add_raca.html',titulo='Nova raca')
@@ -45,7 +45,7 @@ async def new_race():
 @app.post('/criar_raca')
 async  def insert_race():
     try:
-        user = User(id=session.get('id_usuario'))
+        user = User(id_user=session.get('id_user'))
         
         if await user.valid_admin_user():
             race_name = request.form.get('nome_raca')
@@ -60,7 +60,7 @@ async  def insert_race():
     
 @app.route('/criar_pericia')
 async def new_skill():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         return render_template('admin/add_pericia.html',titulo='Nova pericia')
@@ -69,7 +69,7 @@ async def new_skill():
 @app.post('/criar_pericia')
 async def insert_skill():
     try:
-        user = User(id=session.get('id_usuario'))
+        user = User(id_user=session.get('id_user'))
         
         if await user.valid_admin_user():
             skill_name = request.form.get('nome_pericia')
@@ -85,7 +85,7 @@ async def insert_skill():
     
 @app.route('/criar_salvaguarda')
 async def new_saving_throw_name():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         return render_template('admin/add_salvaguarda.html',titulo='Nova salvaguarda')
@@ -94,7 +94,7 @@ async def new_saving_throw_name():
 @app.post('/criar_salvaguarda')
 async def insert_saving_throw_name():
     try:
-        user = User(id=session.get('id_usuario'))
+        user = User(id_user=session.get('id_user'))
         
         if await user.valid_admin_user():
             saving_throw_name = request.form.get('nome_salvaguarda')
@@ -109,7 +109,7 @@ async def insert_saving_throw_name():
     
 @app.route('/criar_habilidade')
 async def new_spell():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         return render_template('admin/add_habilidade.html',titulo='Nova habilidade')
@@ -118,7 +118,7 @@ async def new_spell():
 @app.post('/criar_habilidade')
 async def insert_spell():
     try:
-        user = User(id=session.get('id_usuario'))
+        user = User(id_user=session.get('id_user'))
         
         if await user.valid_admin_user():
             spell_name = request.form.get('nome_habilidade')
@@ -149,7 +149,7 @@ async def insert_spell():
     
 @app.route('/criar_equipamento')
 async def new_equipment():
-    user = User(id=session.get('id_usuario'))
+    user = User(id_user=session.get('id_user'))
     
     if await user.valid_admin_user():
         equipment_type = Equipment()
@@ -160,7 +160,7 @@ async def new_equipment():
 @app.post('/criar_equipamento')
 async def insert_equipment():
     try:
-        user = User(id=session.get('id_usuario'))
+        user = User(id_user=session.get('id_user'))
         
         if await user.valid_admin_user():
             id_equipment_type = request.form.get("id_tipo_equipamento") 

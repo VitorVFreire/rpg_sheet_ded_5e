@@ -5,8 +5,8 @@ import base64
 from hashlib import sha256
 
 class User:
-    def __init__(self,id=None,name=None,email=None,password=None,birth_date=None):
-        self.__id_user = id
+    def __init__(self,id_user=None,name=None,email=None,password=None,birth_date=None):
+        self.__id_user = id_user
         self._name = name
         self._email = email
         self.__password = self.encrypt(password)

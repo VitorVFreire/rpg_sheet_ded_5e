@@ -110,13 +110,13 @@ class Equipment(Image):
             print(e)
             return False
 
-    async def load_character_equipments(self, id_personagem):
+    async def load_character_equipments(self, id_character):
         try:
-            if id_personagem:
+            if id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT id_equipamento FROM equipamento_personagem WHERE id_personagem = %s;"""
-                        await mycursor.execute(query, (id_personagem,))
+                        await mycursor.execute(query, (id_character,))
                         result = await mycursor.fetchall()
                         if result:
                             for row in result:

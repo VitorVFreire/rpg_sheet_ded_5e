@@ -3,7 +3,7 @@ import asyncio
 from src import Spell
 import requests
 
-class HabilidadeTest(unittest.TestCase):
+class SpellTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         cls.habilidade_teste = Spell(

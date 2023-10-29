@@ -6,7 +6,7 @@ from flask import abort
 
 class Character(User, Moeda):
     def __init__(self, id_user=None, id_character=None, value=None):
-        super().__init__(id=id_user)
+        super().__init__(id_user=id_user)
         Moeda().__init__(self, valor=value)
         self._id_character = id_character
         self._character_name = None

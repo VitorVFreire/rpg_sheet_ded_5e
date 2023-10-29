@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 {% block conteudo %}
     Cadastro Usuario
-    <form method="POST" action="{{ url_for('cadastro_usuario') }}">
+    <form method="POST" action="{{ url_for('user_registration') }}">
         <input placeholder="email" type="email" class="form-control" name="email" required/>
         <input placeholder="nome" type="text" class="form-control" name="nome" required/>
         <input placeholder="data de nascimento" type="date" class="form-control" name="data_nascimento" required/>

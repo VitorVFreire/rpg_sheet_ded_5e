@@ -1,7 +1,7 @@
 import unittest
 from main import app
 
-class TestNewPersonagemView(unittest.TestCase):
+class TestNewCharacterView(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = app.test_client()

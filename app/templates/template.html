@@ -22,7 +22,7 @@
                             <a class="navbar-brand" href="{{url_for('index')}}">
                                 Home
                             </a>
-                            {% if session.get('id_usuario') %}
+                            {% if session.get('id_user') %}
                             <a class="navbar-brand" href="{{url_for('logout')}}">
                                 Logout
                             </a>
@@ -30,11 +30,11 @@
                             <a class="navbar-brand" href="{{url_for('login')}}">
                                 Login
                             </a>
-                            <a class="navbar-brand" href="{{url_for('criar_usuario')}}">
+                            <a class="navbar-brand" href="{{url_for('render_user_registration')}}">
                                 Novo Usuario
                             </a>
                             {% endif %}
-                            <a class="navbar-brand" href="{{url_for('personagens')}}">
+                            <a class="navbar-brand" href="{{url_for('characters')}}">
                                 Personagens
                             </a>
                         </li>

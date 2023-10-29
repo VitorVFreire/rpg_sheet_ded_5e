@@ -5,12 +5,12 @@ import asyncio
 from main import app
 from src import User, Skill, Race, Classe, SavingThrow, Spell, Room, Image, Equipment
 from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell
-from src import CharacterSkills, CharacterSavingThrow, CharacterStatusBase, CharacterEquipment
+from src import CharacterSkills, CharacterSavingThrowTest, CharacterStatusBase, CharacterEquipment
 
 @app.post('/personagem')
 async def post_character():
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = Character(id_user=id_user)
         
         id_race = request.form.get('id_raca')
@@ -30,7 +30,7 @@ async def post_character():
 @app.put('/personagem/<id_character>')
 async def put_character(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = Character(id_user=id_user,id_character=id_character)
         
         await character.character_belongs_user()
@@ -46,7 +46,7 @@ async def put_character(id_character):
 @app.delete('/personagem/<id_character>')
 async def delete_character(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterCharacteristics(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -59,7 +59,7 @@ async def delete_character(id_character):
 @app.get('/caracteristicas/<id_character>')
 async def get_character_characteristics(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterCharacteristics(id_character=id_character,id_user=id_user)
             
         await character.character_belongs_user()
@@ -74,7 +74,7 @@ async def get_character_characteristics(id_character):
 @app.put('/caracteristicas/<id_character>')
 async def put_character_characteristics(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterCharacteristics(id_user=id_user, id_character=id_character)
             
         await character.character_belongs_user()
@@ -97,7 +97,7 @@ async def put_character_characteristics(id_character):
 @app.get('/atributos/<id_character>')
 async def get_character_attribute(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterAttribute(id_user=id_user, id_character=id_character)   
         
         await character.character_belongs_user()
@@ -113,7 +113,7 @@ async def get_character_attribute(id_character):
 @app.put('/atributos/<id_character>')
 async def put_character_attribute(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterAttribute(id_user=id_user, id_character=id_character)   
                 
         await character.character_belongs_user()
@@ -142,8 +142,8 @@ async def put_character_attribute(id_character):
 @app.get('/salvaguardas/<id_character>')
 async def get_character_saving_throw(id_character):
     try:
-        id_user = session.get('id_usuario')
-        character = CharacterSavingThrow(id_user=id_user, id_character=id_character)  
+        id_user = session.get('id_user')
+        character = CharacterSavingThrowTest(id_user=id_user, id_character=id_character)  
         
         await character.character_belongs_user()
         
@@ -159,8 +159,8 @@ async def get_character_saving_throw(id_character):
 @app.post('/salvaguardas/<id_character>')
 async def post_character_saving_throw(id_character):
     try:
-        id_user = session.get('id_usuario')
-        character = CharacterSavingThrow(id_user=id_user, id_character=id_character)  
+        id_user = session.get('id_user')
+        character = CharacterSavingThrowTest(id_user=id_user, id_character=id_character)  
         
         await character.character_belongs_user()
         
@@ -179,8 +179,8 @@ async def post_character_saving_throw(id_character):
 @app.delete('/salvaguardas/<id_character>')
 async def delete_character_saving_throw(id_character):
     try:
-        id_user = session.get('id_usuario')
-        character = CharacterSavingThrow(id_user=id_user, id_character=id_character)  
+        id_user = session.get('id_user')
+        character = CharacterSavingThrowTest(id_user=id_user, id_character=id_character)  
         
         await character.character_belongs_user()
         
@@ -199,7 +199,7 @@ async def delete_character_saving_throw(id_character):
 @app.get('/status_base/<id_character>')
 async def get_character_status_base(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterStatusBase(id_user=id_user, id_character=id_character)          
 
         await character.character_belongs_user()
@@ -214,7 +214,7 @@ async def get_character_status_base(id_character):
 @app.put('/status_base/<id_character>')
 async def put_character_status_base(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterStatusBase(id_user=id_user, id_character=id_character)          
         
         await character.character_belongs_user()
@@ -233,7 +233,7 @@ async def put_character_status_base(id_character):
 @app.get('/pericias/<id_character>')
 async def get_character_skills(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterSkills(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -249,7 +249,7 @@ async def get_character_skills(id_character):
 @app.post('/pericias/<id_character>')
 async def post_character_skill(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterSkills(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -269,7 +269,7 @@ async def post_character_skill(id_character):
 @app.delete('/pericias/<id_character>')
 async def delete_character_skill(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterSkills(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -290,7 +290,7 @@ async def delete_character_skill(id_character):
 @app.get('/habilidades/<id_character>')
 async def get_character_spells(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterSpell(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -305,7 +305,7 @@ async def get_character_spells(id_character):
 @app.post('/habilidades/<id_character>')
 async def post_character_spell(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterSpell(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -320,7 +320,7 @@ async def post_character_spell(id_character):
 @app.delete('/habilidades/<id_character>')
 async def delete_character_spell(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterSpell(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -337,7 +337,7 @@ async def delete_character_spell(id_character):
 @app.get('/equipamentos/<id_character>')
 async def get_character_equipment(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         character = CharacterEquipment(id_user=id_user, id_character=id_character)
         
         await character.character_belongs_user()
@@ -352,7 +352,7 @@ async def get_character_equipment(id_character):
 @app.post('/equipamentos/<id_character>')
 async def post_character_equipment(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         id_equipment = request.form.get('id_equipamento')
         amount = request.form.get('qtd')
         character = CharacterEquipment(amount=amount,id_equipment=id_equipment,id_user=id_user, id_character=id_character)
@@ -367,7 +367,7 @@ async def post_character_equipment(id_character):
 @app.put('/equipamentos/<id_character>')
 async def put_character_equipment(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         id_equipment = request.form.get('id_equipamento')
         amount = request.form.get('qtd')
         character = CharacterEquipment(amount=amount,id_equipment=id_equipment,id_user=id_user, id_character=id_character)
@@ -382,7 +382,7 @@ async def put_character_equipment(id_character):
 @app.delete('/equipamentos/<id_character>')
 async def delete_character_equipment(id_character):
     try:
-        id_user = session.get('id_usuario')
+        id_user = session.get('id_user')
         id_equipment = request.form.get('id_equipamento')
         character = CharacterEquipment(id_equipment=id_equipment,id_user=id_user, id_character=id_character)
         
@@ -398,7 +398,7 @@ async def delete_character_equipment(id_character):
 """@app.post('/compra_equipamentos/<id_personagem>')
 async def compra_equipamentos_personagem_post(id_personagem):
     try:
-        id_usuario = session.get('id_usuario')
+        id_usuario = session.get('id_user')
         id_equipamento = request.form.get('id_equipamento')
         personagem = PersonagemEquipamento(id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
         equipamento = Equipamento(id_equipamento=id_equipamento)

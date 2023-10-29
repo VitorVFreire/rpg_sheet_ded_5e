@@ -2,7 +2,7 @@ import unittest
 from src import Race
 import asyncio
 
-class RacaTest(unittest.TestCase):
+class RaceTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         cls.raca_teste = Race(race_name='raca_Teste')

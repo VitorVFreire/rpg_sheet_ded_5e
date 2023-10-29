@@ -2,7 +2,7 @@ import unittest
 from src import Character, Race, Room, Message, Messages
 import asyncio
 
-class TestMessage(unittest.TestCase):
+class MessageTest(unittest.TestCase):
     @classmethod
     async def setUp(cls): 
         cls.usuario_teste = Character(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')

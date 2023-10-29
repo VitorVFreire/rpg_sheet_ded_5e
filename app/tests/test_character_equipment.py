@@ -2,7 +2,7 @@ import unittest
 from src import CharacterEquipment, User, Race, Equipment
 import asyncio
 
-class PersonagemEquipamentosTest(unittest.TestCase):
+class CharacterEquipmentTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         pass

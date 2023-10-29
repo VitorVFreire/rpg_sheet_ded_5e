@@ -1,8 +1,8 @@
 import unittest
-from src import CharacterSavingThrow, SavingThrow, User, Race
+from src import CharacterSavingThrowTest, SavingThrow, User, Race
 import asyncio
 
-class PersonagemSalvaguardaTest(unittest.TestCase):
+class CharacterSavingThrowTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         cls.usuario_teste = User(name='John', email='john@example.com', password='pass123', birth_date='1990-01-01')
@@ -11,7 +11,7 @@ class PersonagemSalvaguardaTest(unittest.TestCase):
         await cls.raca_teste.insert_race()
         cls.nome_personagem_teste = 'Personagem de Teste'
 
-        cls.personagem_teste = CharacterSavingThrow(
+        cls.personagem_teste = CharacterSavingThrowTest(
             id_user=cls.usuario_teste.id_user,
             id_raca=cls.raca_teste.id_race,
             nome_personagem=cls.nome_personagem_teste

@@ -2,7 +2,7 @@ import unittest
 import asyncio
 from src import Equipment
 
-class EquipamentoTest(unittest.TestCase):
+class EquipmentTest(unittest.TestCase):
     @classmethod
     async def setUp(cls):
         pass 

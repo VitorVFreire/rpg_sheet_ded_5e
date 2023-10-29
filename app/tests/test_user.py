@@ -2,7 +2,7 @@ import unittest
 from src import User
 import asyncio
 
-class UsuarioTest(unittest.TestCase):
+class UserTest(unittest.TestCase):
     @classmethod
     async def setUpClass(cls):
         cls.usuario_teste = User(name="John", email="john@example.com", password="pass123", birth_date="1990-01-01")
