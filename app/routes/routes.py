@@ -8,14 +8,14 @@ from src import Character, User, Room, Image
 
 @app.route('/')
 def index():
-    return render_template('index.html'), 200
+    return render_template('index.html', id=session.get('id_user')), 200
     
 @app.route('/login')
 def login():
     try:
         if session.get('id_user'):
             return redirect(url_for('index'))
-        return render_template('index.html'), 200
+        return render_template('index.html', id=session.get('id_user')), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -38,7 +38,7 @@ def logout():
     try:
         session['id_user'] = None
         session.clear()
-        return render_template('index.html', titulo = 'home', msg = 'Logout'), 200
+        return redirect(url_for('index'))
     except Exception as e:
         print(e)
         abort(404)

@@ -1,0 +1,16 @@
+.button-class {
+    background-color: #000000;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 32px;
+    border: none; 
+    cursor: pointer;
+    color: #FFF;
+    margin: 32px 0;
+}
+
+.button-class:hover {
+    color: #b3b6b5
+}
+
