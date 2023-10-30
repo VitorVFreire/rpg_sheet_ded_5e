@@ -8,14 +8,14 @@ from src import Character, User, Room, Image
 
 @app.route('/')
 def index():
-    return render_template('index.html',titulo = 'home'), 200
+    return render_template('index.html'), 200
     
 @app.route('/login')
 def login():
     try:
         if session.get('id_user'):
             return redirect(url_for('index'))
-        return render_template('login.html',titulo = 'login'), 200
+        return render_template('index.html'), 200
     except Exception as e:
         print(e)
         abort(404)

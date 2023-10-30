@@ -1,0 +1,15 @@
+.navbar {
+    background: linear-gradient(135deg, #000000, #272522);
+    color: white; 
+    padding: 10px; 
+}
+  
+.nav-item {
+    list-style: none;
+}
+  
+.navbar-brand {
+    text-decoration: none; 
+    color: white; 
+    margin-right: 20px; 
+}
