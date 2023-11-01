@@ -4,6 +4,8 @@ import asyncio
 import base64
 from hashlib import sha256
 
+from src import Image
+
 class User:
     def __init__(self,id_user=None,name=None,email=None,password=None,birth_date=None):
         self.__id_user = id_user
@@ -164,14 +166,18 @@ class User:
             async with await get_connection() as conn:
                 async with conn.cursor() as mycursor:
                     if self.id_user:
-                        query="""SELECT pr.id_personagem,pr.nome_personagem,rc.nome_raca,rc.id_raca
-                        FROM personagem pr,raca rc
-                        WHERE pr.id_usuario = %s and pr.id_raca=rc.id_raca;"""
+                        query="""SELECT pr.id_personagem, pr.nome_personagem, rc.nome_raca, rc.id_raca, COALESCE(cp.imagem_personagem, null) AS imagem_personagem
+                        FROM personagem pr
+                        LEFT JOIN caracteristicas_personagem cp ON cp.id_personagem = pr.id_personagem
+                        JOIN raca rc ON pr.id_raca = rc.id_raca
+                        WHERE pr.id_usuario = %s;"""
                         await mycursor.execute(query,(self.id_user,))
                         result = await mycursor.fetchall()  
                         if result:
+                            image = Image()
                             for row in result:
-                                self._characters.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3]})
+                                image.name = row[4]
+                                self._characters.append({'id_personagem':row[0],'nome_personagem':row[1],'nome_raca':row[2],'id_raca':row[3],'img': image.url_img})
                             return True
             return 'Sem Personagens no Banco', False
         except EOFError as e:

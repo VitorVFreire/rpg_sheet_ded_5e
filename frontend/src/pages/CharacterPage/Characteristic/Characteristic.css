@@ -1,0 +1,9 @@
+.characteristics {
+    color: aliceblue;
+}
+.characterImage {
+    background-color: aliceblue;
+    width: 20%;
+    min-width: 100px;
+    max-width: 500px;
+}

@@ -1,0 +1,13 @@
+.white-button {
+    background-color: azure;
+    color: black;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.white-button:hover {
+    background-color: antiquewhite;
+}

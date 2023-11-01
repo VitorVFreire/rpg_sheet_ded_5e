@@ -61,4 +61,4 @@ class Image:
     
     @property
     def url_img(self):
-        return url_for('open_img', img=self.name, _external=True) if self.name is not None else None
+        return url_for('open_img', img=self.name if self.name is not None else self.img_default, _external=True)

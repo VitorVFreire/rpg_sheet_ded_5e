@@ -45,6 +45,16 @@ class Character(User, Moeda):
     def race(self,value):
         self._race=value   
         
+    @property
+    def character(self):
+        character = {
+            'id_character': self.id_character,
+            'name_character': self.character_name,
+            'race': self.race,
+            'classes': self.classes
+        }
+        return character
+        
     async def character_belongs_user(self):
         try:
             if self.id_character:

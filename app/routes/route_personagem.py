@@ -7,6 +7,32 @@ from src import User, Skill, Race, Classe, SavingThrow, Spell, Room, Image, Equi
 from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell
 from src import CharacterSkills, CharacterSavingThrowTest, CharacterStatusBase, CharacterEquipment
 
+@app.get('/characters')
+async def get_characters():
+    try:
+        id_user = session.get('id_user')
+        character = Character(id_user=id_user)
+            
+        if await character.load_characters():
+            return jsonify(character.characters), 200
+        return jsonify({'result': False}), 404            
+    except Exception as e:
+        print(e)
+        return 404 
+
+@app.get('/character')
+async def get_character():
+    try:
+        id_user = session.get('id_user')
+        character = Character(id_user=id_user)
+            
+        if await character.load_character:
+            return jsonify(character.character), 200
+        return jsonify({'result': False}), 404            
+    except Exception as e:
+        print(e)
+        return 404 
+
 @app.post('/personagem')
 async def post_character():
     try:
@@ -65,6 +91,7 @@ async def get_character_characteristics(id_character):
         await character.character_belongs_user()
         
         if await character.load_characteristics():
+            print(character.characteristic)
             return jsonify(character.characteristic), 200
         return jsonify({'result': False}), 404            
     except Exception as e:
@@ -81,14 +108,16 @@ async def put_character_characteristics(id_character):
         
         key = request.form.get('chave')
         value = request.form.get('valor')
-
+        print(key)
+        print(value)
         if request.files:
             file_upload = request.files.get('img_personagem')
-            return jsonify({'result': await character.save_character_image(file=file_upload), 'img_personagem': character.url_img}), 200 
-
+            return jsonify({'result': await character.save_character_image(file=file_upload), 'url': character.url_img}), 200 
         if await character.exists_characteristics():
+            print('exist')
             return jsonify({'result': await character.update_characteristics(chave=key,valor=value)}), 200
-        else:               
+        else:   
+            print('novo')            
             return jsonify({'result': await character.insert_characteristics(key=key,value=value)}), 200
     except Exception as e:
         print(e)

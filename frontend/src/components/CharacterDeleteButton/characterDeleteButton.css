@@ -1,0 +1,23 @@
+.delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    /* Torna o botão redondo */
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.delete-icon {
+    font-size: 20px;
+}
+
+.delete-button:hover {
+    background-color: rgb(189, 3, 3);
+}

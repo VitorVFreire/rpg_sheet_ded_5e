@@ -1,3 +1,4 @@
+from .image import Image
 from .user import User
 from .moeda import Moeda
 from .skill import Skill
@@ -6,7 +7,6 @@ from .classe import Classe
 from .spell import Spell
 from .saving_throw import SavingThrow
 from .character import Character
-from .image import Image
 from .character_attribute import CharacterAttribute
 from .character_characteristics import CharacterCharacteristics
 from .character_spell import CharacterSpell

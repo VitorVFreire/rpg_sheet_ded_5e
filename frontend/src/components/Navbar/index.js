@@ -12,7 +12,7 @@ const Navbar = (props) => {
           {props.isLoggedIn ? (
             <>
               <a className="navbar-brand" href="/logout">Logout</a>
-              <a className="navbar-brand" href="/characters">Personagens</a>
+              <a className="navbar-brand" href="/personagens">Personagens</a>
             </>
           ) : (
             <>

@@ -106,11 +106,7 @@ async def characters():
         if id_user is None:
             abort(403)
         
-        user = User(id_user=id_user)
-        
-        await user.load_characters()
-        
-        return render_template('personagens.html', titulo = 'Personagens', personagens = user.characters), 200
+        return render_template('index.html', id=session.get('id_user')), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
@@ -127,7 +123,7 @@ async def character(id_character):
         await character.load_character()
         await character.load_character_classes()
                 
-        return render_template(
+        '''return render_template(
             'ficha_personagem.html',
             titulo = character.character_name,
             raca = character.race,
@@ -135,7 +131,8 @@ async def character(id_character):
             classe = character.classe,
             id_personagem = character.id_character,
             nome_personagem = character.character_name,
-        ), 200
+        ), 200'''
+        return render_template('index.html', id=session.get('id_user')), 200
     except Exception as e:
         print(e)
         abort(403, 'Error: 403\nAcesso Negado')
