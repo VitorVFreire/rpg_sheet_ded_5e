@@ -2,13 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { uploadImage } from '../../server/uploadImage'; // Certifique-se de importar a função corretamente
 import requestInput from '../../server/requestInput';
 
-function CustomInput({ type, name, id, required, placeholder, onInputBlur, defaultChecked, value, min, max, accept, label, characterID, src }) {
-  const [inputValue, setInputValue] = useState(type === 'checkbox' ? true : value);
+function CustomInput({ type, name, id, required, placeholder, defaultChecked, InputValue, min, max, accept, label, characterID, src }) {
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    setInputValue(InputValue);
+  }, [InputValue]);
+  
   const [imageUrl, setImageUrl] = useState(src);
   const fileInputRef = useRef(null);
 
   const handleBlur = (e) => {
-    if (type === 'number' ||  type === 'text') {
+    if (type === 'number' || type === 'text') {
       requestInput(name, inputValue, id, characterID, 'PUT');
     }
   };
@@ -38,6 +43,7 @@ function CustomInput({ type, name, id, required, placeholder, onInputBlur, defau
   };
 
   const displayInputDefault = src ? { display: 'none' } : undefined;
+
   return (
     <div>
       <label>{label}</label>
@@ -56,21 +62,25 @@ function CustomInput({ type, name, id, required, placeholder, onInputBlur, defau
         max={max}
         accept={accept}
       />
-      <img
-        src={imageUrl}
-        id={'img' + id}
-        className='characterImage'
-        style={{ display: imageUrl ? 'block' : 'none' }}
-        alt="Imagem do personagem"
-        onClick={handleImageClick}
-      />
-      <input
-        type="file"
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleChange}
-        accept="image/*"
-      />
+      {type === 'file' && (
+        <>
+          <img
+            src={imageUrl}
+            id={'img' + id}
+            className='characterImage'
+            style={{ display: imageUrl ? 'block' : 'none' }}
+            alt="Imagem do personagem"
+            onClick={handleImageClick}
+          />
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleChange}
+            accept="image/*"
+          />
+        </>
+      )}
     </div>
   );
 }

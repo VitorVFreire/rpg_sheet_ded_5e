@@ -24,9 +24,9 @@ class CharacterCharacteristics(Character, Image):
             'idade': self.age,
             'altura': self.height,
             'peso': self.weight,
-            'cor_dos_olhos': self.eye_color,
-            'cor_da_pele': self.skin_color,
-            'cor_do_cabelo': self.color_hair,
+            'cor_olhos': self.eye_color,
+            'cor_pele': self.skin_color,
+            'cor_cabelo': self.color_hair,
             'imagem_personagem': self.url_img
         }
         

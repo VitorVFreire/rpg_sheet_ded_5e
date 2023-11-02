@@ -61,8 +61,8 @@ async def put_character(id_character):
         
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
-        value = request.form.get('valor')
+        key = request.form.get('key')
+        value = request.form.get('value')
                 
         return jsonify({'result': await character.update_character(chave=key,valor=value)}), 200
     except Exception as e:
@@ -91,7 +91,6 @@ async def get_character_characteristics(id_character):
         await character.character_belongs_user()
         
         if await character.load_characteristics():
-            print(character.characteristic)
             return jsonify(character.characteristic), 200
         return jsonify({'result': False}), 404            
     except Exception as e:
@@ -106,18 +105,15 @@ async def put_character_characteristics(id_character):
             
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
-        value = request.form.get('valor')
-        print(key)
-        print(value)
+        key = request.form.get('key')
+        value = request.form.get('value')
+
         if request.files:
             file_upload = request.files.get('img_personagem')
             return jsonify({'result': await character.save_character_image(file=file_upload), 'url': character.url_img}), 200 
         if await character.exists_characteristics():
-            print('exist')
             return jsonify({'result': await character.update_characteristics(chave=key,valor=value)}), 200
         else:   
-            print('novo')            
             return jsonify({'result': await character.insert_characteristics(key=key,value=value)}), 200
     except Exception as e:
         print(e)
@@ -147,23 +143,29 @@ async def put_character_attribute(id_character):
                 
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
-        value = request.form.get('valor')
+        key = request.form.get('key')
+        value = request.form.get('value')
 
         if await character.exists_attributes() and key != 'bonus_proficiencia':
             update_result = await character.update_attributes(key=key, value=value)
             update_value_bonus = await character.get_bonus(key=key)
             return jsonify({'result': update_result,
-                'bonus': update_value_bonus,
-                'resistencia': update_value_bonus}), 200
+                'data': {
+                    f'{key}_bonus': update_value_bonus,
+                    f'{key}_resistance': update_value_bonus
+                }
+            }), 200
         elif await character.exists_attributes():
             return jsonify({'result': await character.update_attributes(key=key, value=value)}), 200
             
         addition_result = await character.insert_attribute(key=key,value=value)
         addition_value_bonus = await character.get_bonus(key=key)
         return jsonify({'result': addition_result,
-                        'bonus': addition_value_bonus,
-                        'resistencia': addition_value_bonus}), 200
+            'data': {
+                f'{key}_bonus': addition_value_bonus,
+                f'{key}_resistance': addition_value_bonus
+            }
+        }), 200
     except Exception as e:
         print(e)
         return 404
@@ -193,7 +195,7 @@ async def post_character_saving_throw(id_character):
         
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
+        key = request.form.get('key')
             
         saving_throw = SavingThrow(saving_throw_name=key)
             
@@ -213,7 +215,7 @@ async def delete_character_saving_throw(id_character):
         
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
+        key = request.form.get('key')
         saving_throw = SavingThrow(saving_throw_name=key)
             
         if await saving_throw.load_saving_throw_by_name() and await character.load_attributes():
@@ -248,8 +250,8 @@ async def put_character_status_base(id_character):
         
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
-        value = request.form.get('valor')
+        key = request.form.get('key')
+        value = request.form.get('value')
             
         if await character.exists_status_base():
             return jsonify({'result': await character.update_status_base(key=key, value=value)}), 200
@@ -283,7 +285,7 @@ async def post_character_skill(id_character):
         
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
+        key = request.form.get('key')
 
         skill = Skill(skill_name=key)
             
@@ -303,7 +305,7 @@ async def delete_character_skill(id_character):
         
         await character.character_belongs_user()
         
-        key = request.form.get('chave')
+        key = request.form.get('key')
 
         skill = Skill(skill_name=key)
             

@@ -9,9 +9,9 @@ function Characteristics(props) {
         'idade': 'Idade',
         'altura': 'Altura',
         'peso': 'Peso',
-        'cor_dos_olhos': 'Cor dos Olhos',
-        'cor_da_pele': 'Cor da Pele',
-        'cor_do_cabelo': 'Cor do Cabelo',
+        'cor_olhos': 'Cor dos Olhos',
+        'cor_pele': 'Cor da Pele',
+        'cor_cabelo': 'Cor do Cabelo',
         'imagem_personagem': 'Imagem do Personagem'
     }
 
@@ -19,9 +19,9 @@ function Characteristics(props) {
         'idade': 'number',
         'altura': 'number',
         'peso': 'number',
-        'cor_dos_olhos': 'text',
-        'cor_da_pele': 'text',
-        'cor_do_cabelo': 'text',
+        'cor_olhos': 'text',
+        'cor_pele': 'text',
+        'cor_cabelo': 'text',
         'imagem_personagem': 'file'
     }
 
@@ -53,7 +53,8 @@ function Characteristics(props) {
                         id={'caracteristicas'}
                         name={key}
                         accept={types[key] === 'file' ? 'image/*' : undefined}
-                        value={types[key] !== 'file' ? value : undefined}
+                        InputValue={(types[key] !== 'file' && types[key] !== 'checkbox') ? value : undefined}
+                        defaultChecked={types[key] === 'checkbox' ? value : undefined}
                         src={types[key] === 'file' ? value : undefined}
                     />
                 </div>

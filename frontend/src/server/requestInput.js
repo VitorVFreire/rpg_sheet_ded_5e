@@ -1,8 +1,8 @@
 const requestInput = async (key, value, url, characterID, method) => {
   try {
     const data = new FormData();
-    data.append('chave', key);
-    data.append('valor', value);
+    data.append('key', key);
+    data.append('value', value);
 
     const response = await fetch(`/${url}/${characterID}`, {
       method: method,
@@ -10,7 +10,15 @@ const requestInput = async (key, value, url, characterID, method) => {
     });
 
     if (response.ok) {
-      return await response.json();
+      const responseData = await response.json();
+      if (responseData.data) {
+        Object.entries(responseData.data).forEach(([key, value]) => {
+          const element = document.querySelector('#' + key);
+          if (element) {
+            element.innerText = value;
+          }
+        });
+      }
     } else {
       return undefined;
     }
