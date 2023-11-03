@@ -25,13 +25,13 @@ class CharacterSkills(CharacterAttribute):
             print(e)
             return False
     
-    async def insert_skill(self,id_pericia):
+    async def insert_skill(self,id_skill):
         try:
             if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO pericia_personagem(id_personagem,id_pericia) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self.id_character,id_pericia))
+                        await mycursor.execute(query, (self.id_character,id_skill))
                         await conn.commit()
                         return True
             return False
@@ -39,14 +39,14 @@ class CharacterSkills(CharacterAttribute):
             print(e)
             return False
         
-    async def delete_skills(self,id_pericia):
+    async def delete_skills(self,id_skill):
         try:
             if self.id_character:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from pericia_personagem
                         WHERE id_pericia=%s;"""
-                        await mycursor.execute(query, (id_pericia,))
+                        await mycursor.execute(query, (id_skill,))
                         await conn.commit()
                         return True
             return False
@@ -91,40 +91,60 @@ class CharacterSkills(CharacterAttribute):
             print(e)
             return False
 
-    async def get_skills(self,chave):
+    async def get_skills(self,key):
         await self.load_skills()
-        return getattr(self, chave)
+        return getattr(self, key)
         
         
     @property
     def skills_name_list(self):
-        lista = [d.get('nome_pericia') for d in self._skills]
+        list = {
+            'acrobacia': 'acrobatics',
+            'arcanismo': 'arcana',
+            'atletismo': 'athletics',
+            'atuacao': 'performance',
+            'enganacao': 'deception',
+            'furtividade': 'stealth',
+            'historia': 'history',
+            'intimidacao': 'intimidation',
+            'intuicao': 'insight',
+            'investigacao': 'investigation',
+            'lidar_com_animais': 'animal_handling',
+            'medicina': 'medicine',
+            'natureza': 'nature',
+            'percepcao': 'perception',
+            'persuasao': 'persuasion',
+            'prestidigitacao': 'sleight_of_hand',
+            'religiao': 'religion',
+            'sobrevivencia': 'survival'
+        }
+        lista = [list[d.get('nome_pericia')] for d in self._skills]
         return lista if len(lista) > 0 else ''
 
     @property
     def skill(self):
         return {
-            'pericias': {
-                'acrobacia': self.acrobatics,
-                'arcanismo': self.arcana,
-                'atletismo': self.athletics,
-                'atuacao': self.performance,
-                'enganacao': self.deception,
-                'furtividade': self.stealth,
-                'historia': self.history,
-                'intimidacao': self.intimidation,
-                'intuicao': self.insight,
-                'investigacao': self.investigation,
-                'lidar_com_animais': self.animal_handling,
-                'medicina': self.medicine,
-                'natureza': self.nature,
-                'percepcao': self.perception,
-                'persuasao': self.persuasion,
-                'prestidigitacao': self.sleight_of_hand,
-                'religiao': self.religion,
-                'sobrevivencia': self.survival
+            'skills': {
+                'acrobatics': self.acrobatics,
+                'arcana': self.arcana,
+                'athletics': self.athletics,
+                'performance': self.performance,
+                'deception': self.deception,
+                'stealth': self.stealth,
+                'history': self.history,
+                'intimidation': self.intimidation,
+                'insight': self.insight,
+                'investigation': self.investigation,
+                'animal_handling': self.animal_handling,
+                'medicine': self.medicine,
+                'nature': self.nature,
+                'perception': self.perception,
+                'persuasion': self.persuasion,
+                'sleight_of_hand': self.sleight_of_hand,
+                'religion': self.religion,
+                'survival': self.survival
             },                
-            'pericias_do_personagem': self.skills_name_list
+            'character_skills': self.skills_name_list
         }
     
     @property

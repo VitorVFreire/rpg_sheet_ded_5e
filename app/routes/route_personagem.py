@@ -322,8 +322,11 @@ async def post_character_skill(id_character):
         skill = Skill(skill_name=key)
 
         if await skill.load_skill_by_name() and await character.load_attributes():
-            return jsonify({'result': await character.insert_skill(id_pericia=skill.id_skill),
-                            'pericia': await character.get_skills(chave=key)}), 200
+            return jsonify({'result': await character.insert_skill(id_skill=skill.id_skill),
+                'data': {
+                    key: await character.get_skills(key=key)
+                }
+            }), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
@@ -344,8 +347,11 @@ async def delete_character_skill(id_character):
 
         if await skill.load_skill_by_name() and await character.load_attributes():
             if await character.exists_skill(id_pericia=skill.id_skill):
-                return jsonify({'result': await character.delete_skills(id_pericia=skill.id_skill),
-                               'pericia': await character.get_skills(chave=key)}), 200
+                return jsonify({'result': await character.delete_skills(id_skill=skill.id_skill),
+                    'data': {
+                    key: await character.get_skills(key=key)
+                    }
+                }), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)

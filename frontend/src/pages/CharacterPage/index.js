@@ -6,6 +6,7 @@ import Characteristics from './Characteristic';
 import Attribute from './Attribute';
 import SavingThrow from './SavingThrow';
 import StatusBase from './StatusBase';
+import Skill from './Skill';
 
 function CharacterPage(props) {
     const { id } = useParams();
@@ -17,6 +18,7 @@ function CharacterPage(props) {
             <Attribute id={id} />
             <SavingThrow id={id} />
             <StatusBase id={id} />
+            <Skill id={id} />
         </div>
     );
 }

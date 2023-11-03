@@ -10,7 +10,27 @@ class Skill:
         
     @property
     def skill_name(self):
-        return self._skill_name
+        list = {
+            'acrobatics': 'acrobacia',
+            'arcana': 'arcanismo',
+            'athletics': 'atletismo',
+            'performance': 'atuacao',
+            'deception': 'enganacao',
+            'stealth': 'furtividade',
+            'history': 'historia',
+            'intimidation': 'intimidacao',
+            'insight': 'intuicao',
+            'investigation': 'investigacao',
+            'animal_handling': 'lidar_com_animais',
+            'medicine': 'medicina',
+            'nature': 'natureza',
+            'perception': 'percepcao',
+            'persuasion': 'persuasao',
+            'sleight_of_hand': 'prestidigitacao',
+            'religion': 'religiao',
+            'survival': 'sobrevivencia'
+        }
+        return list[self._skill_name]
     
     @property
     def id_skill(self):
@@ -68,7 +88,7 @@ class Skill:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT id_pericia, status_uso FROM pericia WHERE nome_pericia=%s;"
-                        await mycursor.execute(query,(self._skill_name,))
+                        await mycursor.execute(query,(self.skill_name,))
                         result = await mycursor.fetchone() 
                         if result:
                             self._id_skill=result[0]
