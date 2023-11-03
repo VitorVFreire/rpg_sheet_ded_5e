@@ -35,7 +35,7 @@ class CharacterTest(unittest.TestCase):
         self.assertEqual(await self.personagem_teste.character_name, 'nome personagem teste')
         
     async def test_novo_nome_personagem(self):
-        await self.personagem_teste.update_character(chave='nome_personagem',valor='novo nome personagem teste')
+        await self.personagem_teste.update_character(key='nome_personagem',value='novo nome personagem teste')
         await self.personagem_teste.load_character()
         self.assertEqual(await self.personagem_teste.character_name, 'novo nome personagem teste')
         
@@ -43,7 +43,7 @@ class CharacterTest(unittest.TestCase):
         self.assertEqual(await self.personagem_teste.race, 'raca_Teste')
         
     async def test_update_raca(self):
-        await self.personagem_teste.update_character(chave='id_raca',valor=self.raca_teste_UPDATE.id_race)
+        await self.personagem_teste.update_character(key='id_raca',value=self.raca_teste_UPDATE.id_race)
         await self.personagem_teste.load_character()
         self.assertTrue(await self.personagem_teste.race, await self.raca_teste_UPDATE.race_name)
     

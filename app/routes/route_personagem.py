@@ -22,13 +22,13 @@ async def get_characters():
         return 404
 
 
-@app.get('/character')
-async def get_character():
+@app.get('/character/<id_character>')
+async def get_character(id_character):
     try:
         id_user = session.get('id_user')
-        character = Character(id_user=id_user)
+        character = Character(id_user=id_user, id_character=id_character)
 
-        if await character.load_character:
+        if await character.character_belongs_user() and await character.load_character():
             return jsonify(character.character), 200
         return jsonify({'result': False}), 404
     except Exception as e:
@@ -68,7 +68,7 @@ async def put_character(id_character):
         key = request.form.get('key')
         value = request.form.get('value')
 
-        return jsonify({'result': await character.update_character(chave=key, valor=value)}), 200
+        return jsonify({'result': await character.update_character(key=key, value=value)}), 200
     except Exception as e:
         print(e)
         return 404

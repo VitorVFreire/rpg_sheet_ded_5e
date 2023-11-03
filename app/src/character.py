@@ -190,16 +190,21 @@ class Character(User, Moeda):
             print(e)
             return False
         
-    async def update_character(self,chave,valor):
+    async def update_character(self,key,value):
         try:
+            list = {
+                'id_race': 'id_raca',
+                'name_character': 'nome_personagem'
+            }
             possibilidades_chave=['id_raca','nome_personagem']
-            if self.id_character and chave in possibilidades_chave:
+            key = list[key]
+            if self.id_character and key in possibilidades_chave:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE personagem
-                        SET {chave}=%s
+                        SET {key}=%s
                         WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (valor,self.id_character))
+                        await mycursor.execute(query, (value,self.id_character))
                         await conn.commit()
                         return True
             return False

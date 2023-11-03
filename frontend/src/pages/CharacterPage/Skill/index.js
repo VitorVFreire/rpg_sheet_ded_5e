@@ -51,7 +51,6 @@ function Skill(props) {
         <section className='pericias'>
             {Object.entries(list).map(([key, value]) => (
                 <div key={key}>
-                {console.log(checkedSkills.includes(key))}
                     <CustomInput
                         characterID={props.id}
                         label={value}

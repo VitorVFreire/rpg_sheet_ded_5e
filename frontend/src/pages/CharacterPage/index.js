@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import CustomInput from '../../components/CustomInput';
+import Character from './Character';
 import Characteristics from './Characteristic';
 import Attribute from './Attribute';
 import SavingThrow from './SavingThrow';
@@ -14,6 +13,7 @@ function CharacterPage(props) {
     return (
         <div>
             <Navbar isLoggedIn={props.idUser} />
+            <Character id={id} />
             <Characteristics id={id} />
             <Attribute id={id} />
             <SavingThrow id={id} />
