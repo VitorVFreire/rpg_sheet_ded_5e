@@ -9,7 +9,15 @@ class SavingThrow:
         
     @property
     def saving_throw_name(self):
-        return self._saving_throw_name
+        list = {
+            'strength_resistance': 'forca',
+            'dexterity_resistance': 'destreza',
+            'intelligence_resistance': 'inteligencia',
+            'constituition_resistance': 'constituicao',
+            'wisdom_resistance': 'sabedoria',
+            'charisma_resistance': 'carisma'
+        }
+        return list[self._saving_throw_name]
     
     @property
     def id_saving_throw(self):
@@ -61,7 +69,7 @@ class SavingThrow:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT id_salvaguarda,nome_salvaguarda FROM salvaguarda WHERE nome_salvaguarda=%s;"
-                        await mycursor.execute(query,(self._saving_throw_name,))
+                        await mycursor.execute(query,(self.saving_throw_name,))
                         result = await mycursor.fetchone() 
                         if result:
                             self._id_saving_throw=result[0]
@@ -77,7 +85,7 @@ class SavingThrow:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO salvaguarda (nome_salvaguarda) VALUES (%s);"
-                        await mycursor.execute(query, (str(self._saving_throw_name),))
+                        await mycursor.execute(query, (str(self.saving_throw_name),))
                         self._id_saving_throw = mycursor.lastrowid 
                         await conn.commit()
                         return True

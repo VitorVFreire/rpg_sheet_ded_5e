@@ -92,25 +92,33 @@ class CharacterSavingThrowTest(CharacterAttribute):
             print(e)
             return False
         
-    async def get_saving_throws(self,chave):
+    async def get_saving_throws(self,key):
         await self.load_saving_throws()
-        return getattr(self, f'resistencia_{chave}')
+        return getattr(self, key)
         
     @property
     def saving_throws(self):
         return {
-            'forca': self.strength_resistance,
-            'destreza': self.dexterity_resistance,
-            'inteligencia': self.intelligence_resistance,
-            'constituicao': self.constituition_resistance,
-            'sabedoria': self.wisdom_resistance,
-            'carisma': self.charisma_resistance,
-            'salvaguardas': self.saving_throw_name_list
+            'strength_resistance': self.strength_resistance,
+            'dexterity_resistance': self.dexterity_resistance,
+            'intelligence_resistance': self.intelligence_resistance,
+            'constituition_resistance': self.constituition_resistance,
+            'wisdom_resistance': self.wisdom_resistance,
+            'charisma_resistance': self.charisma_resistance,
+            'saving_throw_name_list': self.saving_throw_name_list
         }
         
     @property
     def saving_throw_name_list(self):
-        lista = [d.get('nome_salvaguarda') for d in self._saving_throws]
+        list = {
+            'forca': 'strength_resistance',
+            'destreza': 'dexterity_resistance',
+            'inteligencia': 'intelligence_resistance',
+            'constituicao': 'constituition_resistance',
+            'sabedoria': 'wisdom_resistance',
+            'carisma': 'charisma_resistance'
+        }
+        lista = [list[d.get('nome_salvaguarda')] for d in self._saving_throws]
         return lista
 
     @property

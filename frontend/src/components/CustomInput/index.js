@@ -2,13 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { uploadImage } from '../../server/uploadImage'; // Certifique-se de importar a função corretamente
 import requestInput from '../../server/requestInput';
 
-function CustomInput({ type, name, id, required, placeholder, defaultChecked, InputValue, min, max, accept, label, characterID, src }) {
+function CustomInput({ type, name, id, required, placeholder, checked, InputValue, min, max, accept, label, characterID, src }) {
   const [inputValue, setInputValue] = useState('');
+  const [isChecked, setCheck] = useState(false)
 
   useEffect(() => {
     setInputValue(InputValue);
   }, [InputValue]);
-  
+
+  useEffect(() => {
+    setCheck(checked);
+  }, [checked]);
+
   const [imageUrl, setImageUrl] = useState(src);
   const fileInputRef = useRef(null);
 
@@ -20,7 +25,17 @@ function CustomInput({ type, name, id, required, placeholder, defaultChecked, In
 
   const handleChange = async (e) => {
     if (type === 'checkbox') {
-      setInputValue(e.target.checked);
+      const newInputValue = e.target.checked;
+
+      if (isChecked !== newInputValue) {
+        if (newInputValue) {
+          requestInput(name, null, id, characterID, 'POST');
+        } else {
+          requestInput(name, null, id, characterID, 'DELETE');
+        }
+      }
+
+      setCheck(newInputValue);
     } else if (type === 'file') {
       const selectedFile = e.target.files[0];
       const imageData = await uploadImage(selectedFile, characterID);
@@ -43,7 +58,7 @@ function CustomInput({ type, name, id, required, placeholder, defaultChecked, In
   };
 
   const displayInputDefault = src ? { display: 'none' } : undefined;
-
+  
   return (
     <div>
       <label>{label}</label>
@@ -53,7 +68,6 @@ function CustomInput({ type, name, id, required, placeholder, defaultChecked, In
         id={id}
         required={required}
         placeholder={placeholder}
-        defaultChecked={type === 'checkbox' ? defaultChecked : undefined}
         value={(type !== 'checkbox' && type !== 'file') ? inputValue : undefined}
         onBlur={handleBlur}
         onChange={handleChange}
@@ -61,6 +75,7 @@ function CustomInput({ type, name, id, required, placeholder, defaultChecked, In
         min={min}
         max={max}
         accept={accept}
+        checked={type === 'checkbox' ? isChecked : undefined}
       />
       {type === 'file' && (
         <>

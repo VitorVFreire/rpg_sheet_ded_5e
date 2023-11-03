@@ -21,8 +21,22 @@ class CharacterStatusBase(Character):
         self._xp = None
     
     def valid_key(self, key):
+        list = {
+            'level': 'nivel',
+            'alignment': 'alinhamento',
+            'faction': 'faccao',
+            'background': 'antecedente',
+            'experience_points': 'xp',
+            'movement': 'deslocamento',
+            'initiative': 'iniciativa',
+            'hit_points': 'vida',
+            'current_hit_points': 'vida_atual',
+            'temporary_hit_points': 'vida_temporaria',
+            'inspiration': 'inspiracao',
+            'armor_class': 'ca'
+        }
         possible_keys=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
-        return key in possible_keys
+        return list[key] in possible_keys, list[key]
         
     async def exists_status_base(self):
         try:
@@ -41,7 +55,8 @@ class CharacterStatusBase(Character):
     
     async def insert_status_base(self,key,value):
         try:
-            if self.id_character and self.valid_key(key):
+            condition, key = self.valid_key(key)
+            if self.id_character and condition:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"INSERT INTO status_base(id_personagem,{key}) VALUES(%s,%s);"
@@ -79,18 +94,18 @@ class CharacterStatusBase(Character):
                         await mycursor.execute(query, (self.id_character,))
                         result = await mycursor.fetchone()
                         if result:
-                            self.life = result[0]
-                            self.xp = result[1]
+                            self.hit_points = result[0]
+                            self.experience_points = result[1]
                             self.level = result[2]
                             self.alignment = result[3] 
-                            self.antecedent = result[4] 
+                            self.background = result[4] 
                             self.faction = result[5]  
                             self.inspiration = result[6]
-                            self.ca = result[7]
+                            self.armor_class = result[7]
                             self.initiative = result[8]
-                            self.displacement = result[9]
-                            self.current_life = result[10]
-                            self.temporary_life = result[11]     
+                            self.movement = result[9]
+                            self.current_hit_points = result[10]
+                            self.temporary_hit_points = result[11]     
                             return True
                 return True
             return False
@@ -100,7 +115,8 @@ class CharacterStatusBase(Character):
         
     async def update_status_base(self,key,value):
         try:
-            if self.id_character and self.valid_key(key):
+            condition, key = self.valid_key(key)
+            if self.id_character and condition:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE status_base
@@ -118,18 +134,18 @@ class CharacterStatusBase(Character):
     @property
     def status_base(self):
         return {
-            'nivel': self.level,
-            'alinhamento': self.alignment,
-            'faccao': self.faction,
-            'antecendente': self.antecedent,
-            'xp': self.xp,
-            'deslocamento': self.displacement,
-            'iniciativa': self.initiative,
-            'vida': self.life,
-            'vida_atual': self.current_life,
-            'vida_temporaria': self.temporary_life,
-            'inspiracao': self.inspiration,
-            'ca': self.ca
+            'level': self.level,
+            'alignment': self.alignment,
+            'faction': self.faction,
+            'background': self.background,
+            'experience_points': self.experience_points,
+            'movement': self.movement,
+            'initiative': self.initiative,
+            'hit_points': self.hit_points,
+            'current_hit_points': self.current_hit_points,
+            'temporary_hit_points': self.temporary_hit_points,
+            'inspiration': self.inspiration,
+            'armor_class': self.armor_class
         }
     
     @property
@@ -157,27 +173,27 @@ class CharacterStatusBase(Character):
         self._faction=value
         
     @property
-    def antecedent(self):
+    def background(self):
         return self._antecedent        
          
-    @antecedent.setter
-    def antecedent(self,value):
+    @background.setter
+    def background(self,value):
         self._antecedent=value
     
     @property
-    def xp(self):
+    def experience_points(self):
         return self._xp
                 
-    @xp.setter
-    def xp(self,value):
+    @experience_points.setter
+    def experience_points(self,value):
         self._xp=value
            
     @property
-    def displacement(self):
+    def movement(self):
         return self._displacement
     
-    @displacement.setter
-    def displacement(self,value):
+    @movement.setter
+    def movement(self,value):
         self._displacement=value
         
     @property
@@ -189,27 +205,27 @@ class CharacterStatusBase(Character):
         self._initiative=value
     
     @property
-    def life(self):
+    def hit_points(self):
         return self._life
     
-    @life.setter
-    def life(self,value):
+    @hit_points.setter
+    def hit_points(self,value):
         self._life=value
         
     @property
-    def current_life(self):
+    def current_hit_points(self):
         return self._current_life
     
-    @current_life.setter
-    def current_life(self,value):
+    @current_hit_points.setter
+    def current_hit_points(self,value):
         self._current_life=value
        
     @property
-    def temporary_life(self):
+    def temporary_hit_points(self):
         return self._temporary_life
     
-    @temporary_life.setter
-    def temporary_life(self,value):
+    @temporary_hit_points.setter
+    def temporary_hit_points(self,value):
         self._temporary_life=value
         
     @property
@@ -221,9 +237,9 @@ class CharacterStatusBase(Character):
         self._inspiration=value
     
     @property
-    def ca(self):
+    def armor_class(self):
         return self._ca
     
-    @ca.setter
-    def ca(self,value):
+    @armor_class.setter
+    def armor_class(self,value):
         self._ca=value

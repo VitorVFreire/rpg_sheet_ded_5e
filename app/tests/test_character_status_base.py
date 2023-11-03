@@ -34,18 +34,18 @@ class CharacterStatusBaseTest(unittest.TestCase):
         self.assertTrue(await self.personagem_teste.exists_status_base())
         
     async def test_vida_personagem_equal_20(self):
-        self.assertEqual(await self.personagem_teste.life, 20)
+        self.assertEqual(await self.personagem_teste.hit_points, 20)
         
     async def test_update_vida_personagem_true(self):
         self.assertTrue(await self.personagem_teste.update_status_base(key='vida', value=10))
     
     async def test_vida_personagem_equal_10(self):
-        self.assertEqual(await self.personagem_teste.life, 10)
+        self.assertEqual(await self.personagem_teste.hit_points, 10)
         
     async def test_load_status_base_true_vida_10_nivel_none(self):
         status_base = CharacterStatusBase(id_character = self.personagem_teste.id_character, id_user = self.usuario_teste.id_user)
         self.assertTrue(await status_base.load_status_base())
-        self.assertEqual(status_base.life, 10)
+        self.assertEqual(status_base.hit_points, 10)
         self.assertIsNone(status_base.level)
     
     async def test_adicionar_status_base_xp_20(self):
@@ -54,8 +54,8 @@ class CharacterStatusBaseTest(unittest.TestCase):
     async def test_load_status_base_true_vida_10_xp_20(self):
         status_base = CharacterStatusBase(id_character = self.personagem_teste.id_character, id_user = self.usuario_teste.id_user)
         self.assertTrue(await status_base.load_status_base())
-        self.assertEqual(status_base.life, 10)
-        self.assertEqual(status_base.xp, 10)
+        self.assertEqual(status_base.hit_points, 10)
+        self.assertEqual(status_base.experience_points, 10)
          
     async def test_delete_vida_personagem_true(self):
         self.assertTrue(await self.personagem_teste.delete_character_class())

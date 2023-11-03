@@ -53,8 +53,7 @@ function Characteristics(props) {
                         id={'caracteristicas'}
                         name={key}
                         accept={types[key] === 'file' ? 'image/*' : undefined}
-                        InputValue={(types[key] !== 'file' && types[key] !== 'checkbox') ? value : undefined}
-                        defaultChecked={types[key] === 'checkbox' ? value : undefined}
+                        InputValue={(types[key] !== 'file') ? value : undefined}
                         src={types[key] === 'file' ? value : undefined}
                     />
                 </div>
