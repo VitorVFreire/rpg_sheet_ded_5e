@@ -144,7 +144,7 @@ async def render_character_spell(id_character):
         
         await spell.load_spells()
         await spell.load_character_spells(id_character)
-        
+                
         return render_template('adicionar_habilidade_personagem.html', habilidades = await spell.spells, id_personagem = id_character), 200
     except Exception as e:
         print(e)

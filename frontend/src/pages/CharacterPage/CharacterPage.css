@@ -1,0 +1,33 @@
+h3 {
+    color: aliceblue;
+}
+
+input[type=number] {
+    width: 80px;
+    height: 40px;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    text-align: center;
+    justify-content: center;
+    background-color: rgb(43, 42, 42);
+    color: aliceblue;
+    -moz-appearance: textfield;
+   appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button { 
+    -webkit-appearance: none;    
+}
+
+input[type=text] {
+    width: 120px;
+    height: 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    text-align: center;
+    justify-content: center;
+    background-color: rgb(43, 42, 42);
+    color: aliceblue;
+}

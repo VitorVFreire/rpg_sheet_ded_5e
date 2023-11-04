@@ -20,4 +20,5 @@
 
 .delete-button:hover {
     background-color: rgb(189, 3, 3);
+    color: black;
 }

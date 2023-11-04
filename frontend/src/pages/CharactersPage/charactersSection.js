@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import CharacterDeleteButton from '../../components/CharacterDeleteButton';
+import DeleteButton from '../../components/DeleteButton';
 
 function CharactersSection() {
   const [characters, setCharacters] = useState([]);
@@ -37,7 +37,7 @@ function CharactersSection() {
           <div>{character.nome_raca}</div>
           <div><a href={`/personagem/${character.id_personagem}`}>Ficha</a></div>
           <div>
-            <CharacterDeleteButton characterId={character.id_personagem} onCharacterDeleted={handleCharacterDeleted} />
+            <DeleteButton url={'personagem'} characterId={character.id_personagem} onCharacterDeleted={handleCharacterDeleted} />
           </div>
         </div>
       ))}

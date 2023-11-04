@@ -11,7 +11,7 @@ inputs_habilidades.forEach(input => {
       tipo = 'DELETE'
     }
     $.ajax({
-      url: `/habilidades/${id_personagem}`,
+      url: `/spell/${id_personagem}`,
       type: tipo,
       data: {
         id_habilidade: id_habilidade,

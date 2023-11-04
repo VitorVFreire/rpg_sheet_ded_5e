@@ -7,7 +7,6 @@ from src import User, Skill, Race, Classe, SavingThrow, Spell, Room, Image, Equi
 from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell
 from src import CharacterSkills, CharacterSavingThrowTest, CharacterStatusBase, CharacterEquipment
 
-
 @app.get('/characters')
 async def get_characters():
     try:
@@ -21,7 +20,6 @@ async def get_characters():
         print(e)
         return 404
 
-
 @app.get('/character/<id_character>')
 async def get_character(id_character):
     try:
@@ -34,7 +32,6 @@ async def get_character(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.post('/personagem')
 async def post_character():
@@ -56,7 +53,6 @@ async def post_character():
         print(e)
         return 404
 
-
 @app.put('/personagem/<id_character>')
 async def put_character(id_character):
     try:
@@ -73,7 +69,6 @@ async def put_character(id_character):
         print(e)
         return 404
 
-
 @app.delete('/personagem/<id_character>')
 async def delete_character(id_character):
     try:
@@ -87,7 +82,6 @@ async def delete_character(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.get('/caracteristicas/<id_character>')
 async def get_character_characteristics(id_character):
@@ -104,7 +98,6 @@ async def get_character_characteristics(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.put('/caracteristicas/<id_character>')
 async def put_character_characteristics(id_character):
@@ -129,7 +122,6 @@ async def put_character_characteristics(id_character):
         print(e)
         return 404
 
-
 @app.get('/atributos/<id_character>')
 async def get_character_attribute(id_character):
     try:
@@ -146,7 +138,6 @@ async def get_character_attribute(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.put('/atributos/<id_character>')
 async def put_character_attribute(id_character):
@@ -184,7 +175,6 @@ async def put_character_attribute(id_character):
         print(e)
         return 404
 
-
 @app.get('/salvaguardas/<id_character>')
 async def get_character_saving_throw(id_character):
     try:
@@ -202,7 +192,6 @@ async def get_character_saving_throw(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.post('/salvaguardas/<id_character>')
 async def post_character_saving_throw(id_character):
@@ -228,7 +217,6 @@ async def post_character_saving_throw(id_character):
         print(e)
         return 404
 
-
 @app.delete('/salvaguardas/<id_character>')
 async def delete_character_saving_throw(id_character):
     try:
@@ -253,7 +241,6 @@ async def delete_character_saving_throw(id_character):
         print(e)
         return 404
 
-
 @app.get('/status_base/<id_character>')
 async def get_character_status_base(id_character):
     try:
@@ -269,7 +256,6 @@ async def get_character_status_base(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.put('/status_base/<id_character>')
 async def put_character_status_base(id_character):
@@ -291,7 +277,6 @@ async def put_character_status_base(id_character):
         print(e)
         return 404
 
-
 @app.get('/pericias/<id_character>')
 async def get_character_skills(id_character):
     try:
@@ -307,7 +292,6 @@ async def get_character_skills(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.post('/pericias/<id_character>')
 async def post_character_skill(id_character):
@@ -331,7 +315,6 @@ async def post_character_skill(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.delete('/pericias/<id_character>')
 async def delete_character_skill(id_character):
@@ -357,8 +340,7 @@ async def delete_character_skill(id_character):
         print(e)
         return 404
 
-
-@app.get('/habilidades/<id_character>')
+@app.get('/spell/<id_character>')
 async def get_character_spells(id_character):
     try:
         id_user = session.get('id_user')
@@ -367,46 +349,45 @@ async def get_character_spells(id_character):
         await character.character_belongs_user()
 
         if await character.exists_spell() and await character.load_spells():
-            return jsonify(character.spells), 200
+            return jsonify({'result': True,
+                'data': character.spells
+            }), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
 
-
-@app.post('/habilidades/<id_character>')
+@app.post('/spell/<id_character>')
 async def post_character_spell(id_character):
     try:
         id_user = session.get('id_user')
         character = CharacterSpell(id_user=id_user, id_character=id_character)
 
         await character.character_belongs_user()
-
+        
         id_spell = request.form.get('id_habilidade')
-
+        
         return jsonify({'result': await character.insert_spell(id_spell=id_spell)}), 200
     except Exception as e:
         print(e)
         return 404
 
-
-@app.delete('/habilidades/<id_character>')
+@app.delete('/spell/<id_character>')
 async def delete_character_spell(id_character):
     try:
         id_user = session.get('id_user')
         character = CharacterSpell(id_user=id_user, id_character=id_character)
 
         await character.character_belongs_user()
-
+        
         id_spell = request.form.get('id_habilidade')
-
+        
         if await character.exists_specific_spell(id_spell=id_spell):
             return jsonify({'result': await character.delete_spell(id_character_spell=id_spell)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
-        return 404
-
+        return jsonify({'result': False}), 500
 
 @app.get('/equipamentos/<id_character>')
 async def get_character_equipment(id_character):
@@ -424,7 +405,6 @@ async def get_character_equipment(id_character):
         print(e)
         return 404
 
-
 @app.post('/equipamentos/<id_character>')
 async def post_character_equipment(id_character):
     try:
@@ -441,7 +421,6 @@ async def post_character_equipment(id_character):
         print(e)
         return 404
 
-
 @app.put('/equipamentos/<id_character>')
 async def put_character_equipment(id_character):
     try:
@@ -457,7 +436,6 @@ async def put_character_equipment(id_character):
     except Exception as e:
         print(e)
         return 404
-
 
 @app.delete('/equipamentos/<id_character>')
 async def delete_character_equipment(id_character):

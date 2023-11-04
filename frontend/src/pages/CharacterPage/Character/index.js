@@ -29,8 +29,6 @@ function Character(props) {
         document.title = namePage;
     }, [namePage]);
 
-    console.log(character)
-
     return (
         <section className='character_inputs'>
             <div>
