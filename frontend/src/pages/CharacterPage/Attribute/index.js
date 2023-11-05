@@ -12,7 +12,7 @@ function Attribute(props) {
         'constitution': 'Constituição',
         'wisdom': 'Sabedoria',
         'charisma': 'Carisma'
-    }    
+    }
 
     const bonus = {
         'strength': 'strength_bonus',
@@ -21,7 +21,7 @@ function Attribute(props) {
         'constitution': 'constitution_bonus',
         'wisdom': 'wisdom_bonus',
         'charisma': 'charisma_bonus'
-    }    
+    }
 
     useEffect(() => {
         async function fetchAttribute() {
@@ -55,11 +55,14 @@ function Attribute(props) {
                         min={1}
                         max={30}
                     />
-                    <div id={bonus[key]} className='bonus'>
-                        {attributes[bonus[key]]}
+                    <div className='bonus-container'>
+                        <div id={bonus[key]} className='bonus'>
+                            {attributes[bonus[key]]}
+                        </div>
                     </div>
                 </div>
-            ))}
+            ))
+            }
             <div>
                 <CustomInput
                     characterID={props.id}
@@ -71,7 +74,7 @@ function Attribute(props) {
                     min={0}
                 />
             </div>
-        </section>
+        </section >
     );
 }
 

@@ -23,8 +23,6 @@ function Spell(props) {
         fetchSpell();
     }, [props.id]);
 
-    console.log(spells)
-
     const handleCharacterDeleted = (outherId) => {
         const updatedSpell = spells.filter((spell) => spell.id_habilidade !== outherId);
         setSpells(updatedSpell);

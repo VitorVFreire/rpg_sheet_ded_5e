@@ -8,12 +8,12 @@ function SavingThrow(props) {
     const [checkedSavingThrows, setCheckedSavingThrows] = useState([]);
 
     const list = {
-        'strength_resistance': 'Resistência de Força',
-        'dexterity_resistance': 'Resistência de Destreza',
-        'intelligence_resistance': 'Resistência de Inteligência',
-        'constituition_resistance': 'Resistência de Constituição',
-        'wisdom_resistance': 'Resistência de Sabedoria',
-        'charisma_resistance': 'Resistência de Carisma',
+        'strength_resistance': 'Força',
+        'dexterity_resistance': 'Destreza',
+        'intelligence_resistance': 'Inteligência',
+        'constituition_resistance': 'Constituição',
+        'wisdom_resistance': 'Sabedoria',
+        'charisma_resistance': 'Carisma',
     }
 
     useEffect(() => {
@@ -47,13 +47,15 @@ function SavingThrow(props) {
                         name={key}
                         checked={checkedSavingThrows.includes(key)}
                     />
-                    <div id={key}>
-                        {savingThrow[key]}
+                    <div className='bonus-container'>
+                        <div name='bonus' id={key}>
+                            {savingThrow[key]}
+                        </div>
                     </div>
                 </div>
             ))}
         </section>
-    );    
+    );
 }
 
 export default SavingThrow;

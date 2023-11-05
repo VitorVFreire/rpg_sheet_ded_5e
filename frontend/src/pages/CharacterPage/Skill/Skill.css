@@ -1,3 +1,32 @@
-.pericias {
+.skill_bonus {
+    color: bisque;
+    margin-right: 8px;
+    margin-left: 4px;
+}
+
+.skills {
+    display: flex;
+    flex-direction: column; /* Alteração para empilhar as skills verticalmente */
+    align-items: center; /* Centraliza as skills horizontalmente */
     color: aliceblue;
+    font-size: 12px;
+    border: 2px solid aliceblue;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.skill-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Espaço entre as skills */
+}
+
+.skill-container .skill_bonus {
+    margin-right: 5px;
+}
+
+.skill-container input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    margin-right: 5px; /* Espaço entre o input e a label */
 }

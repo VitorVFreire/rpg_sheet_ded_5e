@@ -1,4 +1,4 @@
-from flask import request, redirect, session, jsonify
+from flask import request, redirect, session, jsonify, url_for
 from flask_session import Session
 import asyncio
 
@@ -41,14 +41,13 @@ async def post_character():
 
         id_race = request.form.get('id_raca')
         id_class = request.form.get('id_classe')
-        character_name = request.form.get('nome_personagem')
+        character_name = request.form.get('character_name')
+        
+        print(id_race, id_class, character_name)
 
-        return jsonify({'result': (
-            await character.insert_character(id_race=id_race, character_name=character_name)
-            and
-            await character.insert_character_class(id_class=id_class)
-        ),
-            'id_personagem': character.id_character}), 200
+        if await character.insert_character(id_race=id_race, character_name=character_name) and await character.insert_character_class(id_class=id_class):
+            return redirect(url_for('characters'))
+        return jsonify({'result': False})
     except Exception as e:
         print(e)
         return 404
@@ -93,6 +92,7 @@ async def get_character_characteristics(id_character):
         await character.character_belongs_user()
 
         if await character.load_characteristics():
+            print(character.characteristic)
             return jsonify(character.characteristic), 200
         return jsonify({'result': False}), 404
     except Exception as e:

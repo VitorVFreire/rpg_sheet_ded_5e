@@ -1,0 +1,21 @@
+.create_character {
+    width: 60%;
+    margin: 0 auto; 
+    background-color: rgb(43, 42, 42);
+    color: aliceblue;
+    font-size: 20px;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.create_character label {
+    margin-top: 20px;
+}
+
+.create_character input, select {
+    border-radius: 12px;
+    height: 30px;
+    width: 500px;
+    font-size: 18px;
+}

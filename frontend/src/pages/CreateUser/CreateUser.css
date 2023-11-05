@@ -1,24 +1,13 @@
-.login {
+.register_user {
     display: flex;
     justify-content: center;
     margin: 80px 0;
 }
 
-.login form {
+.register_user form{
     max-width: 80%;
     background-color: #363434;
     border-radius: 20px;
     padding: 36px 64px;
     box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.0);
-}
-
-.link {
-    color: antiquewhite;
-    text-decoration: none;
-    display: block;
-    margin-top: 10px;
-}
-
-.link:hover {
-    color: whitesmoke;
 }

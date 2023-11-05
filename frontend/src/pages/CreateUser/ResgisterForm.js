@@ -1,12 +1,11 @@
-import './LoginPage.css'
+import './CreateUser.css'
 import TextInput from '../../components/TextInput';
 import Button from '../../components/Button';
-import { Link } from 'react-router-dom';
 
-function LoginForm() {
+function RegisterForm() {
   return (
-    <section className="login">
-      <form action='/login' method='POST'>
+    <section className="register_user">
+      <form action='/cadastro_usuario' method='POST'>
         <TextInput
           name="email"
           label="Email"
@@ -21,15 +20,25 @@ function LoginForm() {
           placeholder="Digite sua senha"
           type="password"
         />
-        <Link className='link' to='/cadastro_usuario'>
-          Novo Usuario
-        </Link>
+        <TextInput
+          name="nome"
+          label="Nome"
+          required={true}
+          placeholder="Digite seu nome"
+          type="text"
+        />
+        <TextInput
+          name="data_nascimento"
+          label="Data de Nascimento"
+          required={true}
+          type="date"
+        />
         <Button>
-          Entrar
+            Cadastrar
         </Button>
       </form>
     </section>
   );
 }
 
-export default LoginForm;
+export default RegisterForm;

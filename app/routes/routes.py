@@ -26,7 +26,6 @@ async def login_registration():
         user = User(email=request.form.get('email'), password=request.form.get('senha'))
         if await user.valid_user():
             session['id_user'] = user.id_user
-            #return render_template('index.html', titulo = 'home', msg = 'Logado'), 200
             return redirect(url_for('index'))
         return redirect(url_for('login')), 406
     except Exception as e:
@@ -48,7 +47,7 @@ def render_user_registration():
     try:
         if session.get('id_user'):
             return redirect(url_for('index'))
-        return render_template('cadastro_usuario.html', titulo = 'cadastro de usuario'), 200
+        return render_template('index.html', id=session.get('id_user')), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -64,9 +63,9 @@ async def user_registration():
         user = User(name = name, email = email, password = password, birth_date = birth_date)
         
         if await user.insert_user():
-            session['id_usuario'] = user.id_user
-            return render_template('index.html', titulo = 'home', msg = 'logado'), 200
-        return render_template('login.html', titulo = 'login', msg = 'Erro no Login')
+            print('entrou')
+            session['id_user'] = user.id_user
+        return redirect(url_for('index'))
     except Exception as e:
         print(e)
         return jsonify({'result': False})
@@ -89,15 +88,38 @@ async def render_create_character():
     try:
         if session.get('id_user') is None:
             abort(403)
-        
-        races = Race()
-        classes = Classe()
-        
-        return render_template('create_personagem.html', titulo = 'Criar Personagem', racas= await races.races, classes = await classes.classes), 200
+                
+        return render_template('index.html', id=session.get('id_user')), 200
     except Exception as e:
         print(e)
         abort(404)
         
+@app.get('/classes')
+async def get_classes():
+    try:
+        if session.get('id_user') is None:
+            abort(403)
+        
+        classes = Classe()
+        
+        return jsonify(await classes.classes)
+    except Exception as e:
+        print(e)
+        abort(404)
+        
+@app.get('/races')
+async def get_races():
+    try:
+        if session.get('id_user') is None:
+            abort(403)
+        
+        races = Race()
+        
+        return jsonify(await races.races)
+    except Exception as e:
+        print(e)
+        abort(404)
+            
 @app.route('/personagens')
 async def characters():
     try:

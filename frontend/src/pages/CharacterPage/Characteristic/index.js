@@ -12,7 +12,7 @@ function Characteristics(props) {
         'cor_olhos': 'Cor dos Olhos',
         'cor_pele': 'Cor da Pele',
         'cor_cabelo': 'Cor do Cabelo',
-        'imagem_personagem': 'Imagem do Personagem'
+        'zimagem_personagem': 'Imagem do Personagem'
     }
 
     const types = {
@@ -22,7 +22,7 @@ function Characteristics(props) {
         'cor_olhos': 'text',
         'cor_pele': 'text',
         'cor_cabelo': 'text',
-        'imagem_personagem': 'file'
+        'zimagem_personagem': 'file'
     }
 
     useEffect(() => {
@@ -42,6 +42,9 @@ function Characteristics(props) {
 
         fetchCharacteristics();
     }, [props.id]);
+
+    console.log(characteristics)
+
     return (
         <section className='characteristics'>
             {Object.entries(characteristics).map(([key, value]) => (
@@ -51,7 +54,7 @@ function Characteristics(props) {
                         label={list[key]}
                         type={types[key]}
                         id={'caracteristicas'}
-                        name={key}
+                        name={key === 'zimagem_personagem' ? 'imagem_personagem': key}
                         accept={types[key] === 'file' ? 'image/*' : undefined}
                         InputValue={(types[key] !== 'file') ? value : undefined}
                         src={types[key] === 'file' ? value : undefined}

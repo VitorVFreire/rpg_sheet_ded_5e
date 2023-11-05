@@ -1,8 +1,7 @@
 from data import get_connection
 import pymysql
-
+from collections import OrderedDict
 import asyncio
-
 from src import Character, Image
 
 class CharacterCharacteristics(Character, Image):
@@ -20,15 +19,16 @@ class CharacterCharacteristics(Character, Image):
     
     @property
     def characteristic(self):
-        return {
-            'idade': self.age,
-            'altura': self.height,
-            'peso': self.weight,
-            'cor_olhos': self.eye_color,
-            'cor_pele': self.skin_color,
-            'cor_cabelo': self.color_hair,
-            'imagem_personagem': self.url_img
-        }
+        character_data = OrderedDict()
+        character_data['idade'] = self.age
+        character_data['altura'] = self.height
+        character_data['peso'] = self.weight
+        character_data['cor_olhos'] = self.eye_color
+        character_data['cor_pele'] = self.skin_color
+        character_data['cor_cabelo'] = self.color_hair
+        character_data['zimagem_personagem'] = self.url_img
+
+        return character_data
         
     async def exists_characteristics(self):
         try:

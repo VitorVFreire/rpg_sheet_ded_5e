@@ -48,24 +48,24 @@ function Skill(props) {
     }, [props.id]);
 
     return (
-        <section className='pericias'>
+        <section className='skills'>
             {Object.entries(list).map(([key, value]) => (
-                <div key={key}>
+                <div className='skill-container' key={key}>
+                    <label htmlFor={key}>{value}</label>
+                    <div className='skill_bonus' id={key}>
+                        {skills[key]}
+                    </div>
                     <CustomInput
                         characterID={props.id}
-                        label={value}
                         type='checkbox'
                         id={url}
                         name={key}
                         checked={checkedSkills.includes(key)}
                     />
-                    <div id={key}>
-                        {skills[key]}
-                    </div>
                 </div>
             ))}
         </section>
-    );    
+    );
 }
 
 export default Skill;
