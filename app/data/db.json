@@ -1,0 +1,76 @@
+{
+    "RPG": {
+        "user": [
+            {
+                "use_id": 1,
+                "name": "Nome1",
+                "email": "email1@example.com",
+                "password": "senha1",
+                "birth_date": "1990-01-01",
+                "user_type": "1",
+                "characters": [
+                    {
+                        "character_id": 1,
+                        "character_name": "Nome232",
+                        "race_id": [
+                            {
+                                "race_id": 1,
+                                "race_name": "nome raca",
+                                "link": "url para detalhes"
+                            }
+                        ],
+                        "class": [
+                            {
+                                "class_id": 1,
+                                "class_name": "nome classe",
+                                "link": "url para detalhes"
+                            },
+                            {
+                                "class_id": 2,
+                                "class_name": "nome classe2",
+                                "link": "url para detalhes"
+                            }
+                        ],
+                        "attributes": {
+                            "strength": 17,
+                            "dexterity": 13,
+                            "intelligence": 10,
+                            "constitution": -5,
+                            "wisdom": 16,
+                            "charisma": 11,
+                            "proficiency_bonus": 2
+                        },
+                        "characteristics": {
+                            "age": 12,
+                            "height": 1.52,
+                            "weight": 120,
+                            "eye_color": "branco",
+                            "skin_color": "vermelho",
+                            "color_hair": "verde",
+                            "character_image": "nome da imagem"
+                        }
+                    }
+                ]
+            }
+        ],
+        "race": [
+            {
+                "race_id": 1,
+                "race_name": "nome raca",
+                "link": "url para detalhes"
+            }
+        ],
+        "class": [
+            {
+                "class_id": 1,
+                "class_name": "nome classe",
+                "link": "url para detalhes"
+            },
+            {
+                "class_id": 2,
+                "class_name": "nome classe2",
+                "link": "url para detalhes"
+            }
+        ]
+    }
+}
