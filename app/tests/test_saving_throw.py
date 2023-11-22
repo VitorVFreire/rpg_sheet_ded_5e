@@ -16,7 +16,7 @@ class SavingThrowTest(unittest.TestCase):
         self.assertEqual(self.salvaguarda_teste.saving_throw_name, 'inteligencia')
 
     async def test_update_salvaguarda(self):
-        await self.salvaguarda_teste.update_saving_throw(valor='forca')
+        await self.salvaguarda_teste.update_saving_throw(value='forca')
         await self.salvaguarda_teste.load_saving_throw()
         self.assertEqual(self.salvaguarda_teste.saving_throw_name, 'forca')
 

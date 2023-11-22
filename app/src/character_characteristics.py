@@ -5,8 +5,8 @@ import asyncio
 from src import Character, Image
 
 class CharacterCharacteristics(Character, Image):
-    def __init__(self, id_user = None, id_character = None, parameter = None ,name = None):
-        super().__init__(id_user=id_user, id_character=id_character)
+    def __init__(self, user_id = None, id_character = None, parameter = None ,name = None):
+        super().__init__(user_id=user_id, id_character=id_character)
         Image.__init__(self, parameters=parameter, name=name)
         self._characteristics = {
             'age': None,
@@ -101,16 +101,16 @@ class CharacterCharacteristics(Character, Image):
             print(e)
             return False
         
-    async def update_characteristics(self,chave, valor):
+    async def update_characteristics(self,key, value):
         try:
-            possibilidade_chave=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
-            if self.id_character and chave in possibilidade_chave:
+            possibilidade_key=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
+            if self.id_character and key in possibilidade_key:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE caracteristicas_personagem
-                        SET {chave}=%s
+                        SET {key}=%s
                         WHERE id_personagem=%s;"""
-                        parametros=(valor,self.id_character)
+                        parametros=(value,self.id_character)
                         await mycursor.execute(query, parametros)
                         await conn.commit()
                         return True
@@ -146,7 +146,7 @@ class CharacterCharacteristics(Character, Image):
             result_final =  (
                 await self.insert_characteristics(key='imagem_personagem', value=name)
                 if not exist_caracteristica
-                else await self.update_characteristics(chave='imagem_personagem', valor=name)
+                else await self.update_characteristics(key='imagem_personagem', value=name)
             ) if result is True else False
             return result_final
         except Exception as e:

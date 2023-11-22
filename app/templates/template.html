@@ -22,7 +22,7 @@
                             <a class="navbar-brand" href="{{url_for('index')}}">
                                 Home
                             </a>
-                            {% if session.get('id_user') %}
+                            {% if session.get('user_id') %}
                             <a class="navbar-brand" href="{{url_for('logout')}}">
                                 Logout
                             </a>

@@ -24,20 +24,20 @@ function CharactersSection() {
 
   const handleCharacterDeleted = (characterId) => {
     // Remove o personagem da lista com base no characterId
-    const updatedCharacters = characters.filter((character) => character.id_personagem !== characterId);
+    const updatedCharacters = characters.filter((character) => character.character_id !== characterId);
     setCharacters(updatedCharacters);
   };
 
   return (
     <section className='characters'>
       {characters.map((character) => (
-        <div key={character.id_personagem} className='character'>
-          <div><img src={character.img} alt={character.nome_personagem} /></div>
-          <div>{character.nome_personagem}</div>
-          <div>{character.nome_raca}</div>
-          <div><a href={`/personagem/${character.id_personagem}`}>Ficha</a></div>
+        <div key={character.character_id} className='character'>
+          <div><img src={character.img} alt={character.character_name} /></div>
+          <div>{character.character_name}</div>
+          <div>{character.race_name}</div>
+          <div><a href={`/character/${character.character_id}`}>Ficha</a></div>
           <div>
-            <DeleteButton url={'personagem'} characterId={character.id_personagem} onCharacterDeleted={handleCharacterDeleted} />
+            <DeleteButton url={'character'} characterId={character.character_id} onCharacterDeleted={handleCharacterDeleted} />
           </div>
         </div>
       ))}

@@ -8,14 +8,14 @@ from src import Character, User, Room, Image
 
 @app.route('/')
 def index():
-    return render_template('index.html', id=session.get('id_user')), 200
+    return render_template('index.html', id=session.get('user_id')), 200
     
 @app.route('/login')
 def login():
     try:
-        if session.get('id_user'):
+        if session.get('user_id'):
             return redirect(url_for('index'))
-        return render_template('index.html', id=session.get('id_user')), 200
+        return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -23,9 +23,9 @@ def login():
 @app.post('/login')
 async def login_registration():
     try:
-        user = User(email=request.form.get('email'), password=request.form.get('senha'))
-        if await user.valid_user():
-            session['id_user'] = user.id_user
+        user = User(email=request.form.get('email'), password=request.form.get('password'))
+        if await user.user_validate():
+            session['user_id'] = user.user_id
             return redirect(url_for('index'))
         return redirect(url_for('login')), 406
     except Exception as e:
@@ -35,46 +35,45 @@ async def login_registration():
 @app.route('/logout')
 def logout():
     try:
-        session['id_user'] = None
+        session['user_id'] = None
         session.clear()
         return redirect(url_for('index'))
     except Exception as e:
         print(e)
         abort(404)
 
-@app.route('/cadastro_usuario')
+@app.route('/user_registration')
 def render_user_registration():
     try:
-        if session.get('id_user'):
+        if session.get('user_id'):
             return redirect(url_for('index'))
-        return render_template('index.html', id=session.get('id_user')), 200
+        return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(404)
 
-@app.post('/cadastro_usuario')
+@app.post('/user_registration')
 async def user_registration():
     try:
         email = request.form.get('email')
-        password = request.form.get('senha')
-        name = request.form.get('nome')
-        birth_date = request.form.get('data_nascimento')
+        password = request.form.get('password')
+        user_name = request.form.get('user_name')
+        birth_date = request.form.get('birth_date')
         
-        user = User(name = name, email = email, password = password, birth_date = birth_date)
+        user = User(user_name = user_name, email = email, password = password, birth_date = birth_date)
         
         if await user.insert_user():
-            print('entrou')
-            session['id_user'] = user.id_user
+            session['user_id'] = user.user_id
         return redirect(url_for('index'))
     except Exception as e:
         print(e)
         return jsonify({'result': False})
     
-@app.delete('/delete/usuario')
+@app.delete('/delete/user')
 async def delete_user():
     try:
-        id_user = session.get('id_user')
-        user = User(id_user=id_user)
+        user_id = session.get('user_id')
+        user = User(user_id=user_id)
                 
         await user.delete_user()
         
@@ -83,13 +82,12 @@ async def delete_user():
         print(e)
         return jsonify({'message': str(e)}), 200
 
-@app.route('/criar_personagem')
+@app.route('/create_character')
 async def render_create_character():
     try:
-        if session.get('id_user') is None:
+        if session.get('user_id') is None:
             abort(403)
-                
-        return render_template('index.html', id=session.get('id_user')), 200
+        return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -97,7 +95,7 @@ async def render_create_character():
 @app.get('/classes')
 async def get_classes():
     try:
-        if session.get('id_user') is None:
+        if session.get('user_id') is None:
             abort(403)
         
         classes = Classe()
@@ -110,7 +108,7 @@ async def get_classes():
 @app.get('/races')
 async def get_races():
     try:
-        if session.get('id_user') is None:
+        if session.get('user_id') is None:
             abort(403)
         
         races = Race()
@@ -120,32 +118,32 @@ async def get_races():
         print(e)
         abort(404)
             
-@app.route('/personagens')
+@app.route('/characters_page')
 async def characters():
     try:
-        id_user = session.get('id_user')
+        user_id = session.get('user_id')
         
-        if id_user is None:
+        if user_id is None:
             abort(403)
         
-        return render_template('index.html', id=session.get('id_user')), 200
+        return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
     
-@app.route('/personagem/<id_character>')
+@app.route('/character/<id_character>')
 async def character(id_character):
     try:
-        id_user = session.get('id_user')
-        character = Character(id_user=id_user, id_character=id_character)
+        user_id = session.get('user_id')
+        character = Character(user_id=user_id, id_character=id_character)
 
         await character.character_belongs_user()
         
-        await character.load_user()
+        '''await character.load_user()
         await character.load_character()
         await character.load_character_classes()
                 
-        '''return render_template(
+        return render_template(
             'ficha_personagem.html',
             titulo = character.character_name,
             raca = character.race,
@@ -154,7 +152,7 @@ async def character(id_character):
             id_personagem = character.id_character,
             nome_personagem = character.character_name,
         ), 200'''
-        return render_template('index.html', id=session.get('id_user')), 200
+        return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(403, 'Error: 403\nAcesso Negado')

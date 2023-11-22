@@ -211,14 +211,14 @@ class Equipment(Image):
             print(e)
             return False
         
-    async def update_equipment(self, chave, valor):
+    async def update_equipment(self, key, value):
         try:
-            possiveis_chave = ['id_tipo_equipamento', 'nome_equipamento', 'descricao', 'preco', 'peso', 'ca', 'dado', 'bonus', 'imagem_equipamento']
-            if chave in possiveis_chave:
+            possiveis_key = ['id_tipo_equipamento', 'nome_equipamento', 'descricao', 'preco', 'peso', 'ca', 'dado', 'bonus', 'imagem_equipamento']
+            if key in possiveis_key:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
-                        query = f"""UPDATE equipamento SET {chave}=%s WHERE id_equipamento=%s"""
-                        await mycursor.execute(query, (valor, self.id_equipment))
+                        query = f"""UPDATE equipamento SET {key}=%s WHERE id_equipamento=%s"""
+                        await mycursor.execute(query, (value, self.id_equipment))
                         await conn.commit()
                         return True
             return False

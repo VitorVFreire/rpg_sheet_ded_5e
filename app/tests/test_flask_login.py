@@ -14,12 +14,12 @@ class TestLoginView(unittest.TestCase):
         self.assertIn(b'<h3>Login</h3>', self.response.data)
         
     def test_post_form_login_without_data_code_406(self):
-        response_post_login = self.app.post('/login', data={'email': '', 'senha': ''})
+        response_post_login = self.app.post('/login', data={'email': '', 'password': ''})
         self.assertEqual(response_post_login.status_code, 406)
         self.assertEqual(response_post_login.request.path, '/login')
         
     def test_post_form_login_with_corret_data_code_302(self):
-        response_post_login = self.app.post('/login', data={'email': 'teste@teste', 'senha': '123'})
+        response_post_login = self.app.post('/login', data={'email': 'teste@teste', 'password': '123'})
         self.assertEqual(response_post_login.status_code, 302)
         self.assertEqual(response_post_login.location, '/')
         

@@ -14,7 +14,7 @@ function CharactersPage(props) {
             <Navbar isLoggedIn={idUser} />
             <div className='content'>
                 <div>
-                    <ButtonLink link='/criar_personagem' text='Criar Personagem'/>
+                    <ButtonLink link='/create_character' text='Criar Personagem'/>
                     <ButtonLink link='/room' text='Entrar Sala'/>
                 </div>
                 <CharactersSection />

@@ -16,7 +16,7 @@ class ClasseTest(unittest.TestCase):
         self.assertEqual(self.classe_teste.name_class, 'Classe_Teste')
 
     async def test_update_classe(self):
-        await self.classe_teste.update_class(valor="Nova Classe Teste")
+        await self.classe_teste.update_class(value="Nova Classe Teste")
         await self.classe_teste.load_class()
         self.assertEqual(self.classe_teste.name_class[0], "Nova Classe Teste")
 

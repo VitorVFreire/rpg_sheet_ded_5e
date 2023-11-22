@@ -5,9 +5,9 @@ import asyncio
 from flask import abort
 
 class Character(User, Moeda):
-    def __init__(self, id_user=None, id_character=None, value=None):
-        super().__init__(id_user=id_user)
-        Moeda().__init__(self, valor=value)
+    def __init__(self, user_id=None, id_character=None, value=None):
+        super().__init__(user_id=user_id)
+        Moeda().__init__(self, value=value)
         self._id_character = id_character
         self._character_name = None
         self._classes = []
@@ -19,7 +19,7 @@ class Character(User, Moeda):
     
     @property
     def classe(self):
-        return self._classes[0]['nome_classe'] if len(self._classes) > 0 else ''
+        return self._classes[0]['class_name'] if len(self._classes) > 0 else ''
     
     @property
     def classes(self):
@@ -48,8 +48,8 @@ class Character(User, Moeda):
     @property
     def character(self):
         character = {
-            'id_character': self.id_character,
-            'name_character': self.character_name,
+            'character_id': self.id_character,
+            'character_name': self.character_name,
             'race': self.race,
             'classes': self.classes
         }
@@ -61,7 +61,7 @@ class Character(User, Moeda):
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_personagem FROM personagem WHERE id_personagem = %s and id_usuario = %s)"
-                        await mycursor.execute(query, (self.id_character, self.id_user))
+                        await mycursor.execute(query, (self.id_character, self.user_id))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
@@ -103,15 +103,15 @@ class Character(User, Moeda):
             print(e)
             return False
     
-    async def insert_character(self,id_race,character_name):
+    async def insert_character(self,race_id,character_name):
         try:
-            if self.id_user:
+            if self.user_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """INSERT INTO personagem
                         (id_usuario,id_raca,nome_personagem) 
                         VALUES(%s,%s,%s);"""
-                        await mycursor.execute(query, (self.id_user,id_race,character_name))
+                        await mycursor.execute(query, (self.user_id,race_id,character_name))
                         self._id_character = mycursor.lastrowid  
                         await conn.commit()
                         return True
@@ -193,12 +193,12 @@ class Character(User, Moeda):
     async def update_character(self,key,value):
         try:
             list = {
-                'id_race': 'id_raca',
+                'race_id': 'id_raca',
                 'name_character': 'nome_personagem'
             }
-            possibilidades_chave=['id_raca','nome_personagem']
+            possibilidades_key=['id_raca','nome_personagem']
             key = list[key]
-            if self.id_character and key in possibilidades_chave:
+            if self.id_character and key in possibilidades_key:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE personagem
@@ -234,10 +234,10 @@ class Character(User, Moeda):
                         async with conn.cursor() as mycursor:
                             if await self.exists_moeda_banco(moeda):
                                 query = f"UPDATE moedas_personagem SET qtd=%s WHERE id_personagem=%s AND moeda=%s;"
-                                parametros = (self.valor, self.id_character, moeda,)
+                                parametros = (self.value, self.id_character, moeda,)
                             else:
                                 query = f"INSERT INTO moedas_personagem(id_personagem,moeda,qtd) VALUES(%s,%s,%s);"
-                                parametros = (self._id_character, moeda, self.valor)
+                                parametros = (self._id_character, moeda, self.value)
                             await mycursor.execute(query, parametros)
                             await conn.commit()
                             return True

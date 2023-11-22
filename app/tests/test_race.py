@@ -16,7 +16,7 @@ class RaceTest(unittest.TestCase):
         self.assertEqual(self.raca_teste.race_name, 'raca_Teste')
 
     async def test_update_raca(self):
-        await self.raca_teste.update_race(valor="Nova raca Teste")
+        await self.raca_teste.update_race(value="Nova raca Teste")
         await self.raca_teste.load_race()
         self.assertEqual(self.raca_teste.race_name, "Nova raca Teste")
 

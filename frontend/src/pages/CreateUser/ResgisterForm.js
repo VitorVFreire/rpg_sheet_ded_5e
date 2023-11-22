@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 function RegisterForm() {
   return (
     <section className="register_user">
-      <form action='/cadastro_usuario' method='POST'>
+      <form action='/user_registration' method='POST'>
         <TextInput
           name="email"
           label="Email"
@@ -14,21 +14,21 @@ function RegisterForm() {
           type="text"
         />
         <TextInput
-          name="senha"
+          name="password"
           label="Senha"
           required={true}
           placeholder="Digite sua senha"
           type="password"
         />
         <TextInput
-          name="nome"
+          name="user_name"
           label="Nome"
           required={true}
           placeholder="Digite seu nome"
           type="text"
         />
         <TextInput
-          name="data_nascimento"
+          name="birth_date"
           label="Data de Nascimento"
           required={true}
           type="date"

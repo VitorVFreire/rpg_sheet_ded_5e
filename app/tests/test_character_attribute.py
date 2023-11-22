@@ -12,8 +12,8 @@ class CharacterAttributeTest(unittest.TestCase):
         cls.nome_personagem_teste = 'Personagem de Teste'
 
         cls.personagem_teste = CharacterAttribute(
-            id_user=cls.usuario_teste.id_user,
-            id_raca=cls.raca_teste.id_race,
+            user_id=cls.usuario_teste.user_id,
+            id_raca=cls.raca_teste.race_id,
             nome_personagem=cls.nome_personagem_teste
         )
         await cls.personagem_teste.insert_character()

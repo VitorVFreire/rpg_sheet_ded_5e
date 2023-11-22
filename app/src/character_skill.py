@@ -6,8 +6,8 @@ import asyncio
 from src import CharacterAttribute
 
 class CharacterSkills(CharacterAttribute):
-    def __init__(self, id_user=None,id_character=None):
-        super().__init__(id_user=id_user, id_character=id_character)
+    def __init__(self, user_id=None,id_character=None):
+        super().__init__(user_id=user_id, id_character=id_character)
         self._skills = [] 
         
     async def exists_skill(self, id_pericia):

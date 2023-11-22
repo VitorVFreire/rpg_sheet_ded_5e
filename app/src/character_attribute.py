@@ -6,8 +6,8 @@ from src import Character
 
 
 class CharacterAttribute(Character):
-    def __init__(self, id_user=None, id_character=None):
-        super().__init__(id_user=id_user, id_character=id_character)
+    def __init__(self, user_id=None, id_character=None):
+        super().__init__(user_id=user_id, id_character=id_character)
         self._attributes = {
             'forca': None,
             'destreza': None,

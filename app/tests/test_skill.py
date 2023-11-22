@@ -17,12 +17,12 @@ class SkillTest(unittest.TestCase):
         self.assertEqual(self.pericia_teste.skill_name, 'pericia_Teste')
 
     async def test_update_nome_pericia(self):
-        await self.pericia_teste.update_skill(chave='nome_pericia', valor="Nova pericia Teste")
+        await self.pericia_teste.update_skill(key='nome_pericia', value="Nova pericia Teste")
         await self.pericia_teste.load_skill()
         self.assertEqual(self.pericia_teste.skill_name, "Nova pericia Teste")
 
     async def test_update_status_pericia(self):
-        self.assertTrue(await self.pericia_teste.update_skill(chave='status_uso', valor="novo status"))
+        self.assertTrue(await self.pericia_teste.update_skill(key='status_uso', value="novo status"))
         await self.pericia_teste.load_skill()
         self.assertEqual(self.pericia_teste.usage_status, "novo status")
 

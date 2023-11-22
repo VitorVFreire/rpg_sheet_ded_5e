@@ -1,3 +1,4 @@
+from .database import Db
 from .image import Image
 from .user import User
 from .moeda import Moeda

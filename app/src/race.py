@@ -1,10 +1,10 @@
 from data import get_connection
-import pymysql
 import asyncio
+from src import Db
 
 class Race:
-    def __init__(self,id_race=None,race_name=None):
-        self._id_race = id_race or[]
+    def __init__(self,race_id=None,race_name=None):
+        self._race_id = race_id or[]
         self._race_name = race_name or []
         
     @property
@@ -12,32 +12,29 @@ class Race:
         return self._race_name
     
     @property
-    def id_race(self):
-        return self._id_race
+    def race_id(self):
+        return self._race_id
     
     @property
     async def races(self):
-        if (type(self._id_race) is list and len(self._id_race)<=0) or (self._id_race is None):
+        if (type(self._race_id) is list and len(self._race_id)<=0) or (self._race_id is None):
             await self.load_races()
         racas = []
-        for id_raca, nome_raca in zip(self._id_race, self._race_name):
-            racas.append({'id_raca': id_raca, 'nome_raca': nome_raca})
+        for race_id, race_name in zip(self._race_id, self._race_name):
+            racas.append({'race_id': race_id, 'race_name': race_name})
         return racas
     
     async def load_races(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "SELECT id_raca, nome_raca FROM raca;"
-                    await mycursor.execute(query)
-                    result = await mycursor.fetchall() 
-                    if result:
-                        for row in result:
-                            self._id_race.append(row[0])
-                            self._race_name.append(row[1])
-                        await conn.close()
-                        return True
-                    await conn.close()
+            query = "SELECT race_id, race_name FROM race;"
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query)
+            if result:
+                for row in result:
+                    self._race_id.append(row[0])
+                    self._race_name.append(row[1])
+                return True
             return False
         except Exception as e:
             print(e)
@@ -45,16 +42,14 @@ class Race:
         
     async def load_race(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "SELECT nome_raca FROM raca WHERE id_raca=%s;"
-                    await mycursor.execute(query,(self._id_race,))
-                    result = await mycursor.fetchall() 
-                    if result:
-                        self._race_name=result[0]
-                        await conn.close()
-                        return True
-                    await conn.close()
+            query = "SELECT race_name FROM raca WHERE race_id=%s;"
+            parameters = (self._race_id,)
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query, parameters=parameters, all=False)
+            if result:
+                self._race_name=result[0]
+                return True
             return False
         except Exception as e:
             print(e)
@@ -62,40 +57,34 @@ class Race:
         
     async def insert_race(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "INSERT INTO raca (nome_raca) VALUES (%s);"
-                    await mycursor.execute(query, (str(self._race_name),))
-                    self._id_race = mycursor.lastrowid 
-                    await conn.commit()
-                    await conn.close()
-                    return True
-        except pymysql.Error as e:
+            query = "INSERT INTO raca (race_name) VALUES (%s);"
+            parameters = (str(self._race_name),)
+            db = Db()
+            await db.connection_db()
+            self._race_id = await db.insert(query=query, parameters=parameters)
+            return True
+        except Exception as e:
             print(e)
             return False
         
     async def delete_race(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "DELETE from raca WHERE id_raca=%s;"
-                    await mycursor.execute(query, (self._id_race,))
-                    await conn.commit()
-                    await conn.close()
-                    return True
-        except pymysql.Error as e:
+            query = "DELETE from raca WHERE race_id=%s;"
+            parameters = (self._race_id,)
+            db = Db()
+            await db.connection_db()
+            return await db.delete(query=query, parameters=parameters)
+        except Exception as e:
             print(e)
             return False
         
-    async def update_race(self,valor):
+    async def update_race(self, value):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "UPDATE raca SET nome_raca=%s WHERE id_raca=%s"
-                    await mycursor.execute(query, (valor,self._id_race))
-                    await conn.commit()
-                    await conn.close()
-                    return True
-        except pymysql.Error as e:
+            query = "UPDATE raca SET race_name=%s WHERE race_id=%s"
+            parameters = (value, self._race_id)
+            db = Db()
+            await db.connection_db()
+            return await db.update(query=query, parameters=parameters)
+        except Exception as e:
             print(e)
             return False        

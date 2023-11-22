@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { uploadImage } from '../../server/uploadImage'; // Certifique-se de importar a função corretamente
+import { uploadImage } from '../../server/uploadImage'; 
 import requestInput from '../../server/requestInput';
 import './CustomInput.css'
 

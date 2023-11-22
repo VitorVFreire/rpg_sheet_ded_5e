@@ -20,7 +20,7 @@ class Moeda:
         'pc': {'da': 1000000, 'pl': 10000, 'po': 100, 'pe': 50, 'pp': 10, 'pc': 1}
     }
 
-    def __init__(self, diamante=None, platina=None, ouro=None, electrum=None, prata=None, cobre=None, origem=None, destino=None, valor=None):
+    def __init__(self, diamante=None, platina=None, ouro=None, electrum=None, prata=None, cobre=None, origem=None, destino=None, value=None):
         self.__moedas = {
             'da': diamante,
             'pl': platina,
@@ -31,7 +31,7 @@ class Moeda:
         }
         self.__origem = origem
         self.__destino = destino
-        self.__valor = valor
+        self.__value = value
         
     @property
     def origem(self):
@@ -50,12 +50,12 @@ class Moeda:
         self.__destino = value
 
     @property
-    def valor(self):
-        return self.__valor
+    def value(self):
+        return self.__value
     
-    @valor.setter
-    def valor(self, valor):
-        self.__valor = valor
+    @value.setter
+    def value(self, value):
+        self.__value = value
     
     @property
     def moedas(self):
@@ -72,15 +72,15 @@ class Moeda:
             'pc': cobre
         }
         
-    def verifica_moeda(self, chave):
-        possiveis_chave = ['da', 'po', 'pl', 'pp', 'pc', 'pe']
-        return chave in possiveis_chave
+    def verifica_moeda(self, key):
+        possiveis_key = ['da', 'po', 'pl', 'pp', 'pc', 'pe']
+        return key in possiveis_key
             
     def converter_moedas(self):
         fator = self.fatores_de_conversao.get(self.origem, {}).get(self.destino)
         if fator is not None:
-            self.__moedas[self.destino] += self.valor * fator
-            self.__moedas[self.origem] -= self.valor
+            self.__moedas[self.destino] += self.value * fator
+            self.__moedas[self.origem] -= self.value
             return self.__moedas[self.destino], self.__moedas[self.origem]
         else:
             print("Conversão não suportada")

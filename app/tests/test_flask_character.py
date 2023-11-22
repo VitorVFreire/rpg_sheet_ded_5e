@@ -5,7 +5,7 @@ class TestNewCharacterView(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = app.test_client()
-        cls.response = cls.app.post('/login', data={'email': 'teste@teste', 'senha': '123'})
+        cls.response = cls.app.post('/login', data={'email': 'teste@teste', 'password': '123'})
         cls.response_post_insert_personagem = cls.app.post('/insert_personagem', data={
             'id_raca': 1,
             'id_classe': 1,

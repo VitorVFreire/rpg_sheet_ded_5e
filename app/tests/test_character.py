@@ -15,8 +15,8 @@ class CharacterTest(unittest.TestCase):
         await cls.raca_teste.insert_race()
         cls.raca_teste_UPDATE = Race(race_name='raca_Teste_UPDATE')
         await cls.raca_teste_UPDATE.insert_race()
-        cls.personagem_teste=Character(id_user=cls.usuario_teste.id_user)
-        await cls.personagem_teste.insert_character(id_race=cls.raca_teste.id_race,character_name='nome personagem teste')
+        cls.personagem_teste=Character(user_id=cls.usuario_teste.user_id)
+        await cls.personagem_teste.insert_character(race_id=cls.raca_teste.race_id,character_name='nome personagem teste')
         
 
     @classmethod
@@ -43,7 +43,7 @@ class CharacterTest(unittest.TestCase):
         self.assertEqual(await self.personagem_teste.race, 'raca_Teste')
         
     async def test_update_raca(self):
-        await self.personagem_teste.update_character(key='id_raca',value=self.raca_teste_UPDATE.id_race)
+        await self.personagem_teste.update_character(key='id_raca',value=self.raca_teste_UPDATE.race_id)
         await self.personagem_teste.load_character()
         self.assertTrue(await self.personagem_teste.race, await self.raca_teste_UPDATE.race_name)
     

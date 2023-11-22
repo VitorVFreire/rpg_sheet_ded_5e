@@ -15,7 +15,7 @@ function LoginForm() {
           type="text"
         />
         <TextInput
-          name="senha"
+          name="password"
           label="Senha"
           required={true}
           placeholder="Digite sua senha"

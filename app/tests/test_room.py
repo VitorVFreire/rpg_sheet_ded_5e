@@ -5,13 +5,13 @@ import asyncio
 class RoomTest(unittest.TestCase):
     @classmethod
     async def setUp(cls): 
-        cls.usuario_teste = Character(nome='John', email='john@example.com', senha='pass123', data_nascimento='1990-01-01')
+        cls.usuario_teste = Character(nome='John', email='john@example.com', password='pass123', birth_date='1990-01-01')
         await cls.usuario_teste.insert_user()
         cls.raca_teste = Race(race_name='raca_Teste')
         await cls.raca_teste.insert_race()
-        await cls.usuario_teste.insert_character(id_race=cls.raca_teste.id_race,character_name='nome personagem teste')
+        await cls.usuario_teste.insert_character(race_id=cls.raca_teste.race_id,character_name='nome personagem teste')
         
-        cls.room = Room(id_user = cls.usuario_teste.id_user, room_name = 'test_room')
+        cls.room = Room(user_id = cls.usuario_teste.user_id, room_name = 'test_room')
         cls.response_insert_room_bank = cls.room.insert_room()
         cls.character = Room(id_room = cls.room.id_room, id_character = cls.usuario_teste.id_character)
         cls.character.insert_character_room()   

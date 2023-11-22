@@ -3,11 +3,11 @@ import pymysql
 from flask import abort
 
 class Room:
-    def __init__(self, id_room=None, id_character=None, id_user=None, room_name=None, id_character_room=None):
+    def __init__(self, id_room=None, id_character=None, user_id=None, room_name=None, id_character_room=None):
         self.__id_room = id_room or []
         self.__name_room = room_name or []
         self._id_character = id_character
-        self.__id_user = id_user
+        self.__user_id = user_id
         self.__id_character_room = id_character_room
     
     @property    
@@ -92,13 +92,13 @@ class Room:
         
     def insert_room(self):
         try:
-            if self.__id_user:
+            if self.__user_id:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """INSERT INTO room
                             (id_usuario, nome_room) 
                             VALUES(%s,%s);"""
-                        mycursor.execute(query, (self.__id_user, self.__name_room))
+                        mycursor.execute(query, (self.__user_id, self.__name_room))
                         self.__id_room = mycursor.lastrowid  
                         conn.commit()
                         return True
@@ -133,7 +133,7 @@ class Room:
             
     def delete_character_room(self):
         try:
-            if self.__id_user:
+            if self.__user_id:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """DELETE FROM room_personagem WHERE id_room = %s and id_personagem = %s"""

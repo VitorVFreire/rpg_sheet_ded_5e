@@ -153,7 +153,7 @@ async function pericias() {
           url: `/pericias/${id_personagem}`,
           type: tipo,
           data: {
-            chave: pericia,
+            key: pericia,
           },
           success: function (response) {
             var result = response.result;
@@ -170,13 +170,13 @@ function html_pericias(periciasData, periciasDoPersonagem) {
   const periciasSection = document.querySelector('[data-pericias-lista]');
   for (const pericia in periciasData) {
     if (periciasData.hasOwnProperty(pericia)) {
-      const valor = periciasData[pericia];
+      const value = periciasData[pericia];
       const periciaElement = document.createElement('div');
       periciaElement.classList.add('col')
       periciaElement.innerHTML = `
             <label for="check_pericia_${pericia}">${capitalizeFirstLetter(pericia)}</label> <br>
             <input type="checkbox" class="form-check-input" id="check_pericia_${pericia}" required/>
-            <div id='pericia_${pericia}'>${valor}</div>
+            <div id='pericia_${pericia}'>${value}</div>
         </div>
       `;
       periciasSection.appendChild(periciaElement);
@@ -274,9 +274,9 @@ async function habilidades() {
 
 function html_habilidades(habilidades) {
   const habilidadesSection = document.querySelector('[data-habilidades]');
-  for (const valor in habilidades) {
-    if (habilidades.hasOwnProperty(valor)) {
-      const habilidade = habilidades[valor]
+  for (const value in habilidades) {
+    if (habilidades.hasOwnProperty(value)) {
+      const habilidade = habilidades[value]
       const habilidadeElement = document.createElement('div');
       habilidadeElement.classList.add('row')
       habilidadeElement.classList.add('justify-content')
@@ -302,11 +302,11 @@ async function equipamentos() {
 
 function html_equipamentos(equipamentos) {
   const equipamentosSection = document.querySelector('[data-equipamentos]');
-  for (const valor in equipamentos) {
-    if (equipamentos.hasOwnProperty(valor)) {
+  for (const value in equipamentos) {
+    if (equipamentos.hasOwnProperty(value)) {
       let text_condicao = "";
 
-      const equipamento = equipamentos[valor];
+      const equipamento = equipamentos[value];
       
       if (equipamento.nome_tipo_equipamento === 'espada') {
         text_condicao = `dado: ${equipamento.dado}\nbonus: ${equipamento.bonus}`;
@@ -367,8 +367,8 @@ input_nome.forEach(input => {
       url: `/personagem/${id_personagem}`,
       type: 'PUT',
       data: {
-        chave: id,
-        valor: this.value,
+        key: id,
+        value: this.value,
       },
       success: function (response) {
         var result = response.result;
@@ -391,8 +391,8 @@ inputs_atributos.forEach(input => {
       url: `/atributos/${id_personagem}`,
       type: 'PUT',
       data: {
-        chave: atributo,
-        valor: this.value,
+        key: atributo,
+        value: this.value,
       },
       success: function (response) {
         var result = response.result;
@@ -425,7 +425,7 @@ inputs_salvaguardas.forEach(input => {
       url: `/salvaguardas/${id_personagem}`,
       type: tipo,
       data: {
-        chave: salvaguarda,
+        key: salvaguarda,
       },
       success: function (response) {
         var result = response.result;
@@ -450,8 +450,8 @@ inputs_status_base.forEach(input => {
       url: `/status_base/${id_personagem}`,
       type: 'PUT',
       data: {
-        chave: status_base,
-        valor: this.value,
+        key: status_base,
+        value: this.value,
       },
       success: function (response) {
         var result = response.result;
@@ -474,8 +474,8 @@ inputs_caracteristicas.forEach(input => {
       url: `/caracteristicas/${id_personagem}`,
       type: 'PUT',
       data: {
-        chave: caracteristica,
-        valor: this.value,
+        key: caracteristica,
+        value: this.value,
       },
       success: function (response) {
         var result = response.result;

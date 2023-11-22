@@ -17,7 +17,7 @@ class TestNewUserView(unittest.TestCase):
         response_post_cadastro = self.app.post('/cadastro_usuario', 
                                             data={
                                                 'email': 'user_test@user_test', 
-                                                'senha': '123',
+                                                'password': '123',
                                                 'nome': 'tester_user',
                                                 'data_nascimeto': '2000-02-10'
                                             })

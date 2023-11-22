@@ -105,12 +105,12 @@ class SavingThrow:
             print(e)
             return False
         
-    async def update_saving_throw(self,valor):
+    async def update_saving_throw(self,value):
         try:
             async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "UPDATE salvaguarda SET nome_salvaguarda=%s WHERE id_salvaguarda=%s"
-                        await mycursor.execute(query, (valor,self._id_saving_throw))
+                        await mycursor.execute(query, (value,self._id_saving_throw))
                         await conn.commit()
                         return True
         except pymysql.Error as e:

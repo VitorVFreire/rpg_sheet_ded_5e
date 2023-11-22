@@ -13,7 +13,7 @@ class UserTest(unittest.TestCase):
         await cls.usuario_teste.delete_user()
 
     async def test_valid_usuario(self):
-        self.assertEqual(await self.usuario_teste.valid_user(), True)
+        self.assertEqual(await self.usuario_teste.user_validate(), True)
 
     async def test_get_usuario(self):
         await self.usuario_teste.load_user()
@@ -37,7 +37,7 @@ class UserTest(unittest.TestCase):
 
     async def test_invalid_usuario(self):
         usuario = User(email="invalid@example.com", password="invalidpass")
-        self.assertEqual(await usuario.valid_user(), False)
+        self.assertEqual(await usuario.user_validate(), False)
 
 if __name__ == '__main__':
     asyncio.run(unittest.main())   

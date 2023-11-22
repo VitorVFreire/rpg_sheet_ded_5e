@@ -23,8 +23,8 @@ CREATE TABLE usuario(
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(45) NOT NULL,
     email VARCHAR(256) NOT NULL,
-    senha VARCHAR(200) NOT NULL,
-    data_nascimento DATE,
+    password VARCHAR(200) NOT NULL,
+    birth_date DATE,
     tipo_usuario VARCHAR(10) NOT NULL
 );
 """)
@@ -322,9 +322,9 @@ INSERT INTO salvaguarda(nome_salvaguarda) VALUES('forca'),('inteligencia'),('sab
 ('destreza'),('carisma'),('constituicao')
 """)
 
-#SENHA: 123
+#password: 123
 cursor.execute("""
-INSERT INTO usuario(nome, email, senha, data_nascimento, tipo_usuario)
+INSERT INTO usuario(nome, email, password, birth_date, tipo_usuario)
 VALUES('user_teste', 'teste@teste', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=', '2023-09-08', 'admin')               
 """)
 

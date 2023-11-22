@@ -12,8 +12,8 @@ class CharacterCharacteristicsTest(unittest.TestCase):
         cls.nome_personagem_teste = 'Personagem de Teste'
         
         cls.personagem_teste = CharacterCharacteristics(
-            id_user=cls.usuario_teste.id_user,
-            id_raca=cls.raca_teste.id_race,
+            user_id=cls.usuario_teste.user_id,
+            id_raca=cls.raca_teste.race_id,
             nome_personagem=cls.nome_personagem_teste,
         )
         cls.response_insert_personagem = await cls.personagem_teste.insert_character()  
@@ -42,13 +42,13 @@ class CharacterCharacteristicsTest(unittest.TestCase):
         self.assertEqual(self.personagem_teste.age, 10)
         
     async def test_update_idade_20(self):
-        self.assertTrue(self.personagem_teste.update_characteristics(chave='idade', valor=20))
+        self.assertTrue(self.personagem_teste.update_characteristics(key='idade', value=20))
         self.assertTrue(self.personagem_teste.load_characteristics())
         self.assertEqual(self.personagem_teste.age, 20)
         self.assertNotEqual(self.personagem_teste, 10)
         
     async def test_update_cor_olhos_vermelho_true(self):
-        self.assertTrue(self.personagem_teste.update_characteristics(chave='cor_olhos', valor='vermelho'))
+        self.assertTrue(self.personagem_teste.update_characteristics(key='cor_olhos', value='vermelho'))
         self.assertEqual(self.personagem_teste.eye_color, 'vermelho')
         
     async def test_cor_pele_is_none(self):

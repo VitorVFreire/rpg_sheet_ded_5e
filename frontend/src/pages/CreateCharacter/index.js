@@ -14,7 +14,7 @@ function CreateCharacter(props) {
         <div>
             <Navbar isLoggedIn={idUser} />
             <div className="create_character">
-                <form action='/personagem' method='POST'>
+                <form action='/character' method='POST'>
                     <TextInput
                         name="character_name"
                         label="Nome"
@@ -26,14 +26,14 @@ function CreateCharacter(props) {
                     <DropdownList
                         url='/races'
                         label='Raça'
-                        id='id_raca'
-                        name='nome_raca'
+                        id='race_id'
+                        name='race_name'
                     />
                     <DropdownList
                         url='/classes'
                         label='Classe'
-                        id='id_classe'
-                        name='nome_classe'
+                        id='class_id'
+                        name='class_name'
                     />
                     <Button>
                         Criar
