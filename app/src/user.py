@@ -1,4 +1,3 @@
-from data import get_connection_without_async
 import datetime
 import asyncio
 import base64

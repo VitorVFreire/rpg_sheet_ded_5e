@@ -13,7 +13,7 @@ class RoomTest(unittest.TestCase):
         
         cls.room = Room(user_id = cls.usuario_teste.user_id, room_name = 'test_room')
         cls.response_insert_room_bank = cls.room.insert_room()
-        cls.character = Room(id_room = cls.room.id_room, id_character = cls.usuario_teste.id_character)
+        cls.character = Room(id_room = cls.room.id_room, character_id = cls.usuario_teste.character_id)
         cls.character.insert_character_room()   
     
     @classmethod
@@ -32,7 +32,7 @@ class RoomTest(unittest.TestCase):
         self.assertTrue(self.character.character_belongs_room())
         
     async def test_load_roons_len_bigger_0(self):
-        roons = Room(id_character=self.usuario_teste.id_character)
+        roons = Room(character_id=self.usuario_teste.character_id)
         roons.load_character_room()
         self.assertTrue(len(roons.roons) > 0)
         
@@ -46,7 +46,7 @@ class RoomTest(unittest.TestCase):
         self.assertTrue(self.character.delete_character_room())
         
     async def test_load_roons_len_equal_0(self):
-        roons = Room(id_character=self.usuario_teste.id_character)
+        roons = Room(character_id=self.usuario_teste.character_id)
         roons.load_character_room()
         self.assertEqual(len(roons.roons), 0)
 

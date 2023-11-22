@@ -4,26 +4,26 @@ from flask import session, abort, render_template, request, jsonify, redirect, u
 from src import Character, Message, Messages, Room, User 
 from main import socketio, app
 
-@app.post('/insert/room/<id_character>/<code_room>')
-async def post_character_room(id_character, code_room):
+@app.post('/insert/room/<character_id>/<code_room>')
+async def post_character_room(character_id, code_room):
     try:
-        room = Room(id_room=code_room ,id_character=id_character)
+        room = Room(id_room=code_room ,character_id=character_id)
 
         return jsonify({'result': room.insert_character_room()}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.route('/roons/<id_character>')
-async def roons(id_character):
+@app.route('/roons/<character_id>')
+async def roons(character_id):
     try:
         if session.get('user_id') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
-        room = Room(id_character=id_character)
+        room = Room(character_id=character_id)
         
         room.load_character_room()
         
-        return render_template('roons.html', titulo = 'Roons', id_personagem = id_character, roons = room.roons), 200
+        return render_template('roons.html', titulo = 'Roons', id_personagem = character_id, roons = room.roons), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
@@ -42,39 +42,39 @@ async def room():
 async def insert_room():
     try:
         user_id = session.get('user_id')
-        id_character = request.form.get('id_personagem')
+        character_id = request.form.get('id_personagem')
         code_room = request.form.get('id_room')
-        print(id_character, code_room)
-        room = Room(id_character=id_character, user_id=user_id, id_room=code_room)
+        print(character_id, code_room)
+        room = Room(character_id=character_id, user_id=user_id, id_room=code_room)
         
         if room.insert_character_room():
-            return redirect(url_for('room_personagem', code_room=code_room, id_personagem=id_character))
+            return redirect(url_for('room_personagem', code_room=code_room, id_personagem=character_id))
         return render_template('index.html', msg = 'Erro em adicionar sala'), 500      
     except Exception as e:
         print(e)
         
-@app.route('/room/<code_room>/<id_character>')
-async def character_room(code_room, id_character):
+@app.route('/room/<code_room>/<character_id>')
+async def character_room(code_room, character_id):
     try:
         if session.get('user_id') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
-        character = Character(user_id=session.get('user_id'), id_character=id_character)
-        room = Room(id_room=code_room, id_character=id_character)
+        character = Character(user_id=session.get('user_id'), character_id=character_id)
+        room = Room(id_room=code_room, character_id=character_id)
         
         room.character_belongs_room()
         
-        return render_template('room_game.html', titulo = 'Room', room = code_room, id_personagem = id_character, nome_personagem = await character.character_name)
+        return render_template('room_game.html', titulo = 'Room', room = code_room, id_personagem = character_id, nome_personagem = await character.character_name)
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-@app.get('/messages/room=<id_room>&id_personagem=<id_character>')
-def get_messages(id_room,id_character):
+@app.get('/messages/room=<id_room>&id_personagem=<character_id>')
+def get_messages(id_room,character_id):
     try:
         if session.get('user_id') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-        room = Room(id_room=id_room, id_character=id_character)
+        room = Room(id_room=id_room, character_id=character_id)
         room.character_belongs_room()
         
         limit = request.args.get('limit', default=None)
@@ -92,10 +92,10 @@ def get_messages(id_room,id_character):
 def on_message(data):
     try:
         user_id = session.get('user_id')
-        id_character = data.get('id_personagem')
+        character_id = data.get('id_personagem')
         room = data.get('room')
-        if user_id and id_character and room:
-            message = Message(message=data['message'], name_character=data['nome_personagem'], id_character=id_character, room=room)
+        if user_id and character_id and room:
+            message = Message(message=data['message'], name_character=data['nome_personagem'], character_id=character_id, room=room)
             socketio.emit('message', message.message, room=room)
     except Exception as e:
         print(e)
@@ -105,9 +105,9 @@ def on_message(data):
 def on_join(data):
     try:
         user_id = session.get('user_id')
-        id_character = data.get('id_personagem')
+        character_id = data.get('id_personagem')
         room = data.get('room')
-        if user_id and id_character and room:
+        if user_id and character_id and room:
             character_name = data['nome_personagem']
             leave_room(room)
             join_room(room)

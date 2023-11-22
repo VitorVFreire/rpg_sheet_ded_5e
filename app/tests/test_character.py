@@ -22,7 +22,7 @@ class CharacterTest(unittest.TestCase):
     @classmethod
     async def tearDown(cls):
         for classe in await cls.personagem_teste.classe:
-            await cls.personagem_teste.delete_character_class(classe['id_classe_personagem'])  
+            await cls.personagem_teste.delete_character_class(classe['class_id_personagem'])  
         
         await cls.classe_teste_UPDATE.delete_class()
         await cls.classe_teste.delete_class()
@@ -43,19 +43,19 @@ class CharacterTest(unittest.TestCase):
         self.assertEqual(await self.personagem_teste.race, 'raca_Teste')
         
     async def test_update_raca(self):
-        await self.personagem_teste.update_character(key='id_raca',value=self.raca_teste_UPDATE.race_id)
+        await self.personagem_teste.update_character(key='race_id',value=self.raca_teste_UPDATE.race_id)
         await self.personagem_teste.load_character()
         self.assertTrue(await self.personagem_teste.race, await self.raca_teste_UPDATE.race_name)
     
     async def test_atribuicao_classe(self):
-        await self.personagem_teste.insert_character_class(id_class=self.classe_teste.id_class)
-        self.assertTrue(any(classe['id_classe'] == self.classe_teste.id_class for classe in await self.personagem_teste.classes))
+        await self.personagem_teste.insert_character_class(class_id=self.classe_teste.class_id)
+        self.assertTrue(any(classe['class_id'] == self.classe_teste.class_id for classe in await self.personagem_teste.classes))
         
     async def test_update_classe(self):
-        id_classe_personagem = self.personagem_teste.classes[0]['id_classe_personagem']
-        await self.personagem_teste.update_character_class(id_classe_personagem=id_classe_personagem, id_classe=self.classe_teste_UPDATE.id_class)
+        class_id_personagem = self.personagem_teste.classes[0]['class_id_personagem']
+        await self.personagem_teste.update_character_class(class_id_personagem=class_id_personagem, class_id=self.classe_teste_UPDATE.class_id)
         await self.personagem_teste.load_character_classes()
-        self.assertTrue(any(classe['id_classe'] == self.classe_teste_UPDATE.id_class for classe in await self.personagem_teste.classes))
+        self.assertTrue(any(classe['class_id'] == self.classe_teste_UPDATE.class_id for classe in await self.personagem_teste.classes))
 
     async def test_carregar_classes_usuarios_banco(self):
         self.assertTrue(self.personagem_teste.load_character_classes())

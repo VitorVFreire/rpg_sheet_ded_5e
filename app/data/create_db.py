@@ -31,7 +31,7 @@ CREATE TABLE usuario(
 
 cursor.execute("""
 CREATE TABLE raca (
-    id_raca INT PRIMARY KEY AUTO_INCREMENT,
+    race_id INT PRIMARY KEY AUTO_INCREMENT,
     nome_raca VARCHAR(45) NOT NULL,
     link_detalhes VARCHAR(300),
     detalhes VARCHAR(200)
@@ -51,10 +51,10 @@ cursor.execute("""
 CREATE TABLE personagem (
     id_personagem INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
-    id_raca INT NOT NULL,
+    race_id INT NOT NULL,
     nome_personagem VARCHAR(45) NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_raca) REFERENCES raca(id_raca) ON DELETE CASCADE
+    FOREIGN KEY (race_id) REFERENCES raca(race_id) ON DELETE CASCADE
 );
 """)
 
@@ -227,7 +227,7 @@ CREATE TABLE caracteristicas_personagem (
 
 cursor.execute("""
 CREATE TABLE classe (
-    id_classe INT PRIMARY KEY AUTO_INCREMENT,
+    class_id INT PRIMARY KEY AUTO_INCREMENT,
     nome_classe VARCHAR(45) NOT NULL,
     link_detalhes VARCHAR(300)
 );
@@ -235,11 +235,11 @@ CREATE TABLE classe (
 
 cursor.execute("""
 CREATE TABLE classe_personagem (
-    id_classe_personagem INT PRIMARY KEY AUTO_INCREMENT,
+    class_id_personagem INT PRIMARY KEY AUTO_INCREMENT,
     id_personagem INT NOT NULL,
-    id_classe INT NOT NULL,
+    class_id INT NOT NULL,
     FOREIGN KEY (id_personagem) REFERENCES personagem(id_personagem) ON DELETE CASCADE,
-    FOREIGN KEY (id_classe) REFERENCES classe(id_classe) ON DELETE CASCADE
+    FOREIGN KEY (class_id) REFERENCES classe(class_id) ON DELETE CASCADE
 );
 """)
 
@@ -260,9 +260,9 @@ CREATE TABLE habilidade (
 cursor.execute("""
 CREATE TABLE habilidade_classe (
     id_habilidade_classe INT PRIMARY KEY AUTO_INCREMENT,
-    id_classe INT NOT NULL,
+    class_id INT NOT NULL,
     id_habilidade INT NOT NULL,
-    FOREIGN KEY (id_classe) REFERENCES classe(id_classe) ON DELETE CASCADE,
+    FOREIGN KEY (class_id) REFERENCES classe(class_id) ON DELETE CASCADE,
     FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade) ON DELETE CASCADE
 );
 """)
@@ -335,7 +335,7 @@ VALUES(1, 'teste_room')
 """)
 
 cursor.execute("""
-INSERT INTO personagem(id_usuario, id_raca, nome_personagem)
+INSERT INTO personagem(id_usuario, race_id, nome_personagem)
 VALUES(1, 1, 'teste')              
 """)
 

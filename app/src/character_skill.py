@@ -6,42 +6,42 @@ import asyncio
 from src import CharacterAttribute
 
 class CharacterSkills(CharacterAttribute):
-    def __init__(self, user_id=None,id_character=None):
-        super().__init__(user_id=user_id, id_character=id_character)
+    def __init__(self, user_id=None,character_id=None):
+        super().__init__(user_id=user_id, character_id=character_id)
         self._skills = [] 
         
     async def exists_skill(self, id_pericia):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_pericia_personagem FROM pericia_personagem WHERE id_personagem = %s and id_pericia = %s)"
-                        await mycursor.execute(query, (self.id_character, id_pericia,))
+                        await mycursor.execute(query, (self.character_id, id_pericia,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def insert_skill(self,id_skill):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "INSERT INTO pericia_personagem(id_personagem,id_pericia) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self.id_character,id_skill))
+                        await mycursor.execute(query, (self.character_id,id_skill))
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def delete_skills(self,id_skill):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from pericia_personagem
@@ -50,20 +50,20 @@ class CharacterSkills(CharacterAttribute):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def load_skills(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT pp.id_pericia, pc.nome_pericia, pc.status_uso,pp.id_pericia_personagem 
                         FROM pericia_personagem pp 
                         JOIN pericia pc ON pp.id_pericia = pc.id_pericia 
                         WHERE pp.id_personagem = %s;"""
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchall() 
                         if result:
                             self._skills.clear()
@@ -71,13 +71,13 @@ class CharacterSkills(CharacterAttribute):
                                 self._skills.append({'id_pericia_personagem': row[3], 'id_pericia': row[0], 'nome_pericia': row[1], 'status_uso': row[2]})
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def update_skills(self,id_pericia,id_pericia_personagem):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """UPDATE pericia_personagem
@@ -87,7 +87,7 @@ class CharacterSkills(CharacterAttribute):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
 

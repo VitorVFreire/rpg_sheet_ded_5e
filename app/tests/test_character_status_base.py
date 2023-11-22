@@ -13,7 +13,7 @@ class CharacterStatusBaseTest(unittest.TestCase):
 
         cls.personagem_teste = CharacterStatusBase(
             user_id=cls.usuario_teste.user_id,
-            id_raca=cls.raca_teste.race_id,
+            race_id=cls.raca_teste.race_id,
             nome_personagem=cls.nome_personagem_teste
         )
         await cls.personagem_teste.insert_character()
@@ -43,7 +43,7 @@ class CharacterStatusBaseTest(unittest.TestCase):
         self.assertEqual(await self.personagem_teste.hit_points, 10)
         
     async def test_load_status_base_true_vida_10_nivel_none(self):
-        status_base = CharacterStatusBase(id_character = self.personagem_teste.id_character, user_id = self.usuario_teste.user_id)
+        status_base = CharacterStatusBase(character_id = self.personagem_teste.character_id, user_id = self.usuario_teste.user_id)
         self.assertTrue(await status_base.load_status_base())
         self.assertEqual(status_base.hit_points, 10)
         self.assertIsNone(status_base.level)
@@ -52,7 +52,7 @@ class CharacterStatusBaseTest(unittest.TestCase):
         self.assertTrue(await self.personagem_teste.insert_status_base(key='xp', value=20))
     
     async def test_load_status_base_true_vida_10_xp_20(self):
-        status_base = CharacterStatusBase(id_character = self.personagem_teste.id_character, user_id = self.usuario_teste.user_id)
+        status_base = CharacterStatusBase(character_id = self.personagem_teste.character_id, user_id = self.usuario_teste.user_id)
         self.assertTrue(await status_base.load_status_base())
         self.assertEqual(status_base.hit_points, 10)
         self.assertEqual(status_base.experience_points, 10)

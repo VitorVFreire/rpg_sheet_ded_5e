@@ -109,7 +109,7 @@ class Skill:
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
@@ -123,7 +123,7 @@ class Skill:
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
@@ -138,6 +138,6 @@ class Skill:
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False        

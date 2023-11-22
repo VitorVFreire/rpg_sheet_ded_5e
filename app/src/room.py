@@ -3,12 +3,12 @@ import pymysql
 from flask import abort
 
 class Room:
-    def __init__(self, id_room=None, id_character=None, user_id=None, room_name=None, id_character_room=None):
+    def __init__(self, id_room=None, character_id=None, user_id=None, room_name=None, character_id_room=None):
         self.__id_room = id_room or []
         self.__name_room = room_name or []
-        self._id_character = id_character
+        self._character_id = character_id
         self.__user_id = user_id
-        self.__id_character_room = id_character_room
+        self.__character_id_room = character_id_room
     
     @property    
     def roons(self):
@@ -27,41 +27,41 @@ class Room:
         
     def exists_character_room(self):
         try:
-            if self._id_character:
+            if self._character_id:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = "SELECT EXISTS (SELECT id_room_personagem FROM room_personagem WHERE id_personagem = %s and id_room = %s)"
-                        mycursor.execute(query, (self._id_character, self.__id_room,))
+                        mycursor.execute(query, (self._character_id, self.__id_room,))
                         result = mycursor.fetchone()
                         if result[0] == 1:
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500)
         
     def character_belongs_room(self):
         try:
-            if self._id_character:
+            if self._character_id:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = "SELECT EXISTS (SELECT id_room_personagem FROM room_personagem WHERE id_personagem = %s and id_room = %s)"
-                        mycursor.execute(query, (self._id_character, self.__id_room,))
+                        mycursor.execute(query, (self._character_id, self.__id_room,))
                         result = mycursor.fetchone()
                         if result[0] == 1:
                             return True
             abort(403, "Acesso Negado")
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500)
         
     def load_character_room(self):
         try:
-            if self._id_character:
+            if self._character_id:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = "SELECT rm.id_room, rm.nome_room  FROM room_personagem rp, room rm WHERE rp.id_personagem = %s and rp.id_room = rm.id_room;"
-                        mycursor.execute(query, (self._id_character,))
+                        mycursor.execute(query, (self._character_id,))
                         result = mycursor.fetchall()
                         if result:
                             for row in result:
@@ -69,24 +69,24 @@ class Room:
                                 self.__name_room.append(row[1])
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500)
                                                                                                                                                                                                                                                                                                           
     def insert_character_room(self):
         try:
-            if self._id_character and self.exists_character_room() is False:
+            if self._character_id and self.exists_character_room() is False:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """INSERT INTO room_personagem
                             (id_personagem, id_room, permissao) 
                             VALUES(%s,%s,0);"""
-                        mycursor.execute(query, (self._id_character, self.__id_room))
-                        self.__id_character_room = mycursor.lastrowid  
+                        mycursor.execute(query, (self._character_id, self.__id_room))
+                        self.__character_id_room = mycursor.lastrowid  
                         conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500, 'Erro na inserção ao banco')
         
@@ -103,7 +103,7 @@ class Room:
                         conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500, 'Erro na inserção ao banco')
             
@@ -115,7 +115,7 @@ class Room:
                     mycursor.execute(query, (self.__id_room,))
                     conn.commit()
                     return True
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500, 'Erro na exclusão da sala')
     
@@ -127,7 +127,7 @@ class Room:
                     mycursor.execute(query, (self.__name_room,self.__id_room,))
                     conn.commit()
                     return True
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500, 'Erro na exclusão da sala')
             
@@ -137,10 +137,10 @@ class Room:
                 with get_connection_without_async() as conn:
                     with conn.cursor() as mycursor:    
                         query = """DELETE FROM room_personagem WHERE id_room = %s and id_personagem = %s"""
-                        mycursor.execute(query, (self.__id_room, self._id_character))
+                        mycursor.execute(query, (self.__id_room, self._character_id))
                         conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500, 'Erro na exclusão da sala')

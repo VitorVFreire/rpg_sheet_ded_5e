@@ -110,20 +110,20 @@ class Equipment(Image):
             print(e)
             return False
 
-    async def load_character_equipments(self, id_character):
+    async def load_character_equipments(self, character_id):
         try:
-            if id_character:
+            if character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT id_equipamento FROM equipamento_personagem WHERE id_personagem = %s;"""
-                        await mycursor.execute(query, (id_character,))
+                        await mycursor.execute(query, (character_id,))
                         result = await mycursor.fetchall()
                         if result:
                             for row in result:
                                 self.__character_equipments.append(row[0])              
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
    
@@ -190,7 +190,7 @@ class Equipment(Image):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             self.name = self.equipment_image
             self.remove_file()
             print(e)
@@ -207,7 +207,7 @@ class Equipment(Image):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
@@ -222,7 +222,7 @@ class Equipment(Image):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False 
     

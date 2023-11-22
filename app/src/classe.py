@@ -1,4 +1,3 @@
-from data import get_connection
 import asyncio
 
 from src import Db
@@ -13,7 +12,7 @@ class Classe:
         return self._class_name
     
     @property
-    def id_class(self):
+    def class_id(self):
         return self._class_id
 
     @property

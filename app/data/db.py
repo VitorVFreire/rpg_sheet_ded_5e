@@ -8,15 +8,7 @@ import psycopg_pool
 load_dotenv()
 
 async def get_connection():
-    conn = await asyncpg.connect(
-        user=os.getenv('USER'),
-        password=os.getenv('PASSWORD'),
-        host=os.getenv('HOST'),
-        port=os.getenv('PORT'),
-        database=os.getenv('DATABASE')
-    )
-
-    return conn
+    pass
 
 async def get_connection_without_async():
     conninfo = f'host={os.getenv("HOST")} dbname={os.getenv("DATABASE")} port={os.getenv("PORT")} user={os.getenv("USER")} password={os.getenv("PASSWORD")}'

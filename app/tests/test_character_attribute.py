@@ -13,7 +13,7 @@ class CharacterAttributeTest(unittest.TestCase):
 
         cls.personagem_teste = CharacterAttribute(
             user_id=cls.usuario_teste.user_id,
-            id_raca=cls.raca_teste.race_id,
+            race_id=cls.raca_teste.race_id,
             nome_personagem=cls.nome_personagem_teste
         )
         await cls.personagem_teste.insert_character()

@@ -3,7 +3,7 @@
 Nome do Jogador: {{nome}}
 <input id="id_personagem" type="hidden" value="{{id_personagem}}">
 
-<a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('roons', id_character=id_personagem)}}">
+<a class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{{url_for('roons', character_id=id_personagem)}}">
     Salas
 </a>
 
@@ -188,12 +188,12 @@ Nome do Jogador: {{nome}}
         </div>
     </div>
 </section>
-<a href="{{url_for('render_character_equipment', id_character=id_personagem)}}">Adicionar Equipamentos</a>
+<a href="{{url_for('render_character_equipment', character_id=id_personagem)}}">Adicionar Equipamentos</a>
 <section data-equipamentos>
 
 </section>
 
-<a href="{{url_for('render_character_spell', id_character=id_personagem)}}">Adicionar Habilidades</a>
+<a href="{{url_for('render_character_spell', character_id=id_personagem)}}">Adicionar Habilidades</a>
 <section data-habilidades>
 
 </section>

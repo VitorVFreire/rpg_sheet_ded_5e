@@ -5,8 +5,8 @@ import asyncio
 from src import Character, Image
 
 class CharacterCharacteristics(Character, Image):
-    def __init__(self, user_id = None, id_character = None, parameter = None ,name = None):
-        super().__init__(user_id=user_id, id_character=id_character)
+    def __init__(self, user_id = None, character_id = None, parameter = None ,name = None):
+        super().__init__(user_id=user_id, character_id=character_id)
         Image.__init__(self, parameters=parameter, name=name)
         self._characteristics = {
             'age': None,
@@ -32,60 +32,60 @@ class CharacterCharacteristics(Character, Image):
         
     async def exists_characteristics(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_caracteristicas_personagem FROM caracteristicas_personagem WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def insert_characteristics(self, key, value):
         try:
             key_possibility = ['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
-            if self.id_character and key in key_possibility:
+            if self.character_id and key in key_possibility:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""INSERT INTO caracteristicas_personagem
                         (id_personagem,{key}) 
                         VALUES(%s,%s);"""
-                        await mycursor.execute(query, (self.id_character, value,))
+                        await mycursor.execute(query, (self.character_id, value,))
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def delete_characteristics(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 await self.load_characteristics()
                 self.remove_file()
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from caracteristicas_personagem
                         WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def load_characteristics(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT idade, cor_olhos, cor_pele, cor_cabelo, peso, altura, imagem_personagem FROM caracteristicas_personagem WHERE id_personagem = %s"
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchone() 
                         if result:
                             self.set_age(result[0])
@@ -97,40 +97,40 @@ class CharacterCharacteristics(Character, Image):
                             self.set_character_image(result[6])
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def update_characteristics(self,key, value):
         try:
             possibilidade_key=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
-            if self.id_character and key in possibilidade_key:
+            if self.character_id and key in possibilidade_key:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE caracteristicas_personagem
                         SET {key}=%s
                         WHERE id_personagem=%s;"""
-                        parametros=(value,self.id_character)
+                        parametros=(value,self.character_id)
                         await mycursor.execute(query, parametros)
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def exists_image(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_caracteristicas_personagem FROM caracteristicas_personagem WHERE id_personagem = %s and imagem_personagem IS NOT NULL);"
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
@@ -140,7 +140,7 @@ class CharacterCharacteristics(Character, Image):
             if exist_caracteristica:
                 if await self.exists_image():
                     await self.load_characteristics()
-            self.parameter = self.id_character
+            self.parameter = self.character_id
             result, name = self.save_file(file) 
             self.set_character_image(name)
             result_final =  (

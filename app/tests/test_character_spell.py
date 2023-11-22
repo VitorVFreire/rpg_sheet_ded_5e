@@ -38,12 +38,12 @@ class CharacterSpellTest(unittest.TestCase):
         
         cls.personagem_teste = CharacterSpell(
             user_id=cls.usuario_teste.user_id,
-            id_raca=cls.raca_teste.race_id,
+            race_id=cls.raca_teste.race_id,
             nome_personagem=cls.nome_personagem_teste,
         )
         await cls.personagem_teste.insert_character()
         
-        cls.response_insert_habilidade = await cls.personagem_teste.insert_spell(cls.habilidade_teste.id_spell)
+        cls.response_insert_habilidade = await cls.personagem_teste.insert_spell(cls.habilidade_teste.spell_id)
         cls.response_load_habilidade_personagem = await cls.personagem_teste.load_spells()
         
     @classmethod
@@ -64,7 +64,7 @@ class CharacterSpellTest(unittest.TestCase):
         self.assertEqual(self.habilidade_teste.spell_name, self.personagem_teste.spells[0]['nome_habilidade'])   
         
     async def test_update_habilidade_personagem(self):
-        self.assertTrue(self.personagem_teste.update_spell(id_spell=self.habilidade_teste_2.id_spell, id_character_spell=self.personagem_teste.spell[0]['id_habilidade_personagem']))
+        self.assertTrue(self.personagem_teste.update_spell(spell_id=self.habilidade_teste_2.spell_id, character_id_spell=self.personagem_teste.spell[0]['id_habilidade_personagem']))
         self.assertTrue(self.personagem_teste.load_spells())
         self.assertEqual(self.personagem_teste.spell[0]['nome_habilidade'], self.habilidade_teste_2.spell_name)
         
@@ -72,7 +72,7 @@ class CharacterSpellTest(unittest.TestCase):
         self.assertNotEqual(self.habilidade_teste.spell_name, self.habilidade_teste_2.spell_name)
 
     async def test_adiconar_habilidade_personagem_habilidades_bigger_equal_2(self):
-        self.assertTrue(self.personagem_teste.insert_spell(id_spell=self.habilidade_teste.id_spell))
+        self.assertTrue(self.personagem_teste.insert_spell(spell_id=self.habilidade_teste.spell_id))
         self.assertTrue(self.personagem_teste.load_spells())
         self.assertTrue(len(self.personagem_teste.spells) > 0)
     

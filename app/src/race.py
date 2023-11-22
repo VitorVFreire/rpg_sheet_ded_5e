@@ -1,4 +1,3 @@
-from data import get_connection
 import asyncio
 from src import Db
 

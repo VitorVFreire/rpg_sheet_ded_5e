@@ -131,11 +131,11 @@ async def characters():
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
     
-@app.route('/character/<id_character>')
-async def character(id_character):
+@app.route('/character/<character_id>')
+async def character(character_id):
     try:
         user_id = session.get('user_id')
-        character = Character(user_id=user_id, id_character=id_character)
+        character = Character(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
         
@@ -149,7 +149,7 @@ async def character(id_character):
             raca = character.race,
             nome = character.name,
             classe = character.classe,
-            id_personagem = character.id_character,
+            id_personagem = character.character_id,
             nome_personagem = character.character_name,
         ), 200'''
         return render_template('index.html', id=session.get('user_id')), 200
@@ -157,27 +157,27 @@ async def character(id_character):
         print(e)
         abort(403, 'Error: 403\nAcesso Negado')
                  
-@app.route('/personagem/adicionar_habilidade/<id_character>')
-async def render_character_spell(id_character):
+@app.route('/personagem/adicionar_habilidade/<character_id>')
+async def render_character_spell(character_id):
     try:
         spell = Spell()
         
         await spell.load_spells()
-        await spell.load_character_spells(id_character)
+        await spell.load_character_spells(character_id)
                 
-        return render_template('adicionar_habilidade_personagem.html', habilidades = await spell.spells, id_personagem = id_character), 200
+        return render_template('adicionar_habilidade_personagem.html', habilidades = await spell.spells, id_personagem = character_id), 200
     except Exception as e:
         print(e)
         abort(404)
         
-@app.route('/personagem/adicionar_equipamento/<id_character>')
-async def render_character_equipment(id_character):
+@app.route('/personagem/adicionar_equipamento/<character_id>')
+async def render_character_equipment(character_id):
     try:
         equipments = Equipment()
         
         await equipments.load_equipments()
-        await equipments.load_character_equipments(id_character=id_character)
-        return render_template('adicionar_equipamento_personagem.html', equipamentos = equipments.equipments, id_personagem = id_character), 200
+        await equipments.load_character_equipments(character_id=character_id)
+        return render_template('adicionar_equipamento_personagem.html', equipamentos = equipments.equipments, id_personagem = character_id), 200
     except Exception as e:
         print(e)
         abort(404)

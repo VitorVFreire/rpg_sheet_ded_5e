@@ -5,8 +5,8 @@ import asyncio
 from src import Character
 
 class CharacterStatusBase(Character):
-    def __init__(self, user_id=None,id_character=None):
-        super().__init__(user_id=user_id, id_character=id_character)
+    def __init__(self, user_id=None,character_id=None):
+        super().__init__(user_id=user_id, character_id=character_id)
         self._alignment = None
         self._antecedent = None
         self._ca = None
@@ -40,58 +40,58 @@ class CharacterStatusBase(Character):
         
     async def exists_status_base(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_status_base FROM status_base WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def insert_status_base(self,key,value):
         try:
             condition, key = self.valid_key(key)
-            if self.id_character and condition:
+            if self.character_id and condition:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"INSERT INTO status_base(id_personagem,{key}) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self.id_character,value,))
+                        await mycursor.execute(query, (self.character_id,value,))
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def delete_status_base(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from status_base
                         WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (self.id_character))
+                        await mycursor.execute(query, (self.character_id))
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def load_status_base(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """SELECT vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria
                         FROM status_base
                         WHERE id_personagem = %s;"""
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchone()
                         if result:
                             self.hit_points = result[0]
@@ -109,25 +109,25 @@ class CharacterStatusBase(Character):
                             return True
                 return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def update_status_base(self,key,value):
         try:
             condition, key = self.valid_key(key)
-            if self.id_character and condition:
+            if self.character_id and condition:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = f"""UPDATE status_base
                         SET {key}=%s
                         WHERE id_personagem=%s;"""
-                        parameters = (value,self.id_character)
+                        parameters = (value,self.character_id)
                         await mycursor.execute(query, parameters)
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     

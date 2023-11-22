@@ -48,6 +48,6 @@ class Messages:
                         self.__offset += len(result)
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             abort(500, 'Erro no carregamento das mensagens')  

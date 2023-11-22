@@ -20,11 +20,11 @@ async def get_characters():
         print(e)
         return 404
 
-@app.get('/character/<id_character>')
-async def get_character(id_character):
+@app.get('/character/<character_id>')
+async def get_character(character_id):
     try:
         user_id = session.get('user_id')
-        character = Character(user_id=user_id, id_character=id_character)
+        character = Character(user_id=user_id, character_id=character_id)
 
         if await character.character_belongs_user() and await character.load_character():
             return jsonify(character.character), 200
@@ -33,30 +33,28 @@ async def get_character(id_character):
         print(e)
         return 404
 
-@app.post('/personagem')
+@app.post('/character')
 async def post_character():
     try:
         user_id = session.get('user_id')
         character = Character(user_id=user_id)
 
-        race_id = request.form.get('id_raca')
-        id_class = request.form.get('id_classe')
+        race_id = request.form.get('race_id')
+        class_id = request.form.get('class_id')
         character_name = request.form.get('character_name')
         
-        print(race_id, id_class, character_name)
-
-        if await character.insert_character(race_id=race_id, character_name=character_name) and await character.insert_character_class(id_class=id_class):
+        if await character.insert_character(race_id=race_id, character_name=character_name) and await character.insert_character_class(class_id=class_id):
             return redirect(url_for('characters'))
         return jsonify({'result': False})
     except Exception as e:
         print(e)
         return 404
 
-@app.put('/personagem/<id_character>')
-async def put_character(id_character):
+@app.put('/character/<character_id>')
+async def put_character(character_id):
     try:
         user_id = session.get('user_id')
-        character = Character(user_id=user_id, id_character=id_character)
+        character = Character(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -68,26 +66,25 @@ async def put_character(id_character):
         print(e)
         return 404
 
-@app.delete('/personagem/<id_character>')
-async def delete_character(id_character):
+@app.delete('/character/<character_id>')
+async def delete_character(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterCharacteristics(
-            user_id=user_id, id_character=id_character)
+        character = CharacterCharacteristics(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
-        return jsonify({'result': (await character.delete_characteristics() and await character.delete_character())}), 200
+        return jsonify({'result': await character.delete_character()}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.get('/caracteristicas/<id_character>')
-async def get_character_characteristics(id_character):
+@app.get('/caracteristicas/<character_id>')
+async def get_character_characteristics(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterCharacteristics(
-            id_character=id_character, user_id=user_id)
+            character_id=character_id, user_id=user_id)
 
         await character.character_belongs_user()
 
@@ -99,12 +96,12 @@ async def get_character_characteristics(id_character):
         print(e)
         return 404
 
-@app.put('/caracteristicas/<id_character>')
-async def put_character_characteristics(id_character):
+@app.put('/caracteristicas/<character_id>')
+async def put_character_characteristics(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterCharacteristics(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -122,12 +119,12 @@ async def put_character_characteristics(id_character):
         print(e)
         return 404
 
-@app.get('/atributos/<id_character>')
-async def get_character_attribute(id_character):
+@app.get('/atributos/<character_id>')
+async def get_character_attribute(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterAttribute(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -139,12 +136,12 @@ async def get_character_attribute(id_character):
         print(e)
         return 404
 
-@app.put('/atributos/<id_character>')
-async def put_character_attribute(id_character):
+@app.put('/atributos/<character_id>')
+async def put_character_attribute(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterAttribute(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -175,12 +172,12 @@ async def put_character_attribute(id_character):
         print(e)
         return 404
 
-@app.get('/salvaguardas/<id_character>')
-async def get_character_saving_throw(id_character):
+@app.get('/salvaguardas/<character_id>')
+async def get_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterSavingThrowTest(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -193,12 +190,12 @@ async def get_character_saving_throw(id_character):
         print(e)
         return 404
 
-@app.post('/salvaguardas/<id_character>')
-async def post_character_saving_throw(id_character):
+@app.post('/salvaguardas/<character_id>')
+async def post_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterSavingThrowTest(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -217,12 +214,12 @@ async def post_character_saving_throw(id_character):
         print(e)
         return 404
 
-@app.delete('/salvaguardas/<id_character>')
-async def delete_character_saving_throw(id_character):
+@app.delete('/salvaguardas/<character_id>')
+async def delete_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterSavingThrowTest(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -241,12 +238,12 @@ async def delete_character_saving_throw(id_character):
         print(e)
         return 404
 
-@app.get('/status_base/<id_character>')
-async def get_character_status_base(id_character):
+@app.get('/status_base/<character_id>')
+async def get_character_status_base(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterStatusBase(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -257,12 +254,12 @@ async def get_character_status_base(id_character):
         print(e)
         return 404
 
-@app.put('/status_base/<id_character>')
-async def put_character_status_base(id_character):
+@app.put('/status_base/<character_id>')
+async def put_character_status_base(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterStatusBase(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -277,11 +274,11 @@ async def put_character_status_base(id_character):
         print(e)
         return 404
 
-@app.get('/pericias/<id_character>')
-async def get_character_skills(id_character):
+@app.get('/pericias/<character_id>')
+async def get_character_skills(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSkills(user_id=user_id, id_character=id_character)
+        character = CharacterSkills(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -293,11 +290,11 @@ async def get_character_skills(id_character):
         print(e)
         return 404
 
-@app.post('/pericias/<id_character>')
-async def post_character_skill(id_character):
+@app.post('/pericias/<character_id>')
+async def post_character_skill(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSkills(user_id=user_id, id_character=id_character)
+        character = CharacterSkills(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -316,11 +313,11 @@ async def post_character_skill(id_character):
         print(e)
         return 404
 
-@app.delete('/pericias/<id_character>')
-async def delete_character_skill(id_character):
+@app.delete('/pericias/<character_id>')
+async def delete_character_skill(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSkills(user_id=user_id, id_character=id_character)
+        character = CharacterSkills(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -340,11 +337,11 @@ async def delete_character_skill(id_character):
         print(e)
         return 404
 
-@app.get('/spell/<id_character>')
-async def get_character_spells(id_character):
+@app.get('/spell/<character_id>')
+async def get_character_spells(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSpell(user_id=user_id, id_character=id_character)
+        character = CharacterSpell(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -357,44 +354,44 @@ async def get_character_spells(id_character):
         print(e)
         return 404
 
-@app.post('/spell/<id_character>')
-async def post_character_spell(id_character):
+@app.post('/spell/<character_id>')
+async def post_character_spell(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSpell(user_id=user_id, id_character=id_character)
+        character = CharacterSpell(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
         
-        id_spell = request.form.get('id_habilidade')
+        spell_id = request.form.get('id_habilidade')
         
-        return jsonify({'result': await character.insert_spell(id_spell=id_spell)}), 200
+        return jsonify({'result': await character.insert_spell(spell_id=spell_id)}), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.delete('/spell/<id_character>')
-async def delete_character_spell(id_character):
+@app.delete('/spell/<character_id>')
+async def delete_character_spell(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSpell(user_id=user_id, id_character=id_character)
+        character = CharacterSpell(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
         
-        id_spell = request.form.get('id_habilidade')
+        spell_id = request.form.get('id_habilidade')
         
-        if await character.exists_specific_spell(id_spell=id_spell):
-            return jsonify({'result': await character.delete_spell(id_character_spell=id_spell)}), 200
+        if await character.exists_specific_spell(spell_id=spell_id):
+            return jsonify({'result': await character.delete_spell(character_id_spell=spell_id)}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return jsonify({'result': False}), 500
 
-@app.get('/equipamentos/<id_character>')
-async def get_character_equipment(id_character):
+@app.get('/equipamentos/<character_id>')
+async def get_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterEquipment(
-            user_id=user_id, id_character=id_character)
+            user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -405,14 +402,14 @@ async def get_character_equipment(id_character):
         print(e)
         return 404
 
-@app.post('/equipamentos/<id_character>')
-async def post_character_equipment(id_character):
+@app.post('/equipamentos/<character_id>')
+async def post_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
         id_equipment = request.form.get('id_equipamento')
         amount = request.form.get('qtd')
         character = CharacterEquipment(
-            amount=amount, id_equipment=id_equipment, user_id=user_id, id_character=id_character)
+            amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -421,14 +418,14 @@ async def post_character_equipment(id_character):
         print(e)
         return 404
 
-@app.put('/equipamentos/<id_character>')
-async def put_character_equipment(id_character):
+@app.put('/equipamentos/<character_id>')
+async def put_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
         id_equipment = request.form.get('id_equipamento')
         amount = request.form.get('qtd')
         character = CharacterEquipment(
-            amount=amount, id_equipment=id_equipment, user_id=user_id, id_character=id_character)
+            amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -437,13 +434,13 @@ async def put_character_equipment(id_character):
         print(e)
         return 404
 
-@app.delete('/equipamentos/<id_character>')
-async def delete_character_equipment(id_character):
+@app.delete('/equipamentos/<character_id>')
+async def delete_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
         id_equipment = request.form.get('id_equipamento')
         character = CharacterEquipment(
-            id_equipment=id_equipment, user_id=user_id, id_character=id_character)
+            id_equipment=id_equipment, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 

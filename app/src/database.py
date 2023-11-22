@@ -29,7 +29,6 @@ class Db:
                 async with conn.cursor() as cursor:
                     await cursor.execute(query, parameters)
                     result = await cursor.fetchall() if all is True else await cursor.fetchone()
-                    await cursor.close()
                     return result
         except Exception as e:
             print(e)
@@ -44,7 +43,6 @@ class Db:
                 async with conn.cursor() as cursor:
                     await cursor.execute(query, parameters)
                     result = await cursor.fetchone()
-                    await cursor.close()
                     return result
         except Exception as e:
             print(e)
@@ -58,7 +56,6 @@ class Db:
                 await conn.set_autocommit(True)
                 async with conn.cursor() as cursor:
                     await cursor.execute(query, parameters)
-                    await cursor.close()
                     return True
         except Exception as e:
             print(e)
@@ -72,7 +69,6 @@ class Db:
                 await conn.set_autocommit(True)
                 async with conn.cursor() as cursor:
                     await cursor.execute(query, parameters)
-                    await cursor.close()
                     return True
         except Exception as e:
             print(e)

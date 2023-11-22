@@ -62,7 +62,7 @@ class SpellTest(unittest.TestCase):
         self.assertIn(self.habilidade_teste.attribute_name, habilidades.spells)
         
     async def test_habilidade_nome_atributo_equal_load_for_id_habilidade(self):
-        habilidades = Spell(id_spell = self.habilidade_teste.id_spell)
+        habilidades = Spell(spell_id = self.habilidade_teste.spell_id)
         habilidades.load_spell()
         self.assertEqual(self.habilidade_teste.attribute_name, habilidades.attribute_name)
 

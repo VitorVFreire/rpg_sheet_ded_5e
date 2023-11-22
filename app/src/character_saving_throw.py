@@ -5,28 +5,28 @@ import asyncio
 from src import CharacterAttribute
 
 class CharacterSavingThrowTest(CharacterAttribute):
-    def __init__(self, user_id=None,id_character=None):
-        super().__init__(user_id=user_id, id_character=id_character)
+    def __init__(self, user_id=None,character_id=None):
+        super().__init__(user_id=user_id, character_id=character_id)
         self._saving_throws = []
     
     async def exists_saving_throw(self, id_saving_throw):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT EXISTS (SELECT id_salvaguarda_personagem FROM salvaguarda_personagem WHERE id_personagem = %s and id_salvaguarda = %s)"
-                        await mycursor.execute(query, (self.id_character, id_saving_throw))
+                        await mycursor.execute(query, (self.character_id, id_saving_throw))
                         result = await mycursor.fetchone()
                         if result[0] == 1:
                             return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def insert_saving_throws(self,id_saving_throw):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """
@@ -34,17 +34,17 @@ class CharacterSavingThrowTest(CharacterAttribute):
                             (`id_personagem`, `id_salvaguarda`)
                             VALUES (%s, %s)
                         """
-                        await mycursor.execute(query, (self.id_character,id_saving_throw,))
+                        await mycursor.execute(query, (self.character_id,id_saving_throw,))
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def delete_saving_throw(self,id_saving_throw):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """DELETE from salvaguarda_personagem
@@ -53,17 +53,17 @@ class CharacterSavingThrowTest(CharacterAttribute):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
     
     async def load_saving_throws(self):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = "SELECT sp.id_salvaguarda,sl.nome_salvaguarda,sp.id_salvaguarda_personagem FROM salvaguarda_personagem sp,salvaguarda sl WHERE sp.id_personagem = %s and sl.id_salvaguarda=sp.id_salvaguarda"
-                        await mycursor.execute(query, (self.id_character,))
+                        await mycursor.execute(query, (self.character_id,))
                         result = await mycursor.fetchall() 
                         if result:
                             self._saving_throws.clear()
@@ -72,13 +72,13 @@ class CharacterSavingThrowTest(CharacterAttribute):
                             return True
                 return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
     async def update_saving_throw(self,new_id_saving_throw,last_id_saving_throw):
         try:
-            if self.id_character:
+            if self.character_id:
                 async with await get_connection() as conn:
                     async with conn.cursor() as mycursor:
                         query = """UPDATE salvaguarda_personagem
@@ -88,7 +88,7 @@ class CharacterSavingThrowTest(CharacterAttribute):
                         await conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         

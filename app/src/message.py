@@ -5,12 +5,12 @@ import datetime
 import re
 
 class Message:
-    def __init__(self, id_message = None, room = None , message = None, name_character = None, id_character = None):
+    def __init__(self, id_message = None, room = None , message = None, name_character = None, character_id = None):
         self.__id_message = id_message
         self.__message = message
         self.__room = room
         self.__name_character = name_character
-        self.__id_personagem = id_character
+        self.__id_personagem = character_id
         self.__exists_command = self.__message.find('!r')
         self.__parts = []
         self.__amount_dices = []
@@ -92,6 +92,6 @@ class Message:
                         conn.commit()
                         return True
             return False
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False  

@@ -89,7 +89,7 @@ class SavingThrow:
                         self._id_saving_throw = mycursor.lastrowid 
                         await conn.commit()
                         return True
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
@@ -101,7 +101,7 @@ class SavingThrow:
                         await mycursor.execute(query, (self._id_saving_throw,))
                         await conn.commit()
                         return True
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False
         
@@ -113,6 +113,6 @@ class SavingThrow:
                         await mycursor.execute(query, (value,self._id_saving_throw))
                         await conn.commit()
                         return True
-        except pymysql.Error as e:
+        except Exception as e:
             print(e)
             return False        

@@ -7,8 +7,8 @@ class TestNewCharacterView(unittest.TestCase):
         cls.app = app.test_client()
         cls.response = cls.app.post('/login', data={'email': 'teste@teste', 'password': '123'})
         cls.response_post_insert_personagem = cls.app.post('/insert_personagem', data={
-            'id_raca': 1,
-            'id_classe': 1,
+            'race_id': 1,
+            'class_id': 1,
             'nome_personagem': 'teste_personagem'
         })
         response_data = cls.response_post_insert_personagem.get_json()
