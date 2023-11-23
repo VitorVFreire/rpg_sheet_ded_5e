@@ -30,9 +30,9 @@ class CharacterSavingThrowTest(unittest.TestCase):
 
     async def test_atribuicao_salvaguarda(self):
         self.assertEqual(self.salvaguarda_teste.saving_throw_name, 'inteligencia')
-        await self.personagem_teste.insert_attribute(id_salvaguarda=self.salvaguarda_teste.id_saving_throw)
+        await self.personagem_teste.insert_attribute(id_salvaguarda=self.salvaguarda_teste.saving_throw_id)
         await self.personagem_teste.load_saving_throws()
-        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste.id_saving_throw for salvaguarda in await self.personagem_teste.saving_throws))
+        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste.saving_throw_id for salvaguarda in await self.personagem_teste.saving_throws))
         self.assertEqual(self.personagem_teste.intelligence_resistance, (self.personagem_teste.intelligence_bonus + self.personagem_teste.proficiency_bonus))
 
     async def test_update_salvaguarda(self):
@@ -41,9 +41,9 @@ class CharacterSavingThrowTest(unittest.TestCase):
         await self.salvaguarda_teste_UPDATE.load_saving_throw_by_name()
 
         self.assertEqual(self.salvaguarda_teste_UPDATE.saving_throw_name, 'forca')
-        await self.personagem_teste.update_saving_throw(id_salvaguarda_personagem=id_salvaguarda_personagem, id_salvaguarda=self.salvaguarda_teste_UPDATE.id_saving_throw)
+        await self.personagem_teste.update_saving_throw(id_salvaguarda_personagem=id_salvaguarda_personagem, id_salvaguarda=self.salvaguarda_teste_UPDATE.saving_throw_id)
         await self.personagem_teste.load_saving_throws()
-        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste_UPDATE.id_saving_throw for salvaguarda in await self.personagem_teste.saving_throws))
+        self.assertTrue(any(salvaguarda['id_salvaguarda'] == self.salvaguarda_teste_UPDATE.saving_throw_id for salvaguarda in await self.personagem_teste.saving_throws))
         self.assertEqual(self.personagem_teste.strength_resistance, (self.personagem_teste.strength_bonus + self.personagem_teste.proficiency_bonus))
 
     async def test_carregar_salvaguardas_usuarios_banco(self):

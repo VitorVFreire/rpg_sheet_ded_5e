@@ -26,7 +26,7 @@ function Attribute(props) {
     useEffect(() => {
         async function fetchAttribute() {
             try {
-                const response = await fetch('/atributos/' + props.id);
+                const response = await fetch('/attributes/' + props.id);
                 const data = await response.json();
                 if (data !== false) {
                     setAttribute(data);
@@ -50,7 +50,7 @@ function Attribute(props) {
                         label={value}
                         InputValue={attributes[key]}
                         type='number'
-                        id={'atributos'}
+                        id={'attributes'}
                         name={key}
                         min={1}
                         max={30}
@@ -68,7 +68,7 @@ function Attribute(props) {
                     characterID={props.id}
                     label='Bônus de Proficiência'
                     type='number'
-                    id={'atributos'}
+                    id={'attributes'}
                     name={'proficiency_bonus'}
                     InputValue={attributes.proficiency_bonus}
                     min={0}

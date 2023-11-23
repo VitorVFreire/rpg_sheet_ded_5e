@@ -1,8 +1,6 @@
-from data import get_connection
-import pymysql
 from collections import OrderedDict
 import asyncio
-from src import Character, Image
+from src import Character, Image, Db
 
 class CharacterCharacteristics(Character, Image):
     def __init__(self, user_id = None, character_id = None, parameter = None ,name = None):
@@ -20,26 +18,25 @@ class CharacterCharacteristics(Character, Image):
     @property
     def characteristic(self):
         character_data = OrderedDict()
-        character_data['idade'] = self.age
-        character_data['altura'] = self.height
-        character_data['peso'] = self.weight
-        character_data['cor_olhos'] = self.eye_color
-        character_data['cor_pele'] = self.skin_color
-        character_data['cor_cabelo'] = self.color_hair
-        character_data['zimagem_personagem'] = self.url_img
+        character_data['age'] = self.age
+        character_data['height'] = self.height
+        character_data['weight'] = self.weight
+        character_data['eye_color'] = self.eye_color
+        character_data['skin_color'] = self.skin_color
+        character_data['color_hair'] = self.color_hair
+        character_data['character_image'] = self.url_img
 
         return character_data
         
     async def exists_characteristics(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT EXISTS (SELECT id_caracteristicas_personagem FROM caracteristicas_personagem WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone()
-                        if result[0] == 1:
-                            return True
+                query = "SELECT EXISTS (SELECT character_characteristic_id FROM character_characteristic WHERE character_id = %s)"
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                if await db.exists(query=query, parameters=parameters):
+                    return True
             return False
         except Exception as e:
             print(e)
@@ -47,16 +44,16 @@ class CharacterCharacteristics(Character, Image):
     
     async def insert_characteristics(self, key, value):
         try:
-            key_possibility = ['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
+            key_possibility = ['age','eye_color','skin_color','color_hair','weight','height','character_image']
             if self.character_id and key in key_possibility:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"""INSERT INTO caracteristicas_personagem
-                        (id_personagem,{key}) 
-                        VALUES(%s,%s);"""
-                        await mycursor.execute(query, (self.character_id, value,))
-                        await conn.commit()
-                        return True
+                query = f"""INSERT INTO character_characteristic
+                (character_id,{key}) 
+                VALUES(%s,%s);"""
+                parameters = (self.character_id, value,)
+                db = Db()
+                await db.connection_db()
+                await db.insert(query=query, parameters=parameters)
+                return True
             return False
         except Exception as e:
             print(e)
@@ -67,13 +64,12 @@ class CharacterCharacteristics(Character, Image):
             if self.character_id:
                 await self.load_characteristics()
                 self.remove_file()
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """DELETE from caracteristicas_personagem
-                        WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (self.character_id,))
-                        await conn.commit()
-                        return True
+                query = """DELETE from character_characteristic
+                WHERE character_id=%s;"""
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                return await db.delete(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -82,20 +78,20 @@ class CharacterCharacteristics(Character, Image):
     async def load_characteristics(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT idade, cor_olhos, cor_pele, cor_cabelo, peso, altura, imagem_personagem FROM caracteristicas_personagem WHERE id_personagem = %s"
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone() 
-                        if result:
-                            self.set_age(result[0])
-                            self.set_eye_color(result[1])
-                            self.set_skin_color(result[2])
-                            self.set_color_hair(result[3])
-                            self.set_weight(result[4])
-                            self.set_height(result[5])
-                            self.set_character_image(result[6])
-                        return True
+                query = "SELECT age, eye_color, skin_color, color_hair, weight, height, character_image FROM character_characteristic WHERE character_id = %s"
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters, all=False)
+                if result:
+                    self.set_age(result[0])
+                    self.set_eye_color(result[1])
+                    self.set_skin_color(result[2])
+                    self.set_color_hair(result[3])
+                    self.set_weight(result[4])
+                    self.set_height(result[5])
+                    self.set_character_image(result[6])
+                return True
             return False
         except Exception as e:
             print(e)
@@ -103,17 +99,15 @@ class CharacterCharacteristics(Character, Image):
         
     async def update_characteristics(self,key, value):
         try:
-            possibilidade_key=['idade','cor_olhos','cor_pele','cor_cabelo','peso','altura','imagem_personagem']
-            if self.character_id and key in possibilidade_key:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"""UPDATE caracteristicas_personagem
-                        SET {key}=%s
-                        WHERE id_personagem=%s;"""
-                        parametros=(value,self.character_id)
-                        await mycursor.execute(query, parametros)
-                        await conn.commit()
-                        return True
+            possibilage_key=['age','eye_color','skin_color','color_hair','weight','height','character_image']
+            if self.character_id and key in possibilage_key:
+                query = f"""UPDATE character_characteristic
+                SET {key}=%s
+                WHERE character_id=%s;"""
+                parameters = (value,self.character_id)
+                db = Db()
+                await db.connection_db()
+                return await db.update(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -122,13 +116,12 @@ class CharacterCharacteristics(Character, Image):
     async def exists_image(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT EXISTS (SELECT id_caracteristicas_personagem FROM caracteristicas_personagem WHERE id_personagem = %s and imagem_personagem IS NOT NULL);"
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone()
-                        if result[0] == 1:
-                            return True
+                query = "SELECT EXISTS (SELECT id_character_characteristic FROM character_characteristic WHERE character_id = %s and character_image IS NOT NULL);"
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                if await db.exists(query=query, parameters=parameters):
+                    return True
             return False
         except Exception as e:
             print(e)
@@ -144,9 +137,9 @@ class CharacterCharacteristics(Character, Image):
             result, name = self.save_file(file) 
             self.set_character_image(name)
             result_final =  (
-                await self.insert_characteristics(key='imagem_personagem', value=name)
+                await self.insert_characteristics(key='character_image', value=name)
                 if not exist_caracteristica
-                else await self.update_characteristics(key='imagem_personagem', value=name)
+                else await self.update_characteristics(key='character_image', value=name)
             ) if result is True else False
             return result_final
         except Exception as e:

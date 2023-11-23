@@ -191,7 +191,7 @@ async def create_tables():
 
                 await cursor.execute("""
                 CREATE TABLE character_characteristic (
-                    character_characteristic SERIAL PRIMARY KEY ,
+                    character_characteristic_id SERIAL PRIMARY KEY ,
                     character_id SERIAL NOT NULL REFERENCES character(character_id) ON DELETE CASCADE,
                     age INT,
                     height FLOAT,
@@ -200,6 +200,20 @@ async def create_tables():
                     skin_color VARCHAR(20),
                     color_hair VARCHAR(20),
                     character_image VARCHAR(200)
+                );
+                """)
+                
+                await cursor.execute("""
+                CREATE TABLE character_attribute (
+                    character_attribute_id SERIAL PRIMARY KEY ,
+                    character_id SERIAL NOT NULL REFERENCES character(character_id) ON DELETE CASCADE,
+                    strength INT,
+                    dexterity INT,
+                    intelligence INT,
+                    constitution INT,
+                    wisdom INT,
+                    charisma INT,
+                    proficiency_bonus INT
                 );
                 """)
 

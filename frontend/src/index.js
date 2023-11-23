@@ -20,7 +20,7 @@ root.render(
       <Route path="/login" element={<LoginPage idUser={idUser} />} />
       <Route path="/create_character" element={<CreateCharacter idUser={idUser} />} />
       <Route path='/characters_page' element={<CharactersPage idUser={idUser} />} />
-      <Route path='/chracter/:id' element={<CharacterPage idUser={idUser} />} />
+      <Route path='/character_page/:id' element={<CharacterPage idUser={idUser} />} />
     </Routes>
   </Router>
 );

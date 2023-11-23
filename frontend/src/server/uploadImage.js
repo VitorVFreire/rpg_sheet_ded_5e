@@ -2,9 +2,9 @@ export async function uploadImage(file, characterID) {
     try {
       if (file) {
         const formData = new FormData();
-        formData.append('img_personagem', file);
+        formData.append('character_image', file);
 
-        const response = await fetch(`/caracteristicas/${characterID}`, {
+        const response = await fetch(`/characteristics/${characterID}`, {
           method: 'PUT',
           body: formData,
         });

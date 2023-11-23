@@ -23,7 +23,7 @@ function Character(props) {
         fetchCharacter();
     }, [props.id]);
 
-    const namePage = character['name_character']
+    const namePage = character['character_name']
 
     useEffect(() => {
         document.title = namePage;
@@ -36,9 +36,9 @@ function Character(props) {
                     characterID={props.id}
                     label='Nome'
                     type={'text'}
-                    id={'personagem'}
-                    name='name_character'
-                    InputValue={character['name_character']}
+                    id={'character'}
+                    name='character_name'
+                    InputValue={character['character_name']}
                 />
             </div>
         </section>

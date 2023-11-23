@@ -131,7 +131,7 @@ async def characters():
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
     
-@app.route('/character/<character_id>')
+@app.route('/character_page/<character_id>')
 async def character(character_id):
     try:
         user_id = session.get('user_id')

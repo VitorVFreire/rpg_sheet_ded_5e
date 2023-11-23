@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import CustomInput from '../../../components/CustomInput';
 
 function SavingThrow(props) {
-    const url = 'salvaguardas';
+    const url = 'saving_throws';
     const [savingThrow, setSavingThrow] = useState({});
     const [checkedSavingThrows, setCheckedSavingThrows] = useState([]);
 
@@ -11,7 +11,7 @@ function SavingThrow(props) {
         'strength_resistance': 'Força',
         'dexterity_resistance': 'Destreza',
         'intelligence_resistance': 'Inteligência',
-        'constituition_resistance': 'Constituição',
+        'constitution_resistance': 'Constituição',
         'wisdom_resistance': 'Sabedoria',
         'charisma_resistance': 'Carisma',
     }

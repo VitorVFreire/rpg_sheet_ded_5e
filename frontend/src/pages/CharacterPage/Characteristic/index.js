@@ -6,29 +6,29 @@ function Characteristics(props) {
     const [characteristics, setCharacteristics] = useState([]);
 
     const list = {
-        'idade': 'Idade',
-        'altura': 'Altura',
-        'peso': 'Peso',
-        'cor_olhos': 'Cor dos Olhos',
-        'cor_pele': 'Cor da Pele',
-        'cor_cabelo': 'Cor do Cabelo',
-        'zimagem_personagem': 'Imagem do Personagem'
+        'age': 'Idade',
+        'height': 'Altura',
+        'weight': 'Peso',
+        'eye_color': 'Cor dos Olhos',
+        'skin_color': 'Cor da Pele',
+        'color_hair': 'Cor do Cabelo',
+        'character_image': 'Imagem do Personagem'
     }
 
     const types = {
-        'idade': 'number',
-        'altura': 'number',
-        'peso': 'number',
-        'cor_olhos': 'text',
-        'cor_pele': 'text',
-        'cor_cabelo': 'text',
-        'zimagem_personagem': 'file'
+        'age': 'number',
+        'height': 'number',
+        'weight': 'number',
+        'eye_color': 'text',
+        'skin_color': 'text',
+        'color_hair': 'text',
+        'character_image': 'file'
     }
 
     useEffect(() => {
         async function fetchCharacteristics() {
             try {
-                const response = await fetch('/caracteristicas/' + props.id);
+                const response = await fetch('/characteristics/' + props.id);
                 const data = await response.json();
                 if (data !== false) {
                     setCharacteristics(data);
@@ -43,8 +43,6 @@ function Characteristics(props) {
         fetchCharacteristics();
     }, [props.id]);
 
-    console.log(characteristics)
-
     return (
         <section className='characteristics'>
             {Object.entries(characteristics).map(([key, value]) => (
@@ -53,8 +51,8 @@ function Characteristics(props) {
                         characterID={props.id}
                         label={list[key]}
                         type={types[key]}
-                        id={'caracteristicas'}
-                        name={key === 'zimagem_personagem' ? 'imagem_personagem': key}
+                        id={'characteristics'}
+                        name={key}
                         accept={types[key] === 'file' ? 'image/*' : undefined}
                         InputValue={(types[key] !== 'file') ? value : undefined}
                         src={types[key] === 'file' ? value : undefined}

@@ -35,7 +35,7 @@ function CharactersSection() {
           <div><img src={character.img} alt={character.character_name} /></div>
           <div>{character.character_name}</div>
           <div>{character.race_name}</div>
-          <div><a href={`/character/${character.character_id}`}>Ficha</a></div>
+          <div><a href={`/character_page/${character.character_id}`}>Ficha</a></div>
           <div>
             <DeleteButton url={'character'} characterId={character.character_id} onCharacterDeleted={handleCharacterDeleted} />
           </div>

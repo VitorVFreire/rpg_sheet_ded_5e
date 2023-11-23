@@ -79,29 +79,26 @@ async def delete_character(character_id):
         print(e)
         return 404
 
-@app.get('/caracteristicas/<character_id>')
+@app.get('/characteristics/<character_id>')
 async def get_character_characteristics(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterCharacteristics(
-            character_id=character_id, user_id=user_id)
+        character = CharacterCharacteristics(character_id=character_id, user_id=user_id)
 
         await character.character_belongs_user()
-
+        
         if await character.load_characteristics():
-            print(character.characteristic)
             return jsonify(character.characteristic), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
 
-@app.put('/caracteristicas/<character_id>')
+@app.put('/characteristics/<character_id>')
 async def put_character_characteristics(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterCharacteristics(
-            user_id=user_id, character_id=character_id)
+        character = CharacterCharacteristics(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -109,7 +106,7 @@ async def put_character_characteristics(character_id):
         value = request.form.get('value')
 
         if request.files:
-            file_upload = request.files.get('img_personagem')
+            file_upload = request.files.get('character_image')
             return jsonify({'result': await character.save_character_image(file=file_upload), 'url': character.url_img}), 200
         if await character.exists_characteristics():
             return jsonify({'result': await character.update_characteristics(key=key, value=value)}), 200
@@ -119,29 +116,26 @@ async def put_character_characteristics(character_id):
         print(e)
         return 404
 
-@app.get('/atributos/<character_id>')
+@app.get('/attributes/<character_id>')
 async def get_character_attribute(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterAttribute(
-            user_id=user_id, character_id=character_id)
+        character = CharacterAttribute(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
         if await character.exists_attributes():
             await character.load_attributes()
-
         return jsonify(character.attributes)
     except Exception as e:
         print(e)
         return 404
 
-@app.put('/atributos/<character_id>')
+@app.put('/attributes/<character_id>')
 async def put_character_attribute(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterAttribute(
-            user_id=user_id, character_id=character_id)
+        character = CharacterAttribute(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -172,39 +166,39 @@ async def put_character_attribute(character_id):
         print(e)
         return 404
 
-@app.get('/salvaguardas/<character_id>')
+@app.get('/saving_throws/<character_id>')
 async def get_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSavingThrowTest(
-            user_id=user_id, character_id=character_id)
+        character = CharacterSavingThrowTest(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
         if await character.exists_attributes():
             await character.load_attributes()
             await character.load_saving_throws()
-        
-        return jsonify(character.saving_throws)
+
+        return jsonify(character.saving_throws), 200
     except Exception as e:
         print(e)
         return 404
 
-@app.post('/salvaguardas/<character_id>')
+@app.post('/saving_throws/<character_id>')
 async def post_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSavingThrowTest(
-            user_id=user_id, character_id=character_id)
+        character = CharacterSavingThrowTest(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
         key = request.form.get('key')
+        
+        key_saving = key.replace('_resistance', '')
 
-        saving_throw = SavingThrow(saving_throw_name=key)
-
+        saving_throw = SavingThrow(saving_throw_name=key_saving)
+        
         if await saving_throw.load_saving_throw_by_name() and await character.load_attributes():
-            return jsonify({'result': await character.insert_saving_throws(id_saving_throw=saving_throw.id_saving_throw),
+            return jsonify({'result': await character.insert_saving_throws(saving_throw_id=saving_throw.saving_throw_id),
                 'data': {
                     key: await character.get_saving_throws(key)
                 }
@@ -214,21 +208,23 @@ async def post_character_saving_throw(character_id):
         print(e)
         return 404
 
-@app.delete('/salvaguardas/<character_id>')
+@app.delete('/saving_throws/<character_id>')
 async def delete_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSavingThrowTest(
-            user_id=user_id, character_id=character_id)
+        character = CharacterSavingThrowTest(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
         key = request.form.get('key')
-        saving_throw = SavingThrow(saving_throw_name=key)
+        
+        key_saving = key.replace('_resistance', '')
+        
+        saving_throw = SavingThrow(saving_throw_name=key_saving)
 
         if await saving_throw.load_saving_throw_by_name() and await character.load_attributes():
-            if await character.exists_saving_throw(id_saving_throw=saving_throw.id_saving_throw):
-                return jsonify({'result': await character.delete_saving_throw(id_saving_throw=saving_throw.id_saving_throw),
+            if await character.exists_saving_throw(saving_throw_id=saving_throw.saving_throw_id):
+                return jsonify({'result': await character.delete_saving_throw(saving_throw_id=saving_throw.saving_throw_id),
                     'data': {
                         key: await character.get_saving_throws(key)
                     }
@@ -242,8 +238,7 @@ async def delete_character_saving_throw(character_id):
 async def get_character_status_base(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterStatusBase(
-            user_id=user_id, character_id=character_id)
+        character = CharacterStatusBase(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -258,8 +253,7 @@ async def get_character_status_base(character_id):
 async def put_character_status_base(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterStatusBase(
-            user_id=user_id, character_id=character_id)
+        character = CharacterStatusBase(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -390,8 +384,7 @@ async def delete_character_spell(character_id):
 async def get_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterEquipment(
-            user_id=user_id, character_id=character_id)
+        character = CharacterEquipment(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -408,8 +401,7 @@ async def post_character_equipment(character_id):
         user_id = session.get('user_id')
         id_equipment = request.form.get('id_equipamento')
         amount = request.form.get('qtd')
-        character = CharacterEquipment(
-            amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
+        character = CharacterEquipment(amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -424,8 +416,7 @@ async def put_character_equipment(character_id):
         user_id = session.get('user_id')
         id_equipment = request.form.get('id_equipamento')
         amount = request.form.get('qtd')
-        character = CharacterEquipment(
-            amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
+        character = CharacterEquipment(amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -439,8 +430,7 @@ async def delete_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
         id_equipment = request.form.get('id_equipamento')
-        character = CharacterEquipment(
-            id_equipment=id_equipment, user_id=user_id, character_id=character_id)
+        character = CharacterEquipment(id_equipment=id_equipment, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 

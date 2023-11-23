@@ -1,38 +1,28 @@
-from data import get_connection, attributes
+from data import attributes
 import pymysql
 import asyncio
 
-from src import Character
+from src import Character, Db
 
 
 class CharacterAttribute(Character):
     def __init__(self, user_id=None, character_id=None):
         super().__init__(user_id=user_id, character_id=character_id)
         self._attributes = {
-            'forca': None,
-            'destreza': None,
-            'constituicao': None,
-            'inteligencia': None,
-            'sabedoria': None,
-            'carisma': None
+            'strength': None,
+            'dexterity': None,
+            'intelligence': None,
+            'constitution': None,
+            'wisdom': None,
+            'charisma': None
         }
         self._proficiency_bonus = None
 
     def check_value(self, value, key):
         value = int(value)
-        list = {
-            'strength': 'forca',
-            'dexterity': 'destreza',
-            'intelligence': 'inteligencia',
-            'constitution': 'constituicao',
-            'wisdom': 'sabedoria',
-            'charisma': 'carisma',
-            'proficiency_bonus': 'bonus_proficiencia'
-        }
-        key_possibility = ['forca', 'destreza', 'constituicao',
-                           'inteligencia', 'sabedoria', 'carisma', 'bonus_proficiencia']
-        condition = 0 < value <= 30 if list[key] != 'bonus_proficiencia' else value > 0
-        return condition and list[key] in key_possibility, list[key]
+        key_possibility = ['strength', 'dexterity', 'intelligence', 'constitution', 'wisdom', 'charisma', 'proficiency_bonus']
+        condition = 0 < value <= 30 if key != 'proficiency_bonus' else value > 0
+        return condition and key in key_possibility, key
 
     @property
     def attributes(self):
@@ -43,8 +33,8 @@ class CharacterAttribute(Character):
             'dexterity_bonus': self.dexterity_bonus,
             'intelligence': self.intelligence,
             'intelligence_bonus': self.intelligence_bonus,
-            'constitution': self.constituition,
-            'constitution_bonus': self.constituition_bonus,
+            'constitution': self.constitution,
+            'constitution_bonus': self.constitution_bonus,
             'wisdom': self.wisdom,
             'wisdom_bonus': self.wisdom_bonus,
             'charisma': self.charisma,
@@ -55,13 +45,12 @@ class CharacterAttribute(Character):
     async def exists_attributes(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT EXISTS (SELECT id_atributos FROM atributos WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone()
-                        if result[0] == 1:
-                            return True
+                query = "SELECT EXISTS (SELECT character_attribute_id FROM character_attribute WHERE character_id = %s)"
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                if await db.exists(query=query, parameters=parameters):
+                    return True
             return False
         except Exception as e:
             print(e)
@@ -71,12 +60,11 @@ class CharacterAttribute(Character):
         try:
             condition, key = self.check_value(key=key, value=value)
             if self.character_id and condition:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"INSERT INTO atributos(id_personagem,{key}) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self.character_id, value,))
-                        await conn.commit()
-                        return True
+                query = f"INSERT INTO character_attribute(character_id,{key}) VALUES(%s,%s);"
+                parameters = (self.character_id, value,)
+                db = Db()
+                await db.connection_db()
+                return (await db.insert(query=query, parameters=parameters) is not None)
             return False
         except Exception as e:
             print(e)
@@ -85,13 +73,12 @@ class CharacterAttribute(Character):
     async def delete_attributes(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """DELETE from atributos
-                        WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (self.character_id,))
-                        await conn.commit()
-                        return True
+                query = """DELETE from character_attribute
+                WHERE character_id=%s;"""
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                return await db.delete(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -100,21 +87,21 @@ class CharacterAttribute(Character):
     async def load_attributes(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """SELECT forca,destreza,constituicao,inteligencia,sabedoria,carisma,bonus_proficiencia 
-                        FROM atributos WHERE id_personagem = %s"""
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone()
-                        if result:
-                            self.set_strength(result[0])
-                            self.set_dexterity(result[1])
-                            self.set_constituition(result[2])
-                            self.set_intelligence(result[3])
-                            self.set_wisdom(result[4])
-                            self.set_charisma(result[5])
-                            self._proficiency_bonus = result[6]
-                            return True
+                query = """SELECT strength, dexterity, constitution, intelligence, wisdom, charisma,proficiency_bonus 
+                FROM character_attribute WHERE character_id = %s"""
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters, all=False)
+                if result:
+                    self.set_strength(result[0])
+                    self.set_dexterity(result[1])
+                    self.set_constitution(result[2])
+                    self.set_intelligence(result[3])
+                    self.set_wisdom(result[4])
+                    self.set_charisma(result[5])
+                    self._proficiency_bonus = result[6]
+                    return True
                 return True
             return False
         except Exception as e:
@@ -125,15 +112,13 @@ class CharacterAttribute(Character):
         try:
             condition, key = self.check_value(key=key, value=value)
             if self.character_id and condition:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"""UPDATE atributos
-                        SET {key}=%s
-                        WHERE id_personagem=%s;"""
-                        parametros = (value, self.character_id)
-                        await mycursor.execute(query, parametros)
-                        await conn.commit()
-                        return True
+                query = f"""UPDATE character_attribute
+                SET {key}=%s
+                WHERE character_id=%s;"""
+                parameters = (value, self.character_id)
+                db = Db()
+                await db.connection_db()
+                return await db.update(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -161,66 +146,66 @@ class CharacterAttribute(Character):
 
     @property
     def strength(self):
-        return int(self._attributes['forca']) if self._attributes['forca'] is not None else None
+        return int(self._attributes['strength']) if self._attributes['strength'] is not None else None
 
     @property
     def strength_bonus(self):
         return int(attributes.loc[self.strength]) if self.strength is not None else None
 
     def set_strength(self, value):
-        self._attributes['forca'] = value
+        self._attributes['strength'] = value
 
     @property
     def dexterity(self):
-        return int(self._attributes['destreza']) if self._attributes['destreza'] is not None else None
+        return int(self._attributes['dexterity']) if self._attributes['dexterity'] is not None else None
 
     @property
     def dexterity_bonus(self):
-        return int(attributes.loc[self.dexterity]) if self._attributes['destreza'] is not None else None
+        return int(attributes.loc[self.dexterity]) if self._attributes['dexterity'] is not None else None
 
     def set_dexterity(self, value):
-        self._attributes['destreza'] = value
+        self._attributes['dexterity'] = value
 
     @property
-    def constituition(self):
-        return int(self._attributes['constituicao']) if self._attributes['constituicao'] is not None else None
+    def constitution(self):
+        return int(self._attributes['contituition']) if self._attributes['contituition'] is not None else None
 
     @property
-    def constituition_bonus(self):
-        return int(attributes.loc[self.constituition]) if self._attributes['constituicao'] is not None else None
+    def constitution_bonus(self):
+        return int(attributes.loc[self.constitution]) if self._attributes['contituition'] is not None else None
 
-    def set_constituition(self, value):
-        self._attributes['constituicao'] = value
+    def set_constitution(self, value):
+        self._attributes['contituition'] = value
 
     @property
     def intelligence(self):
-        return int(self._attributes['inteligencia']) if self._attributes['inteligencia'] is not None else None
+        return int(self._attributes['intelligence']) if self._attributes['intelligence'] is not None else None
 
     @property
     def intelligence_bonus(self):
-        return int(attributes.loc[self.intelligence]) if self._attributes['inteligencia'] is not None else None
+        return int(attributes.loc[self.intelligence]) if self._attributes['intelligence'] is not None else None
 
     def set_intelligence(self, value):
-        self._attributes['inteligencia'] = value
+        self._attributes['intelligence'] = value
 
     @property
     def wisdom(self):
-        return int(self._attributes['sabedoria']) if self._attributes['sabedoria'] is not None else None
+        return int(self._attributes['wisdom']) if self._attributes['wisdom'] is not None else None
 
     @property
     def wisdom_bonus(self):
-        return int(attributes.loc[self.wisdom]) if self._attributes['sabedoria'] is not None else None
+        return int(attributes.loc[self.wisdom]) if self._attributes['wisdom'] is not None else None
 
     def set_wisdom(self, value):
-        self._attributes['sabedoria'] = value
+        self._attributes['wisdom'] = value
 
     @property
     def charisma(self):
-        return int(self._attributes['carisma']) if self._attributes['carisma'] is not None else None
+        return int(self._attributes['charisma']) if self._attributes['charisma'] is not None else None
 
     @property
     def charisma_bonus(self):
-        return int(attributes.loc[self.charisma]) if self._attributes['carisma'] is not None else None
+        return int(attributes.loc[self.charisma]) if self._attributes['charisma'] is not None else None
 
     def set_charisma(self, value):
-        self._attributes['carisma'] = value
+        self._attributes['charisma'] = value
