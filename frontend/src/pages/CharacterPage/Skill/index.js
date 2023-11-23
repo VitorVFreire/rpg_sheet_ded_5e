@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import CustomInput from '../../../components/CustomInput';
 
 function Skill(props) {
-    const url = 'pericias';
+    const url = 'skills';
     const [skills, setSkills] = useState({});
     const [checkedSkills, setCheckedSkills] = useState([]);
 

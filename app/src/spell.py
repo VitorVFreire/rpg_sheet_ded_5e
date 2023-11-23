@@ -2,16 +2,16 @@ import asyncio
 from src import Db
 
 class Spell:
-    def __init__(self, spell_id = None, attribute_name = None, side_dice = None, link_details = None, spell_name = None, type_damage_id = None, amount_dice = None, level_spell = None, add_per_level = None):
+    def __init__(self, spell_id = None, attribute_name = None, side_dice = None, description_spell = None, spell_name = None, type_damage_name = None, amount_dice = None, level_spell = None, add_per_level = None):
         self._spell_id = spell_id or []
         self._attribute_name = attribute_name or []
         self._spell_name = spell_name or []
         self._level_spell = level_spell or []
-        self._type_damage_id = type_damage_id or []
+        self._type_damage_name = type_damage_name or []
         self._amount_dice = amount_dice or []
         self._side_dice = side_dice or []
         self._add_per_level = add_per_level or [] 
-        self._link_details = link_details or []
+        self._description_spell = description_spell or []
         self.__character_spell = []
         
     async def load_character_spells(self, character_id):
@@ -36,17 +36,17 @@ class Spell:
         if (type(self._spell_id) is list and len(self._spell_id)<=0) or (self._spell_id is None):
             await self.load_spells()
         spells = []
-        for spell_id, attribute_name, spell_name, level_spell, type_damage_id, amount_dice, side_dice, add_per_level, link_details in zip(self._spell_id, self._attribute_name, self._spell_name, self._level_spell, self._type_damage_id, self._amount_dice, self._side_dice, self._add_per_level, self._link_details):
+        for spell_id, attribute_name, spell_name, level_spell, type_damage_name, amount_dice, side_dice, add_per_level, description_spell in zip(self._spell_id, self._attribute_name, self._spell_name, self._level_spell, self._type_damage_name, self._amount_dice, self._side_dice, self._add_per_level, self._description_spell):
             spells.append({
                 'spell_id': spell_id, 
                 'attribute_name': attribute_name, 
                 'spell_name': spell_name, 
                 'spell_level': level_spell, 
-                'type_damage_id': type_damage_id, 
+                'type_damage_name': type_damage_name, 
                 'amount_dice': amount_dice, 
                 'side_dice': side_dice, 
                 'add_per_level': add_per_level, 
-                'link_details': link_details,
+                'description_spell': description_spell,
                 'personagem_possui': spell_id in self.__character_spell
             })
         return spells
@@ -60,17 +60,20 @@ class Spell:
             'attribute_name': self.attribute_name, 
             'spell_name': self.spell_name, 
             'spell_level': self.level_spell, 
-            'type_damage_id': self.type_damage_id, 
+            'type_damage_name': self.type_damage_name, 
             'amount_dice': self.amount_dice, 
             'side_dice': self.side_dice, 
             'add_per_level': self.add_per_level, 
-            'link_details': self.link_details
+            'description_spell': self.description_spell
         }
         return spell
    
     async def load_spells(self):
         try:
-            query = "SELECT spell_id, attribute_use, spell_name, spell_level, type_damage_id, amount_dice, side_dice, add_per_level, link_details FROM spell;"
+            query = """SELECT sp.spell_id, sp.attribute_use, sp.spell_name, sp.spell_level, td.type_damage_name, sp.amount_dice, sp.side_dice, sp.add_per_level, sp.description_spell 
+            FROM spell sp, type_damage td
+            WHERE SP.type_damage_id = td.type_damage_id
+            ;"""
             db = Db()
             await db.connection_db()
             result = await db.select(query=query)
@@ -80,11 +83,11 @@ class Spell:
                     self._attribute_name.append(row[1])
                     self._spell_name.append(row[2])
                     self._level_spell.append(row[3])
-                    self._type_damage_id.append(row[4])
+                    self._type_damage_name.append(row[4])
                     self._amount_dice.append(row[5])
                     self._side_dice.append(row[6])
                     self._add_per_level.append(row[7])
-                    self._link_details.append(row[8])
+                    self._description_spell.append(row[8])
                 return True
             return False
         except Exception as e:
@@ -93,7 +96,7 @@ class Spell:
     
     async def load_spell(self):
         try:
-            query = "SELECT spell_id, attribute_use, spell_name, spell_level, type_damage_id, amount_dice, side_dice, add_per_level, link_details FROM spell WHERE spell_id=%s;"
+            query = "SELECT spell_id, attribute_use, spell_name, spell_level, type_damage_name, amount_dice, side_dice, add_per_level, description_spell FROM spell WHERE spell_id=%s;"
             parameters = (self._spell_id,)
             db = Db()
             await db.connection_db()
@@ -103,11 +106,11 @@ class Spell:
                 self._attribute_name = result[1]
                 self._spell_name = result[2]
                 self._level_spell = result[3]
-                self._type_damage_id = result[4]
+                self._type_damage_name = result[4]
                 self._amount_dice = result[5]
                 self._side_dice = result[6]
                 self._add_per_level = result[7]
-                self._link_details = result[8]
+                self._description_spell = result[8]
                 return True
             return False
         except Exception as e:
@@ -116,8 +119,8 @@ class Spell:
 
     async def insert_spell(self):
         try:
-            query = "INSERT INTO spell (attribute_use, spell_name, spell_level, type_damage_id, amount_dice, side_dice, add_per_level, link_details) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING spell_id;;"
-            parameters = (self.attribute_name, self.spell_name, self.level_spell, self.type_damage_id, self.amount_dice, self.side_dice, self.add_per_level, self.link_details)
+            query = "INSERT INTO spell (attribute_use, spell_name, spell_level, type_damage_id, amount_dice, side_dice, add_per_level, description_spell) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING spell_id;;"
+            parameters = (self.attribute_name, self.spell_name, self.level_spell, self.type_damage_id, self.amount_dice, self.side_dice, self.add_per_level, self.description_spell)
             db = Db()
             await db.connection_db()
             self.character_spell_id = await db.insert(query=query, parameters=parameters)  
@@ -143,7 +146,7 @@ class Spell:
         
     async def update_spell(self, key, value):
         try:
-            possible_key = ['spell_id', 'attribute_use', 'spell_name', 'spell_level', 'type_damage_id', 'amount_dice', 'side_dice', 'add_per_level', 'link_details']
+            possible_key = ['spell_id', 'attribute_use', 'spell_name', 'spell_level', 'type_damage_id', 'amount_dice', 'side_dice', 'add_per_level', 'description_spell']
             if key in possible_key:
                 query = f"""UPDATE habilidade SET {key}=%s WHERE spell_id=%s;"""
                 parameters = (value, self._spell_id)
@@ -180,12 +183,12 @@ class Spell:
         self._spell_id = value
         
     @property
-    def type_damage_id(self):
-        return self._type_damage_id
+    def type_damage_name(self):
+        return self._type_damage_name
     
-    @type_damage_id.setter
-    def type_damage_id(self, value):
-        self._type_damage_id = value
+    @type_damage_name.setter
+    def type_damage_name(self, value):
+        self._type_damage_name = value
         
     @property
     def amount_dice(self):
@@ -212,12 +215,12 @@ class Spell:
         self._add_per_level = value
         
     @property
-    def link_details(self):
-        return self._link_details
+    def description_spell(self):
+        return self._description_spell
     
-    @link_details.setter
-    def link_details(self, value):
-        self._link_details = value
+    @description_spell.setter
+    def description_spell(self, value):
+        self._description_spell = value
         
     @property
     def level_spell(self):

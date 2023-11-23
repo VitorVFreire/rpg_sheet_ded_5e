@@ -268,7 +268,7 @@ async def put_character_status_base(character_id):
         print(e)
         return 404
 
-@app.get('/pericias/<character_id>')
+@app.get('/skills/<character_id>')
 async def get_character_skills(character_id):
     try:
         user_id = session.get('user_id')
@@ -284,7 +284,7 @@ async def get_character_skills(character_id):
         print(e)
         return 404
 
-@app.post('/pericias/<character_id>')
+@app.post('/skills/<character_id>')
 async def post_character_skill(character_id):
     try:
         user_id = session.get('user_id')
@@ -297,7 +297,7 @@ async def post_character_skill(character_id):
         skill = Skill(skill_name=key)
 
         if await skill.load_skill_by_name() and await character.load_attributes():
-            return jsonify({'result': await character.insert_skill(id_skill=skill.id_skill),
+            return jsonify({'result': await character.insert_skill(skill_id=skill.skill_id),
                 'data': {
                     key: await character.get_skills(key=key)
                 }
@@ -307,7 +307,7 @@ async def post_character_skill(character_id):
         print(e)
         return 404
 
-@app.delete('/pericias/<character_id>')
+@app.delete('/skills/<character_id>')
 async def delete_character_skill(character_id):
     try:
         user_id = session.get('user_id')
@@ -319,9 +319,9 @@ async def delete_character_skill(character_id):
 
         skill = Skill(skill_name=key)
 
-        if await skill.load_skill_by_name() and await character.load_attributes():
-            if await character.exists_skill(id_pericia=skill.id_skill):
-                return jsonify({'result': await character.delete_skills(id_skill=skill.id_skill),
+        if await skill.load_skill_by_name() and await character.exists_skill(skill_id=skill.skill_id):
+            if await character.load_attributes():
+                return jsonify({'result': await character.delete_skills(skill_id=skill.skill_id),
                     'data': {
                     key: await character.get_skills(key=key)
                     }
@@ -339,7 +339,11 @@ async def get_character_spells(character_id):
 
         await character.character_belongs_user()
 
-        if await character.exists_spell() and await character.load_spells():
+        if await character.exists_spell() is False:
+            return jsonify({'result': True,
+                'data': None
+            }), 200
+        elif await character.load_spells():
             return jsonify({'result': True,
                 'data': character.spells
             }), 200
@@ -356,7 +360,7 @@ async def post_character_spell(character_id):
 
         await character.character_belongs_user()
         
-        spell_id = request.form.get('id_habilidade')
+        spell_id = request.form.get('spell_id')
         
         return jsonify({'result': await character.insert_spell(spell_id=spell_id)}), 200
     except Exception as e:
@@ -371,7 +375,7 @@ async def delete_character_spell(character_id):
 
         await character.character_belongs_user()
         
-        spell_id = request.form.get('id_habilidade')
+        spell_id = request.form.get('spell_id')
         
         if await character.exists_specific_spell(spell_id=spell_id):
             return jsonify({'result': await character.delete_spell(character_id_spell=spell_id)}), 200

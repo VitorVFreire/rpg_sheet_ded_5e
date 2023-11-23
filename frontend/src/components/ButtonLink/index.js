@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './CreateCharacterButton.css'
 
-function CreateCharacterButton(props) {
+function ButtonLink(props) {
   return (
     <Link to={props.link}>
       <button className="white-button">
@@ -12,4 +12,4 @@ function CreateCharacterButton(props) {
   );
 }
 
-export default CreateCharacterButton;
+export default ButtonLink;

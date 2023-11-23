@@ -11,7 +11,9 @@ function Spell(props) {
                 const response = await fetch('/spell/' + props.id);
                 const data = await response.json();
                 if (data.result !== false) {
-                    setSpells(data.data);
+                    if (data.data !== null){
+                        setSpells(data.data);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }
@@ -24,7 +26,7 @@ function Spell(props) {
     }, [props.id]);
 
     const handleCharacterDeleted = (outherId) => {
-        const updatedSpell = spells.filter((spell) => spell.id_habilidade !== outherId);
+        const updatedSpell = spells.filter((spell) => spell.spell_id !== outherId);
         setSpells(updatedSpell);
     };
 
@@ -33,14 +35,14 @@ function Spell(props) {
             {spells.map((spell, index) => (
                 <div id='spell' className='spell'>
                     <div>
-                        <DeleteButton url='spell' keyData='id_habilidade' outherId={spell.id_habilidade} characterId={props.id} onCharacterDeleted={handleCharacterDeleted} />
+                        <DeleteButton url='spell' keyData='spell_id' outherId={spell.spell_id} characterId={props.id} onCharacterDeleted={handleCharacterDeleted} />
                     </div>
                     <h4>{spell.nome_habilidade}</h4>
-                    <label>Nivel: {spell.nivel_habilidade}</label>
-                    <label>Dados: {spell.qtd_dados}D{spell.lados_dados}</label>
-                    <label>Bonus: {spell.nome_atributo}</label>
-                    <label>Tipo de Dano: {spell.tipo_dano}</label>
-                    <label>Detalhes: <a href={spell.link_detalhes} target='_blank'>Clique Aqui!</a></label>
+                    <label>Nivel: {spell.spell_level}</label>
+                    <label>Dados: {spell.amount_dice}D{spell.side_dice}</label>
+                    <label>Bonus: {spell.attribute_use}</label>
+                    <label>Tipo de Dano: {spell.type_damage}</label>
+                    <label>Detalhes: {spell.description_spell}</label>
                 </div>
             ))}
         </section>

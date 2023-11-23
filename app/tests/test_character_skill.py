@@ -32,7 +32,7 @@ class CharacterSkillTest(unittest.TestCase):
     async def test_adiciona_pericia_acrobacia_personagem(self):
         self.assertTrue(await self.personagem_teste.insert_skill(self.pericia_teste.id_skill))
         await self.personagem_teste.load_skills()
-        self.assertTrue(any(pericia['id_pericia'] == self.pericia_teste.id_skill for pericia in self.personagem_teste.skills))
+        self.assertTrue(any(pericia['skill_id'] == self.pericia_teste.id_skill for pericia in self.personagem_teste.skills))
         if self.personagem_teste.proficiency_bonus is not None and self.personagem_teste.strength is not None:
             self.assertEqual(self.personagem_teste.acrobatics,(self.personagem_teste.strength_bonus+self.personagem_teste.proficiency_bonus))
 

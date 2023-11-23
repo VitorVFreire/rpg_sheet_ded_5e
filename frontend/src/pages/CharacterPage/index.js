@@ -8,6 +8,7 @@ import SavingThrow from './SavingThrow';
 import StatusBase from './StatusBase';
 import Skill from './Skill';
 import Spell from './Spell';
+import ButtonLink from '../../components/ButtonLink';
 
 function CharacterPage(props) {
     const { id } = useParams();
@@ -31,7 +32,7 @@ function CharacterPage(props) {
                     <StatusBase id={id} />
                 </div>
                 <div className='footer'>
-                    <h3>Spell: </h3>
+                    <h3>Spell: </h3> <ButtonLink link={'/character/spell/' + id} text='Adicionar Mágia'/>
                     <Spell id={id} />
                 </div>
             </div>

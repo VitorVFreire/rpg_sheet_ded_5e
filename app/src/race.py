@@ -18,10 +18,10 @@ class Race:
     async def races(self):
         if (type(self._race_id) is list and len(self._race_id)<=0) or (self._race_id is None):
             await self.load_races()
-        racas = []
+        races = []
         for race_id, race_name in zip(self._race_id, self._race_name):
-            racas.append({'race_id': race_id, 'race_name': race_name})
-        return racas
+            races.append({'race_id': race_id, 'race_name': race_name})
+        return races
     
     async def load_races(self):
         try:
@@ -41,7 +41,7 @@ class Race:
         
     async def load_race(self):
         try:
-            query = "SELECT race_name FROM raca WHERE race_id=%s;"
+            query = "SELECT race_name FROM race WHERE race_id=%s;"
             parameters = (self._race_id,)
             db = Db()
             await db.connection_db()
@@ -56,7 +56,7 @@ class Race:
         
     async def insert_race(self):
         try:
-            query = "INSERT INTO raca (race_name) VALUES (%s);"
+            query = "INSERT INTO race (race_name) VALUES (%s) RETURNING race_id;"
             parameters = (str(self._race_name),)
             db = Db()
             await db.connection_db()
@@ -68,7 +68,7 @@ class Race:
         
     async def delete_race(self):
         try:
-            query = "DELETE from raca WHERE race_id=%s;"
+            query = "DELETE from race WHERE race_id=%s;"
             parameters = (self._race_id,)
             db = Db()
             await db.connection_db()
@@ -79,7 +79,7 @@ class Race:
         
     async def update_race(self, value):
         try:
-            query = "UPDATE raca SET race_name=%s WHERE race_id=%s"
+            query = "UPDATE race SET race_name=%s WHERE race_id=%s;"
             parameters = (value, self._race_id)
             db = Db()
             await db.connection_db()

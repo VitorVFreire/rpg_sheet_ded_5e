@@ -1,40 +1,20 @@
-from data import get_connection
-import pymysql
 import asyncio
 
+from src import Db
+
 class Skill:
-    def __init__(self,id_skill=None,skill_name=None,usage_status=None):
-        self._id_skill = id_skill or []
+    def __init__(self,skill_id=None,skill_name=None,usage_status=None):
+        self._skill_id = skill_id or []
         self._skill_name = skill_name or []
         self._usage_status = usage_status or []
         
     @property
     def skill_name(self):
-        list = {
-            'acrobatics': 'acrobacia',
-            'arcana': 'arcanismo',
-            'athletics': 'atletismo',
-            'performance': 'atuacao',
-            'deception': 'enganacao',
-            'stealth': 'furtividade',
-            'history': 'historia',
-            'intimidation': 'intimidacao',
-            'insight': 'intuicao',
-            'investigation': 'investigacao',
-            'animal_handling': 'lidar_com_animais',
-            'medicine': 'medicina',
-            'nature': 'natureza',
-            'perception': 'percepcao',
-            'persuasion': 'persuasao',
-            'sleight_of_hand': 'prestidigitacao',
-            'religion': 'religiao',
-            'survival': 'sobrevivencia'
-        }
-        return list[self._skill_name]
+        return self._skill_name
     
     @property
-    def id_skill(self):
-        return self._id_skill
+    def skill_id(self):
+        return self._skill_id
     
     @property
     def usage_status(self):
@@ -42,26 +22,25 @@ class Skill:
     
     @property
     async def skills(self):
-        if (type(self._id_skill) is list and len(self._id_skill)<=0) or (self._id_skill is None):
+        if (type(self._skill_id) is list and len(self._skill_id)<=0) or (self._skill_id is None):
             await self.load_skills()
-        pericias=[]
-        for id_pericia,nome_pericia,status_uso in zip(self._id_skill,self._skill_name,self._usage_status):
-            pericias.append({'id_pericia':id_pericia,'nome_pericia':nome_pericia,'status_uso':status_uso})
-        return pericias
+        skills=[]
+        for skill_id, skill_name, usage_status in zip(self._skill_id,self._skill_name,self._usage_status):
+            skills.append({'skill_id ': skill_id, 'skill_name': skill_name, 'usage_status': usage_status})
+        return skills
     
     async def load_skills(self):
         try:
-            async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT id_pericia, nome_pericia, status_uso from pericia;"
-                        await mycursor.execute(query)
-                        result = await mycursor.fetchall() 
-                        if result:
-                            for row in result:
-                                self._id_skill.append(row[0])
-                                self._skill_name.append(row[1])
-                                self._usage_status.append(row[2])
-                            return True
+            query = "SELECT skill_id, skill_name, usage_status FROM skill;"
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query)
+            if result:
+                for row in result:
+                    self._skill_id.append(row[0])
+                    self._skill_name.append(row[1])
+                    self._usage_status.append(row[2])
+                return True
             return False
         except Exception as e:
             print(e)
@@ -69,15 +48,15 @@ class Skill:
         
     async def load_skill(self):
         try:
-            async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT nome_pericia, status_uso FROM pericia WHERE id_pericia=%s;"
-                        await mycursor.execute(query,(self._id_skill,))
-                        result = await mycursor.fetchall() 
-                        if result:
-                            self._skill_name=result[0]
-                            self._usage_status=result[1]
-                            return True
+            query = "SELECT skill_name, usage_status FROM skill WHERE skill_id =%s;"
+            parameters = (self._skill_id,)
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query, parameters=parameters, all=False)
+            if result:
+                self._skill_name=result[0]
+                self._usage_status=result[1]
+                return True
             return False
         except Exception as e:
             print(e)
@@ -85,15 +64,15 @@ class Skill:
         
     async def load_skill_by_name(self):
         try:
-            async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT id_pericia, status_uso FROM pericia WHERE nome_pericia=%s;"
-                        await mycursor.execute(query,(self.skill_name,))
-                        result = await mycursor.fetchone() 
-                        if result:
-                            self._id_skill=result[0]
-                            self._usage_status=result[1]
-                            return True
+            query = "SELECT skill_id , usage_status FROM skill WHERE skill_name=%s;"
+            parameters = (self.skill_name,)
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query, parameters=parameters, all=False)
+            if result:
+                self._skill_id=result[0]
+                self._usage_status=result[1]
+                return True
             return False
         except Exception as e:
             print(e)
@@ -101,42 +80,37 @@ class Skill:
         
     async def insert_skill(self):
         try:
-            async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "INSERT INTO pericia(nome_pericia,status_uso) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self._skill_name,self._usage_status,))
-                        self._id_skill = mycursor.lastrowid
-                        await conn.commit()
-                        return True
-            return False
+            query = "INSERT INTO skill(skill_name,usage_status) VALUES(%s,%s) RETURNING skill_id;"
+            parameters = (self._skill_name,self._usage_status,)
+            db = Db()
+            await db.connection_db()
+            self._skill_id = await db.insert(query=query, parameters=parameters)
+            return True
         except Exception as e:
             print(e)
             return False
         
     async def delete_skill(self):
         try:
-            async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """DELETE from pericia
-                        WHERE id_pericia=%s;"""
-                        await mycursor.execute(query, (self._id_skill,))
-                        await conn.commit()
-                        return True
-            return False
+            query = """DELETE from skill
+            WHERE skill_id =%s;"""
+            parameters = (self._skill_id,)
+            db = Db()
+            await db.connection_db()
+            return await db.delete(query=query, parameters=parameters)
         except Exception as e:
             print(e)
             return False
         
     async def update_skill(self,key,value):
         try:
-            possiveis_key=['nome_pericia','status_uso']
+            possiveis_key=['skill_name','usage_status']
             if key in possiveis_key:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"UPDATE pericia SET {key}=%s WHERE id_pericia=%s"
-                        await mycursor.execute(query, (value,self._id_skill,))
-                        await conn.commit()
-                        return True
+                query = f"UPDATE skill SET {key}=%s WHERE skill_id =%s"
+                parameters = (value,self._skill_id,)
+                db = Db()
+                await db.connection_db()
+                return await db.update(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)

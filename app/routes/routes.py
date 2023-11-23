@@ -139,25 +139,12 @@ async def character(character_id):
 
         await character.character_belongs_user()
         
-        '''await character.load_user()
-        await character.load_character()
-        await character.load_character_classes()
-                
-        return render_template(
-            'ficha_personagem.html',
-            titulo = character.character_name,
-            raca = character.race,
-            nome = character.name,
-            classe = character.classe,
-            id_personagem = character.character_id,
-            nome_personagem = character.character_name,
-        ), 200'''
         return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(403, 'Error: 403\nAcesso Negado')
                  
-@app.route('/personagem/adicionar_habilidade/<character_id>')
+@app.route('/character/spell/<character_id>')
 async def render_character_spell(character_id):
     try:
         spell = Spell()
