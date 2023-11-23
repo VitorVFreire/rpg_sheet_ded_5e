@@ -1,16 +1,15 @@
-from data import get_connection_without_async
-import pymysql
 import random
 import datetime
 import re
+from src import Db
 
 class Message:
-    def __init__(self, id_message = None, room = None , message = None, name_character = None, character_id = None):
-        self.__id_message = id_message
+    def __init__(self, message_id = None, room = None , message = None, name_character = None, character_id = None):
+        self.__message_id = message_id
         self.__message = message
         self.__room = room
         self.__name_character = name_character
-        self.__id_personagem = character_id
+        self.__character_id = character_id
         self.__exists_command = self.__message.find('!r')
         self.__parts = []
         self.__amount_dices = []
@@ -81,16 +80,14 @@ class Message:
         
     def insert_message(self):
         try:
-            if self.__id_personagem:
-                with get_connection_without_async() as conn:
-                    with conn.cursor() as mycursor:    
-                        query = """INSERT INTO message
-                            (id_personagem, message, id_room, time) 
-                            VALUES(%s,%s,%s,%s);"""
-                        mycursor.execute(query, (self.__id_personagem, self.__message, self.__room, datetime.datetime.now()))
-                        self.__id_message = mycursor.lastrowid  
-                        conn.commit()
-                        return True
+            if self.__character_id:    
+                query = """INSERT INTO message
+                    (character_id, message, room_id, messagetime) 
+                    VALUES(%s,%s,%s,%s);"""
+                db = Db()
+                db.sync_connection_db()
+                self.__message_id = db.sync_insert(query=query, parameters=(self.__character_id, self.__message, self.__room, datetime.datetime.now()))  
+                return True
             return False
         except Exception as e:
             print(e)

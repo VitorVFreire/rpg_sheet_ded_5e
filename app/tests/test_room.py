@@ -13,7 +13,7 @@ class RoomTest(unittest.TestCase):
         
         cls.room = Room(user_id = cls.usuario_teste.user_id, room_name = 'test_room')
         cls.response_insert_room_bank = cls.room.insert_room()
-        cls.character = Room(id_room = cls.room.id_room, character_id = cls.usuario_teste.character_id)
+        cls.character = Room(room_id = cls.room.room_id, character_id = cls.usuario_teste.character_id)
         cls.character.insert_character_room()   
     
     @classmethod
@@ -37,10 +37,10 @@ class RoomTest(unittest.TestCase):
         self.assertTrue(len(roons.roons) > 0)
         
     async def test_update_name_room_true(self):
-        room = Room(id_room = self.room.id_room, room_name='new teste name room')
+        room = Room(room_id = self.room.room_id, room_name='new teste name room')
         self.assertTrue(room.update_room())
         self.assertNotEqual(room.name_room, self.room.name_room)
-        self.assertEqual(room.id_room, self.room.id_room)
+        self.assertEqual(room.room_id, self.room.room_id)
         
     async def test_delete_character_room_bank_true(self):
         self.assertTrue(self.character.delete_character_room())

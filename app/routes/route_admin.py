@@ -163,7 +163,7 @@ async def insert_equipment():
         user = User(user_id=session.get('user_id'))
         
         if await user.valid_admin_user():
-            id_equipment_type = request.form.get("id_tipo_equipamento") 
+            equipment_id_type = request.form.get("id_tipo_equipamento") 
             equipment_name = request.form.get('nome_equipamento')
             description = request.form.get('descricao')
             price = request.form.get('preco')
@@ -174,7 +174,7 @@ async def insert_equipment():
             equipment_image = request.files.get('imagem_equipamento')
             
             equipment = Equipment(
-                id_equipment_type=id_equipment_type,
+                equipment_id_type=equipment_id_type,
                 equipment_name=equipment_name,
                 description=description,
                 price=price,

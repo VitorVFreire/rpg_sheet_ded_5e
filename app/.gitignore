@@ -5,4 +5,5 @@ flask_session
 .vscode
 .pytest_cache
 comandos.txt
+data/img/
 .gitignore

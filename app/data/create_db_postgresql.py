@@ -83,7 +83,8 @@ async def create_tables():
                     amount_dice INT,
                     side_dice INT,
                     type_damage_id SERIAL REFERENCES type_damage(type_damage_id) ON DELETE CASCADE NOT NULL,
-                    bonus VARCHAR(20)
+                    bonus VARCHAR(20),
+                    equipment_image VARCHAR(200)
                 );
                 """)
 
@@ -182,7 +183,7 @@ async def create_tables():
                 await cursor.execute("""
                 CREATE TABLE message (
                     message_id SERIAL PRIMARY KEY ,
-                    user_room_id SERIAL NOT NULL REFERENCES user_room(user_room_id) ON DELETE CASCADE,
+                    room_id SERIAL NOT NULL REFERENCES room(room_id) ON DELETE CASCADE,
                     character_id SERIAL NOT NULL REFERENCES character(character_id) ON DELETE CASCADE,
                     messagetime TIMESTAMP NOT NULL,
                     message VARCHAR(200) NOT NULL
@@ -240,7 +241,8 @@ async def create_tables():
                 CREATE TABLE character_equipment (
                     character_equipment_id SERIAL PRIMARY KEY ,
                     equipment_id SERIAL NOT NULL REFERENCES equipment(equipment_id) ON DELETE CASCADE,
-                    character_id SERIAL NOT NULL REFERENCES character(character_id) ON DELETE CASCADE
+                    character_id SERIAL NOT NULL REFERENCES character(character_id) ON DELETE CASCADE,
+                    amount INT
                 );
                 """)
 
@@ -349,6 +351,24 @@ async def insert_default_values():
                     ('dexterity'),
                     ('charisma'),
                     ('constitution');        
+                """)
+                
+                await cursor.execute("""
+                INSERT INTO type_damage(type_damage_name) 
+                VALUES
+                    ('slashing'),
+                    ('bludgeoning'),
+                    ('piercing'),
+                    ('acid'),
+                    ('cold'),
+                    ('fire'),
+                    ('thunder'),
+                    ('lightning'),
+                    ('necrotic'),
+                    ('radiant'),
+                    ('poison'),
+                    ('psychic'),
+                    ('force');        
                 """)
                 
                 await cursor.execute("""

@@ -7,7 +7,7 @@ from main import socketio, app
 @app.post('/insert/room/<character_id>/<code_room>')
 async def post_character_room(character_id, code_room):
     try:
-        room = Room(id_room=code_room ,character_id=character_id)
+        room = Room(room_id=code_room ,character_id=character_id)
 
         return jsonify({'result': room.insert_character_room()}), 200
     except Exception as e:
@@ -43,9 +43,9 @@ async def insert_room():
     try:
         user_id = session.get('user_id')
         character_id = request.form.get('id_personagem')
-        code_room = request.form.get('id_room')
+        code_room = request.form.get('room_id')
         print(character_id, code_room)
-        room = Room(character_id=character_id, user_id=user_id, id_room=code_room)
+        room = Room(character_id=character_id, user_id=user_id, room_id=code_room)
         
         if room.insert_character_room():
             return redirect(url_for('room_personagem', code_room=code_room, id_personagem=character_id))
@@ -59,7 +59,7 @@ async def character_room(code_room, character_id):
         if session.get('user_id') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
         character = Character(user_id=session.get('user_id'), character_id=character_id)
-        room = Room(id_room=code_room, character_id=character_id)
+        room = Room(room_id=code_room, character_id=character_id)
         
         room.character_belongs_room()
         
@@ -68,19 +68,19 @@ async def character_room(code_room, character_id):
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-@app.get('/messages/room=<id_room>&id_personagem=<character_id>')
-def get_messages(id_room,character_id):
+@app.get('/messages/room=<room_id>&id_personagem=<character_id>')
+def get_messages(room_id,character_id):
     try:
         if session.get('user_id') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-        room = Room(id_room=id_room, character_id=character_id)
+        room = Room(room_id=room_id, character_id=character_id)
         room.character_belongs_room()
         
         limit = request.args.get('limit', default=None)
         offset = request.args.get('offset', default=None)
         
-        messages = Messages(id_room=id_room, limit=limit, offset=offset)        
+        messages = Messages(room_id=room_id, limit=limit, offset=offset)        
         messages.load_messages()
         
         return jsonify(messages.messages), 200   

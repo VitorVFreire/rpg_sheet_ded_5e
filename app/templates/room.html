@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 {% block conteudo %}
 <form method="POST" action="{{ url_for('room') }}">
-    <input type="text" class="form-control text-center" id="id_room" name="id_room" required/>
+    <input type="text" class="form-control text-center" id="room_id" name="room_id" required/>
     <select class="form-select" aria-label="Default select example" name="id_personagem" id="id_personagem">
         {% for personagem in personagens %}
             <option value="{{personagem['id_personagem']}}">{{personagem['nome_personagem']}}</option>

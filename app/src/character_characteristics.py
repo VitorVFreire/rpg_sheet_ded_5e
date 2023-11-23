@@ -116,7 +116,7 @@ class CharacterCharacteristics(Character, Image):
     async def exists_image(self):
         try:
             if self.character_id:
-                query = "SELECT EXISTS (SELECT id_character_characteristic FROM character_characteristic WHERE character_id = %s and character_image IS NOT NULL);"
+                query = "SELECT EXISTS (SELECT character_characteristic_id FROM character_characteristic WHERE character_id = %s and character_image IS NOT NULL);"
                 parameters = (self.character_id,)
                 db = Db()
                 await db.connection_db()

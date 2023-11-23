@@ -2,7 +2,6 @@ from .database import Db
 from .image import Image
 from .user import User
 from .type_damage import TypeDamage
-from .moeda import Moeda
 from .skill import Skill
 from .race import Race
 from .classe import Classe

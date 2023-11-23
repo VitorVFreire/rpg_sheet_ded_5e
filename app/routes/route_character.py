@@ -384,7 +384,7 @@ async def delete_character_spell(character_id):
         print(e)
         return jsonify({'result': False}), 500
 
-@app.get('/equipamentos/<character_id>')
+@app.get('/equipments/<character_id>')
 async def get_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
@@ -392,20 +392,22 @@ async def get_character_equipment(character_id):
 
         await character.character_belongs_user()
 
-        if await character.exists_equipment() and await character.load_equipments():
-            return jsonify(character.list_equipments), 200
+        if await character.exists_equipment() is False:
+            return jsonify({'result': True, 'data': None}), 200
+        elif await character.load_equipments():
+            return jsonify({'result': True, 'data': character.list_equipments}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
         return 404
 
-@app.post('/equipamentos/<character_id>')
+@app.post('/equipments/<character_id>')
 async def post_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        id_equipment = request.form.get('id_equipamento')
+        e = request.form.get('equipment_id')
         amount = request.form.get('qtd')
-        character = CharacterEquipment(amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
+        character = CharacterEquipment(amount=amount, e=e, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -414,13 +416,13 @@ async def post_character_equipment(character_id):
         print(e)
         return 404
 
-@app.put('/equipamentos/<character_id>')
+@app.put('/equipments/<character_id>')
 async def put_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        id_equipment = request.form.get('id_equipamento')
+        e = request.form.get('equipment_id')
         amount = request.form.get('qtd')
-        character = CharacterEquipment(amount=amount, id_equipment=id_equipment, user_id=user_id, character_id=character_id)
+        character = CharacterEquipment(amount=amount, e=e, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -429,12 +431,12 @@ async def put_character_equipment(character_id):
         print(e)
         return 404
 
-@app.delete('/equipamentos/<character_id>')
+@app.delete('/equipments/<character_id>')
 async def delete_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        id_equipment = request.form.get('id_equipamento')
-        character = CharacterEquipment(id_equipment=id_equipment, user_id=user_id, character_id=character_id)
+        e = request.form.get('equipment_id')
+        character = CharacterEquipment(e=e, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -445,13 +447,13 @@ async def delete_character_equipment(character_id):
         print(e)
         return 404
 
-"""@app.post('/compra_equipamentos/<id_personagem>')
-async def compra_equipamentos_personagem_post(id_personagem):
+"""@app.post('/compra_equipments/<id_personagem>')
+async def compra_equipments_personagem_post(id_personagem):
     try:
         id_usuario = session.get('user_id')
-        id_equipamento = request.form.get('id_equipamento')
-        personagem = PersonagemEquipamento(id_equipamento=id_equipamento,id_usuario=id_usuario, id_personagem=id_personagem)
-        equipamento = Equipamento(id_equipamento=id_equipamento)
+        equipment_id = request.form.get('equipment_id')
+        personagem = PersonagemEquipamento(equipment_id=equipment_id,id_usuario=id_usuario, id_personagem=id_personagem)
+        equipamento = Equipamento(equipment_id=equipment_id)
         
         await personagem.personagem_pertence_usuario()
         await equipamento.carregar_equipamento()

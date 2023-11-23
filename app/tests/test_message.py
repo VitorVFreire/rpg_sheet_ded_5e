@@ -13,13 +13,13 @@ class MessageTest(unittest.TestCase):
         
         cls.room = Room(user_id = cls.usuario_teste.user_id, room_name = 'test_room')
         cls.response_insert_room_bank = cls.room.insert_room()
-        cls.character = Room(id_room = cls.room.id_room, character_id = cls.usuario_teste.character_id)
+        cls.character = Room(room_id = cls.room.room_id, character_id = cls.usuario_teste.character_id)
         cls.character.insert_character_room()
         
         cls.message = Message(character_id=cls.usuario_teste.character_id, message='teste text') 
         cls.message_roll = Message(character_id=cls.usuario_teste.character_id, message='!r 1d20')
         
-        cls.messages = Messages(id_room=cls.room.id_room)
+        cls.messages = Messages(room_id=cls.room.room_id)
         cls.response_messages = cls.messages.load_messages()         
     
     @classmethod

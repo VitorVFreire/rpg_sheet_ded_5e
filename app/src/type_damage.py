@@ -54,6 +54,21 @@ class TypeDamage:
             print(e)
             return False
         
+    async def load_type_damage_with_name(self):
+        try:
+            query = "SELECT type_damage_id FROM type_damage WHERE type_damage_name=%s;"
+            parameters = (self._type_damage_name,)
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query, parameters=parameters, all=False)
+            if result:
+                self._type_damage_id=result[0]
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+        
     async def insert_type_damage(self):
         try:
             query = "INSERT INTO type_damage (type_damage_name) VALUES (%s) RETURNING type_damage_id;"

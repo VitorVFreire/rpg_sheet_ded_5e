@@ -1,24 +1,25 @@
-from data import get_connection
-import pymysql
 import asyncio
 from flask import url_for
 
-from src import Image
+from src import Image, Db
 
 class Equipment(Image):
-    def __init__(self, id_equipment = None, id_equipment_type = None, equipment_type_name = None, equipment_name = None, description = None, price = None, weight = None, ca = None, dice = None, bonus = None, name = None, equipment_image = None):
-        super().__init__(parameters=id_equipment,name=name)
-        self.__id_equipment_type = [id_equipment_type]
-        self.__equipment_type_name = [equipment_type_name]
-        self.__id_equipment = [id_equipment]
+    def __init__(self, equipment_id = None, kind_equipment_id = None, kind_equipment_name = None, equipment_name = None, description_equipment = None, price = None, weight = None, armor_class = None, amount_dice = None, side_dice = None, bonus = None, name = None, equipment_image = None, type_damage_name = None, coin_name = None):
+        super().__init__(parameters=equipment_id,name=name)
+        self.__kind_equipment_id = [kind_equipment_id]
+        self.__kind_equipment_name = [kind_equipment_name]
+        self.__equipment_id = [equipment_id]
         self.__equipment_name = [equipment_name]
-        self.__description = [description]
+        self.__description_equipment = [description_equipment]
         self.__price = [price]
         self.__weight = [weight]
-        self.__ca = [ca]
-        self.__dice = [dice]
+        self.__armor_class = [armor_class]
+        self.__amount_dice = [amount_dice]
+        self.__side_dice = [side_dice]
         self.__bonus = [bonus]
         self.__equipment_image = [equipment_image]
+        self.__coin_name = [coin_name]
+        self.__type_damage_name = [type_damage_name]
         self.__character_equipments = []
     
     @property
@@ -33,78 +34,86 @@ class Equipment(Image):
     @property
     def equipments(self):
         equipments = []
-        for id_equipment_type, equipment_type_name, id_equipment, equipment_name, description, price, weight, ca, dice, bonus, equipment_image in zip(self.__id_equipment_type, self.__equipment_type_name, self.__id_equipment, self.__equipment_name, self.__description, self.__price, self.__weight, self.__ca, self.__dice, self.__bonus, self.equipment_image):
+        for kind_equipment_id, kind_equipment_name, equipment_id, equipment_name, description_equipment, price, weight, armor_class, amount_dice, side_dice, bonus, equipment_image, type_damage_name, coin_name in zip(self.__kind_equipment_id, self.__kind_equipment_name, self.__equipment_id, self.__equipment_name, self.__description_equipment, self.__price, self.__weight, self.__armor_class, self.__amount_dice, self.__side_dice, self.__bonus, self.equipment_image, self.__type_damage_name, self.__coin_name):
             equipments.append({
-                'id_tipo_equipamento': id_equipment_type, 
-                'nome_tipo_equipamento': equipment_type_name,
-                'id_equipamento': id_equipment, 
-                'nome_equipamento': equipment_name, 
-                'descricao': description,  
-                'preco': price, 
-                'peso': weight, 
-                'ca': ca,
-                'dado': dice,
+                'kind_equipment_id': kind_equipment_id, 
+                'kind_equipment_name': kind_equipment_name,
+                'equipment_id': equipment_id, 
+                'equipment_name': equipment_name, 
+                'description_equipment': description_equipment,  
+                'price': price, 
+                'weight': weight, 
+                'armor_clas': armor_clas,
+                'amount_dice': amount_dice,
+                'side_dice': side_dice,
                 'bonus': bonus,
-                'imagem_equipamento': equipment_image,
-                'personagem_possui': id_equipment in self.__character_equipments
+                'equipment_image': equipment_image,
+                'coin_name': coin_name,
+                'type_damage_name': type_damage_name,
+                'character_has': equipment_id in self.__character_equipments
             })
-        return equipments if equipments[0]['id_equipamento'] is not None else None
+        return equipments if equipments[0]['equipment_id'] is not None else None
     
     @property
     def equipment(self):
         equipment = {
-            'id_tipo_equipamento': self.id_equipment_type, 
-            'nome_tipo_equipamento': self.__equipment_type_name,
-            'id_equipamento': self.id_equipment, 
-            'nome_equipamento': self.equipment_name, 
-            'descricao': self.description,  
-            'preco': self.price, 
-            'peso': self.weight, 
-            'ca': self.ca,
-            'dado': self.dice,
+            'kind_equipment_id': self.kind_equipment_id, 
+            'kind_equipment_name': self.__kind_equipment_name,
+            'equipment_id': self.equipment_id, 
+            'equipment_name': self.equipment_name, 
+            'description_equipment': self.description_equipment,  
+            'price': self.price, 
+            'weight': self.weight, 
+            'armor_class': self.armor_class,
+            'amount_dice': self.amount_dice,
+            'side_dice': self.side_dice,
             'bonus': self.bonus,
-            'imagem_equipamento': self.equipment_image,
-            'personagem_possui': self.__id_equipment in self.__character_equipments
+            'coin_name': self.coin_name,
+            'type_damage_name': self.type_damage_name,
+            'equipment_image': self.equipment_image,
+            'character_has': self.__equipment_id in self.__character_equipments
         }
-        return equipment if equipment['id_equipamento'] is not None else None
+        return equipment if equipment['equipment_id'] is not None else None
     
     def equipment_clear(self):
-        if self.__id_equipment[0] is None:
-            self.__id_equipment_type.clear()
-            self.__equipment_type_name.clear()
-            self.__id_equipment.clear()
+        if self.__equipment_id[0] is None:
+            self.__kind_equipment_id.clear()
+            self.__kind_equipment_name.clear()
+            self.__equipment_id.clear()
             self.__equipment_name.clear()
-            self.__description.clear()
+            self.__description_equipment.clear()
             self.__price.clear()
             self.__weight.clear()
             self.__ca.clear()
-            self.__dice.clear()
+            self.__amount_dice.clear()
+            self.__side_dice.clear()
             self.__bonus.clear()
             self.__equipment_image.clear()
+            self.__coin_name.clear()
+            self.__type_damage_name.clear()
 
     @property
     def type_equipments(self):
-        tipo_equipamento = []
-        for id_tipo_equipamento, nome_tipo_equipamento in zip(self.__id_equipment_type, self.__equipment_type_name):
-            tipo_equipamento.append({
-                'id_tipo_equipamento': id_tipo_equipamento, 
-                'nome_tipo_equipamento': nome_tipo_equipamento
+        kind_equipment = []
+        for kind_equipment_id, kind_equipment_name in zip(self.__kind_equipment_id, self.__kind_equipment_name):
+            kind_equipment.append({
+                'kind_equipment_id': kind_equipment_id, 
+                'kind_equipment_name': kind_equipment_name
             })
-        return tipo_equipamento
+        return kind_equipment
     
     async def load_type_equipment(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "SELECT id_tipo_equipamento, nome_tipo_equipamento FROM tipo_equipamento;"
-                    await mycursor.execute(query)
-                    result = await mycursor.fetchall() 
-                    if result:
-                        self.equipment_clear()
-                        for row in result:
-                            self.__id_equipment_type.append(row[0])
-                            self.__equipment_type_name.append(row[1])
-                        return True
+            query = "SELECT kind_equipment_id, kind_equipment_name FROM kind_equipment;"
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query)
+            if result:
+                self.equipment_clear()
+                for row in result:
+                    self.__kind_equipment_id.append(row[0])
+                    self.__kind_equipment_name.append(row[1])
+                return True
             return False
         except Exception as e:
             print(e)
@@ -113,15 +122,15 @@ class Equipment(Image):
     async def load_character_equipments(self, character_id):
         try:
             if character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """SELECT id_equipamento FROM equipamento_personagem WHERE id_personagem = %s;"""
-                        await mycursor.execute(query, (character_id,))
-                        result = await mycursor.fetchall()
-                        if result:
-                            for row in result:
-                                self.__character_equipments.append(row[0])              
-                            return True
+                query = """SELECT equipment_id FROM character_equipment WHERE character_id = %s;"""
+                parameters = (character_id,)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters, all=False)
+                if result:
+                    for row in result:
+                        self.__character_equipments.append(row[0])              
+                    return True
             return False
         except Exception as e:
             print(e)
@@ -129,26 +138,32 @@ class Equipment(Image):
    
     async def load_equipments(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "SELECT eq.id_tipo_equipamento, eq.nome_equipamento, eq.descricao, eq.preco, eq.peso, eq.ca, eq.dado, eq.bonus, eq.id_equipamento, te.nome_tipo_equipamento, eq.imagem_equipamento FROM equipamento eq, tipo_equipamento te WHERE eq.id_tipo_equipamento = te.id_tipo_equipamento;"
-                    await mycursor.execute(query)
-                    result = await mycursor.fetchall() 
-                    if result:
-                        self.equipment_clear()
-                        for row in result:
-                            self.__id_equipment_type.append(row[0])
-                            self.__equipment_name.append(row[1]) 
-                            self.__description.append(row[2]) 
-                            self.__price.append(row[3])
-                            self.__weight.append(row[4])
-                            self.__ca.append(row[5])
-                            self.__dice.append(row[6])
-                            self.__bonus.append(row[7])
-                            self.__id_equipment.append(row[8])
-                            self.__equipment_type_name.append(row[9])
-                            self.equipment_image = row[10]
-                        return True
+            query = """SELECT eq.kind_equipment_id, eq.equipment_name, eq.description_equipment, eq.price, eq.weight, eq.armor_class, eq.amount_dice, eq.side_dice, eq.bonus, eq.equipment_id, te.kind_equipment_name, eq.equipment_image, td.type_damage_name, cn.coin_name 
+            FROM equipment eq
+            JOIN kind_equipment te ON eq.kind_equipment_id = te.kind_equipment_id
+            JOIN type_damage td ON td.type_damage_id = eq.type_damage_id
+            JOIN coin cn ON cn.coin_id = eq.coin_id;"""
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query)
+            if result:
+                self.equipment_clear()
+                for row in result:
+                    self.__kind_equipment_id.append(row[0])
+                    self.__equipment_name.append(row[1]) 
+                    self.__description_equipment.append(row[2]) 
+                    self.__price.append(row[3])
+                    self.__weight.append(row[4])
+                    self.__armor_class.append(row[5])
+                    self.__amount_dice.append(row[6])
+                    self.__side_dice.append(row[7])
+                    self.__bonus.append(row[8])
+                    self.__equipment_id.append(row[9])
+                    self.__kind_equipment_name.append(row[10])
+                    self.equipment_image = row[11]
+                    self.__type_damage_name.append(row[12])
+                    self.__coin_name.append(row[13])
+                return True
             return False
         except Exception as e:
             print(e)
@@ -156,39 +171,47 @@ class Equipment(Image):
     
     async def load_equipment(self):
         try:
-            async with await get_connection() as conn:
-                async with conn.cursor() as mycursor:
-                    query = "SELECT id_tipo_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus, imagem_equipamento FROM equipamento WHERE id_equipamento=%s;"
-                    await mycursor.execute(query,(self.id_equipment,))
-                    result = await mycursor.fetchone() 
-                    if result:
-                        self.equipment_clear()
-                        self.__id_equipment_type.append(result[0])
-                        self.__equipment_name.append(result[1]) 
-                        self.__description.append(result[2]) 
-                        self.__price.append(result[3])
-                        self.__weight.append(result[4])
-                        self.__ca.append(result[5])
-                        self.__dice.append(result[6])
-                        self.__bonus.append(result[7])
-                        self.equipment_image(result[8])
-                        return True
+            query = """SELECT eq.kind_equipment_id, eq.equipment_name, eq.description_equipment, eq.price, eq.weight, eq.armor_class, eq.amount_dice, eq.side_dice, eq.bonus, te.kind_equipment_name, eq.equipment_image, td.type_damage_name, cn.coin_name 
+            FROM equipment eq
+            JOIN kind_equipment te ON eq.kind_equipment_id = te.kind_equipment_id
+            JOIN type_damage td ON td.type_damage_id = eq.type_damage_id
+            JOIN coin cn ON cn.coin_id = eq.coin_id
+            WHERE eq.equipment_id = %s;"""
+            parameters = (self.equipment_id,)
+            db = Db()
+            await db.connection_db()
+            result = await db.select(query=query, parameters=parameters, all=False)
+            if result:
+                self.equipment_clear()
+                self.__kind_equipment_id.append(result[0])
+                self.__equipment_name.append(result[1]) 
+                self.__description_equipment.append(result[2]) 
+                self.__price.append(result[3])
+                self.__weight.append(result[4])
+                self.__armor_class.append(result[5])
+                self.__amount_dice.append(result[6])
+                self.__side_dice.append(result[7])
+                self.__bonus.append(result[8])
+                self.__kind_equipment_name(result[9])
+                self.equipment_image(result[10])
+                self.__type_damage_name(result[11])
+                self.__coin_name(result[12])
+                return True
             return False
         except Exception as e:
             print(e)
             return False
 
-    async def insert_equipment(self):
+    async def insert_equipment(self, type_damage_id, coin_id):
         try:
-            if self.__id_equipment_type:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        self.__equipment_image[0] = self.save_equipment_image(self.equipment_image) if self.equipment_image is not None else None
-                        query = "INSERT INTO equipamento (id_tipo_equipamento, nome_equipamento, descricao, preco, peso, ca, dado, bonus, imagem_equipamento) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);"
-                        await mycursor.execute(query, (self.id_equipment_type, self.equipment_name, self.description, self.price, self.weight, self.ca, self.dice, self.bonus, self.equipment_image))
-                        self.__id_equipment[0] = mycursor.lastrowid   
-                        await conn.commit()
-                        return True
+            if self.kind_equipment_id:
+                self.__equipment_image[0] = self.save_equipment_image(self.equipment_image) if self.equipment_image is not None else None
+                query = "INSERT INTO equipment (kind_equipment_id, equipment_name, description_equipment, price, weight, armor_class, amount_dice, side_dice, bonus, equipment_image, type_damage_id, coin_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING equipment_id;"
+                parameters = (self.kind_equipment_id, self.equipment_name, self.description_equipment, self.price, self.weight, self.armor_class, self.amount_dice, self.side_dice, self.bonus, self.equipment_image, type_damage_id, coin_id)
+                db = Db()
+                await db.connection_db()
+                self.__equipment_id[0] = await db.insert(query=query, parameters=parameters)   
+                return True
             return False
         except Exception as e:
             self.name = self.equipment_image
@@ -198,14 +221,13 @@ class Equipment(Image):
 
     async def delete_equipment(self):
         try:
-            if self.__id_equipment:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """DELETE from equipamento
-                        WHERE id_equipamento=%s;"""
-                        await mycursor.execute(query, (self.id_equipment,))
-                        await conn.commit()
-                        return True
+            if self.equipment_id:
+                query = """DELETE from equipment
+                WHERE equipment_id=%s;"""
+                parameters = (self.equipment_id,)
+                db = Db()
+                await db.connection_db()
+                return await db.delete(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -213,14 +235,13 @@ class Equipment(Image):
         
     async def update_equipment(self, key, value):
         try:
-            possiveis_key = ['id_tipo_equipamento', 'nome_equipamento', 'descricao', 'preco', 'peso', 'ca', 'dado', 'bonus', 'imagem_equipamento']
+            possiveis_key = ['kind_equipment_id', 'equipment_name', 'description_equipment', 'price', 'weight', 'armor_class', 'amount_dice', 'side_dice', 'bonus', 'equipment_image', 'type_damage_id', 'coin_id']
             if key in possiveis_key:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"""UPDATE equipamento SET {key}=%s WHERE id_equipamento=%s"""
-                        await mycursor.execute(query, (value, self.id_equipment))
-                        await conn.commit()
-                        return True
+                query = f"""UPDATE equipment SET {key}=%s WHERE equipment_id=%s"""
+                parameters = (value, self.equipment_id)
+                db = Db()
+                await db.connection_db()
+                return await db.update(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -228,7 +249,7 @@ class Equipment(Image):
     
     def save_equipment_image(self, file):
         try:
-            self.parameter = 'equipamento'
+            self.parameter = 'equipment'
             result, name = self.save_file(file) 
             return name if result is True else None
         except Exception as e:
@@ -236,28 +257,28 @@ class Equipment(Image):
             return False       
         
     @property
-    def ca(self):
-        if isinstance(self.__ca, list) and self.__ca[0] == '':
+    def armor_class(self):
+        if isinstance(self.__armor_class, list) and self.__armor_class[0] == '':
             return None
-        return self.__ca[0]
+        return self.__armor_class[0]
     
     @property
-    def id_equipment(self):
-        if isinstance(self.__id_equipment, list) and self.__id_equipment[0] == '':
+    def equipment_id(self):
+        if isinstance(self.__equipment_id, list) and self.__equipment_id[0] == '':
             return None
-        return self.__id_equipment[0]
+        return self.__equipment_id[0]
     
     @property
-    def id_equipment_type(self):
-        if isinstance(self.__id_equipment_type, list) and self.__id_equipment_type[0] == '':
+    def kind_equipment_id(self):
+        if isinstance(self.__kind_equipment_id, list) and self.__kind_equipment_id[0] == '':
             return None
-        return self.__id_equipment_type[0]
+        return self.__kind_equipment_id[0]
     
     @property
-    def equipment_type_name(self):
-        if isinstance(self.__equipment_type_name, list) and self.__equipment_type_name[0] == '':
+    def kind_equipment_name(self):
+        if isinstance(self.__kind_equipment_name, list) and self.__kind_equipment_name[0] == '':
             return None
-        return self.__equipment_type_name[0]
+        return self.__kind_equipment_name[0]
     
     @property
     def equipment_name(self):
@@ -266,10 +287,10 @@ class Equipment(Image):
         return self.__equipment_name[0]
     
     @property
-    def description(self):
-        if isinstance(self.__description, list) and self.__description[0] == '':
+    def description_equipment(self):
+        if isinstance(self.__description_equipment, list) and self.__description_equipment[0] == '':
             return None
-        return self.__description[0]
+        return self.__description_equipment[0]
     
     @property
     def equipment_image(self):
@@ -290,14 +311,32 @@ class Equipment(Image):
         return self.__weight[0]
     
     @property
-    def dice(self):
-        if isinstance(self.__dice, list) and self.__dice[0] == '':
+    def amount_dice(self):
+        if isinstance(self.__amount_dice, list) and self.__amount_dice[0] == '':
             return None
-        return self.__dice[0]
+        return self.__amount_dice[0]
+    
+    @property
+    def side_dice(self):
+        if isinstance(self.__side_dice, list) and self.__side_dice[0] == '':
+            return None
+        return self.__side_dice[0]
     
     @property
     def bonus(self):
         if isinstance(self.__bonus, list) and self.__bonus[0] == '':
             return None
         return self.__bonus[0]
+    
+    @property
+    def type_damage_name(self):
+        if isinstance(self.__type_damage_name, list) and self.__type_damage_name[0] == '':
+            return None
+        return self.__type_damage_name[0]
+    
+    @property
+    def coin_name(self):
+        if isinstance(self.__coin_name, list) and self.__coin_name[0] == '':
+            return None
+        return self.__coin_name[0]
     

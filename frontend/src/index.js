@@ -16,7 +16,7 @@ root.render(
   <Router>
     <Routes> 
       <Route path="/" element={<HomePage idUser={idUser} />} />
-      <Route path="/user_register" element={<CreateUser idUser={idUser} />} />
+      <Route path="/user_registration" element={<CreateUser idUser={idUser} />} />
       <Route path="/login" element={<LoginPage idUser={idUser} />} />
       <Route path="/create_character" element={<CreateCharacter idUser={idUser} />} />
       <Route path='/characters_page' element={<CharactersPage idUser={idUser} />} />

@@ -21,7 +21,7 @@ function LoginForm() {
           placeholder="Digite sua senha"
           type="password"
         />
-        <Link className='link' to='/cadastro_usuario'>
+        <Link className='link' to='/user_registration'>
           Novo Usuario
         </Link>
         <Button>

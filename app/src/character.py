@@ -1,12 +1,11 @@
-from src import User, Db, Moeda
+from src import User, Db
 import asyncio
 from flask import abort
 import datetime
 
-class Character(User, Moeda):
+class Character(User):
     def __init__(self, user_id=None, character_id=None, value=None):
         super().__init__(user_id=user_id)
-        Moeda().__init__(self, value=value)
         self._character_id = character_id
         self._character_name = None
         self._classes = []
