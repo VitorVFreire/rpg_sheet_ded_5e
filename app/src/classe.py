@@ -56,7 +56,7 @@ class Classe:
 
     async def insert_class(self):
         try:
-            query = "INSERT INTO classe (nome_classe) VALUES (%s);"
+            query = "INSERT INTO classe (nome_classe) VALUES (%s) RETURNING class_id;;"
             parameters = (str(self._class_name),)
             db = Db()
             await db.connection_db()

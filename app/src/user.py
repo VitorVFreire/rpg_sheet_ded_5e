@@ -87,7 +87,7 @@ class User:
             if self._user_name and self._email and self.__password and self._birth_date:
                 db = Db()
                 await db.connection_db()
-                query = 'INSERT INTO "user"(user_name, password, email, birth_date, date_creation) VALUES(%s, %s, %s, %s, %s);'
+                query = 'INSERT INTO "user"(user_name, password, email, birth_date, date_creation) VALUES(%s, %s, %s, %s, %s) RETURNING user_id;;'
                 parameters = (self.user_name, self.__password, self.email, self._birth_date, datetime.date.today())
                 self.user_id = await db.insert(query=query, parameters=parameters)
                 return True

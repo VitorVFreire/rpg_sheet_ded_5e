@@ -116,7 +116,7 @@ class Spell:
 
     async def insert_spell(self):
         try:
-            query = "INSERT INTO spell (attribute_use, spell_name, spell_level, type_damage_id, amount_dice, side_dice, add_per_level, link_details) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
+            query = "INSERT INTO spell (attribute_use, spell_name, spell_level, type_damage_id, amount_dice, side_dice, add_per_level, link_details) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING spell_id;;"
             parameters = (self.attribute_name, self.spell_name, self.level_spell, self.type_damage_id, self.amount_dice, self.side_dice, self.add_per_level, self.link_details)
             db = Db()
             await db.connection_db()
@@ -145,7 +145,7 @@ class Spell:
         try:
             possible_key = ['spell_id', 'attribute_use', 'spell_name', 'spell_level', 'type_damage_id', 'amount_dice', 'side_dice', 'add_per_level', 'link_details']
             if key in possible_key:
-                query = f"""UPDATE habilidade SET {key}=%s WHERE spell_id=%s"""
+                query = f"""UPDATE habilidade SET {key}=%s WHERE spell_id=%s;"""
                 parameters = (value, self._spell_id)
                 db = Db()
                 await db.connection_db()

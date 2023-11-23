@@ -1,8 +1,6 @@
-from data import get_connection
-import pymysql
 import asyncio
 
-from src import Character
+from src import Character, Db
 
 class CharacterStatusBase(Character):
     def __init__(self, user_id=None,character_id=None):
@@ -21,33 +19,18 @@ class CharacterStatusBase(Character):
         self._xp = None
     
     def valid_key(self, key):
-        list = {
-            'level': 'nivel',
-            'alignment': 'alinhamento',
-            'faction': 'faccao',
-            'background': 'antecedente',
-            'experience_points': 'xp',
-            'movement': 'deslocamento',
-            'initiative': 'iniciativa',
-            'hit_points': 'vida',
-            'current_hit_points': 'vida_atual',
-            'temporary_hit_points': 'vida_temporaria',
-            'inspiration': 'inspiracao',
-            'armor_class': 'ca'
-        }
-        possible_keys=['vida','xp','nivel','alinhamento','antecendente','faccao','inspiracao','ca','iniciativa','deslocamento','vida_atual','vida_temporaria']
-        return list[key] in possible_keys, list[key]
+        possible_keys=['level','alignment','faction','background','experience_points','movement','initiative','hit_points','current_hit_points','temporary_hit_points','inspiration','armor_class']
+        return key in possible_keys
         
     async def exists_status_base(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT EXISTS (SELECT id_status_base FROM status_base WHERE id_personagem = %s)"
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone()
-                        if result[0] == 1:
-                            return True
+                query = "SELECT EXISTS (SELECT status_base_id FROM status_base WHERE character_id = %s)"
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                if await db.exists(query=query, parameters=parameters):
+                    return True
             return False
         except Exception as e:
             print(e)
@@ -55,14 +38,13 @@ class CharacterStatusBase(Character):
     
     async def insert_status_base(self,key,value):
         try:
-            condition, key = self.valid_key(key)
-            if self.character_id and condition:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"INSERT INTO status_base(id_personagem,{key}) VALUES(%s,%s);"
-                        await mycursor.execute(query, (self.character_id,value,))
-                        await conn.commit()
-                        return True
+            if self.character_id and self.valid_key(key):
+                query = f"INSERT INTO status_base(character_id,{key}) VALUES(%s,%s) RETURNING status_base_id;;"
+                parameters = (self.character_id,value,)
+                db = Db()
+                await db.connection_db()
+                await db.insert(query=query, parameters=parameters)
+                return True
             return False
         except Exception as e:
             print(e)
@@ -71,13 +53,12 @@ class CharacterStatusBase(Character):
     async def delete_status_base(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """DELETE from status_base
-                        WHERE id_personagem=%s;"""
-                        await mycursor.execute(query, (self.character_id))
-                        await conn.commit()
-                        return True
+                query = """DELETE from status_base
+                WHERE character_id=%s;"""
+                parameters = (self.character_id)
+                db = Db()
+                await db.connection_db()
+                return await db.delete(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)
@@ -86,27 +67,27 @@ class CharacterStatusBase(Character):
     async def load_status_base(self):
         try:
             if self.character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = """SELECT vida,xp,nivel,alinhamento,antecendente,faccao,inspiracao,ca,iniciativa,deslocamento,vida_atual,vida_temporaria
-                        FROM status_base
-                        WHERE id_personagem = %s;"""
-                        await mycursor.execute(query, (self.character_id,))
-                        result = await mycursor.fetchone()
-                        if result:
-                            self.hit_points = result[0]
-                            self.experience_points = result[1]
-                            self.level = result[2]
-                            self.alignment = result[3] 
-                            self.background = result[4] 
-                            self.faction = result[5]  
-                            self.inspiration = result[6]
-                            self.armor_class = result[7]
-                            self.initiative = result[8]
-                            self.movement = result[9]
-                            self.current_hit_points = result[10]
-                            self.temporary_hit_points = result[11]     
-                            return True
+                query = """SELECT hit_points, experience_points, level, alignment, background, faction, inspiration, armor_class, initiative, movement, current_hit_points, temporary_hit_points
+                FROM status_base
+                WHERE character_id = %s;"""
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters, all=False)
+                if result:
+                    self.hit_points = result[0]
+                    self.experience_points = result[1]
+                    self.level = result[2]
+                    self.alignment = result[3] 
+                    self.background = result[4] 
+                    self.faction = result[5]  
+                    self.inspiration = result[6]
+                    self.armor_class = result[7]
+                    self.initiative = result[8]
+                    self.movement = result[9]
+                    self.current_hit_points = result[10]
+                    self.temporary_hit_points = result[11]     
+                    return True
                 return True
             return False
         except Exception as e:
@@ -115,17 +96,15 @@ class CharacterStatusBase(Character):
         
     async def update_status_base(self,key,value):
         try:
-            condition, key = self.valid_key(key)
-            if self.character_id and condition:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = f"""UPDATE status_base
-                        SET {key}=%s
-                        WHERE id_personagem=%s;"""
-                        parameters = (value,self.character_id)
-                        await mycursor.execute(query, parameters)
-                        await conn.commit()
-                        return True
+            
+            if self.character_id and self.valid_key(key):
+                query = f"""UPDATE status_base
+                SET {key}=%s
+                WHERE character_id=%s;"""
+                parameters = (value, self.character_id)
+                db = Db()
+                await db.connection_db()
+                return await db.update(query=query, parameters=parameters)
             return False
         except Exception as e:
             print(e)

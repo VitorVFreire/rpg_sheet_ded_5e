@@ -72,7 +72,7 @@ class SavingThrow:
         
     async def insert_saving_throw(self):
         try:
-            query = "INSERT INTO saving_throw (saving_throw_name) VALUES (%s);"
+            query = "INSERT INTO saving_throw (saving_throw_name) VALUES (%s) RETURNING saving_throw_id;;"
             parameters = (str(self.saving_throw_name),)
             db = Db()
             await db.connection_db()

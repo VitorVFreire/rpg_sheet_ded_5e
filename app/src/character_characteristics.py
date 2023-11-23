@@ -48,7 +48,7 @@ class CharacterCharacteristics(Character, Image):
             if self.character_id and key in key_possibility:
                 query = f"""INSERT INTO character_characteristic
                 (character_id,{key}) 
-                VALUES(%s,%s);"""
+                VALUES(%s,%s) RETURNING character_characteristic_id;;"""
                 parameters = (self.character_id, value,)
                 db = Db()
                 await db.connection_db()

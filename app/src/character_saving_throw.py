@@ -28,7 +28,7 @@ class CharacterSavingThrowTest(CharacterAttribute):
                 query = """
                     INSERT INTO character_saving_throw 
                     (character_id, saving_throw_id)
-                    VALUES (%s, %s)
+                    VALUES (%s, %s) RETURNING character_saving_throw_id;
                 """
                 parameters = (self.character_id,saving_throw_id,)
                 db = Db()

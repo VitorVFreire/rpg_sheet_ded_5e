@@ -74,7 +74,7 @@ class Character(User, Moeda):
                 query = """
                     INSERT INTO character_class 
                     (character_id, class_id)
-                    VALUES (%s, %s)
+                    VALUES (%s, %s);
                 """
                 parameters = (self.character_id, class_id)
                 db = Db()

@@ -60,7 +60,7 @@ class CharacterAttribute(Character):
         try:
             condition, key = self.check_value(key=key, value=value)
             if self.character_id and condition:
-                query = f"INSERT INTO character_attribute(character_id,{key}) VALUES(%s,%s);"
+                query = f"INSERT INTO character_attribute(character_id,{key}) VALUES(%s,%s) RETURNING character_attribute_id;;"
                 parameters = (self.character_id, value,)
                 db = Db()
                 await db.connection_db()
