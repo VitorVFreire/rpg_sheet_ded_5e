@@ -21,9 +21,11 @@ function SavingThrow(props) {
             try {
                 const response = await fetch('/' + url + '/' + props.id);
                 const data = await response.json();
-                if (data !== false) {
-                    setSavingThrow(data);
-                    setCheckedSavingThrows(data.saving_throw_name_list || []);
+                if (data.result !== false) {
+                    if (data.data !== null) {
+                        setSavingThrow(data.data);
+                        setCheckedSavingThrows(data.data.saving_throw_name_list || []);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }

@@ -77,15 +77,18 @@ async def create_tables():
                     equipment_name VARCHAR(100) NOT NULL,
                     description_equipment VARCHAR(200),
                     price FLOAT,
-                    coin_id SERIAL REFERENCES coin(coin_id) ON DELETE CASCADE NOT NULL,
+                    coin_id SERIAL REFERENCES coin(coin_id) ON DELETE CASCADE,
                     weight FLOAT,
                     armor_class INT,
                     amount_dice INT,
                     side_dice INT,
-                    type_damage_id SERIAL REFERENCES type_damage(type_damage_id) ON DELETE CASCADE NOT NULL,
+                    type_damage_id SERIAL REFERENCES type_damage(type_damage_id) ON DELETE CASCADE,
                     bonus VARCHAR(20),
                     equipment_image VARCHAR(200)
                 );
+                
+                ALTER TABLE equipment
+                ALTER COLUMN type_damage_id DROP NOT NULL;
                 """)
 
                 await cursor.execute("""
@@ -97,7 +100,7 @@ async def create_tables():
                     attribute_use VARCHAR(30),
                     amount_dice INT,
                     side_dice INT,
-                    type_damage_id SERIAL REFERENCES type_damage(type_damage_id) ON DELETE CASCADE NOT NULL,
+                    type_damage_id SERIAL REFERENCES type_damage(type_damage_id) ON DELETE CASCADE,
                     add_per_level INT
                 );               
                 """)
@@ -369,6 +372,13 @@ async def insert_default_values():
                     ('poison'),
                     ('psychic'),
                     ('force');        
+                """)
+                
+                await cursor.execute("""
+                INSERT INTO kind_equipment(kind_equipment_name) 
+                VALUES
+                    ('shild'),
+                    ('sword');        
                 """)
                 
                 await cursor.execute("""

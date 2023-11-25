@@ -2,6 +2,8 @@ from .database import Db
 from .image import Image
 from .user import User
 from .type_damage import TypeDamage
+from .kind_equipment import KindEquipment
+from .coin import Coin
 from .skill import Skill
 from .race import Race
 from .classe import Classe

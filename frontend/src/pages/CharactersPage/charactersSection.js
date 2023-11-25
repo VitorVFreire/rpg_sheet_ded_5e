@@ -9,8 +9,10 @@ function CharactersSection() {
       try {
         const response = await fetch('/characters');
         const data = await response.json();
-        if (data !== false) {
-          setCharacters(data);
+        if (data.result !== false) {
+          if (data.data !== null){
+            setCharacters(data.data);
+          }
         } else {
           console.error('Erro ao buscar dados');
         }

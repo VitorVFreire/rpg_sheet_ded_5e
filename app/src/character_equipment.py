@@ -41,7 +41,7 @@ class CharacterEquipment(Character, Image):
     async def insert_equipment(self):
         try:
             if self.character_id:
-                query = "INSERT INTO character_equipment(equipment_id, character_id, amount) VALUES(%s,%s,%s);"
+                query = "INSERT INTO character_equipment(equipment_id, character_id, amount) VALUES(%s,%s,%s) RETURNING character_equipment_id;"
                 parameters = (self.__equipment_id, self.character_id, self.__amount)
                 db = Db()
                 await db.connection_db()

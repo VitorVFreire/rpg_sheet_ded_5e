@@ -28,8 +28,10 @@ function Attribute(props) {
             try {
                 const response = await fetch('/attributes/' + props.id);
                 const data = await response.json();
-                if (data !== false) {
-                    setAttribute(data);
+                if (data.result !== false) {
+                    if (data.data !== null){
+                        setAttribute(data.data);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }

@@ -10,8 +10,10 @@ function Character(props) {
             try {
                 const response = await fetch('/character/' + props.id);
                 const data = await response.json();
-                if (data !== false) {
-                    setCharacter(data);
+                if (data.result !== false) {
+                    if (data.data !== null) {
+                        setCharacter(data.data);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }

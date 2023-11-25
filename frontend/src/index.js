@@ -8,6 +8,8 @@ import CharactersPage from './pages/CharactersPage';
 import CharacterPage from './pages/CharacterPage';
 import CreateCharacter from './pages/CreateCharacter'
 import CreateUser from './pages/CreateUser';
+import EquipmentRegister from './pages/EquipmentRegister';
+import AddEquipment from './pages/AddEquipment';
 
 const idUser = window.initialData || false;
 
@@ -21,6 +23,8 @@ root.render(
       <Route path="/create_character" element={<CreateCharacter idUser={idUser} />} />
       <Route path='/characters_page' element={<CharactersPage idUser={idUser} />} />
       <Route path='/character_page/:id' element={<CharacterPage idUser={idUser} />} />
+      <Route path="/equipment_register" element={<EquipmentRegister idUser={idUser} />} />
+      <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />
     </Routes>
   </Router>
 );

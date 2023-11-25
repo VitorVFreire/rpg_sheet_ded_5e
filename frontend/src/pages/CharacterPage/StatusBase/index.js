@@ -41,8 +41,10 @@ function StatusBase(props) {
             try {
                 const response = await fetch('/status_base/' + props.id);
                 const data = await response.json();
-                if (data !== false) {
-                    setStatusBase(data);
+                if (data.result !== false) {
+                    if (data.data !== null){
+                        setStatusBase(data.data);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }

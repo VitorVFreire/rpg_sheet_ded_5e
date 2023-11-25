@@ -33,9 +33,11 @@ function Skill(props) {
             try {
                 const response = await fetch('/' + url + '/' + props.id);
                 const data = await response.json();
-                if (data !== false) {
-                    setSkills(data.skills);
-                    setCheckedSkills(data.character_skills || []);
+                if (data.result !== false) {
+                    if (data.data !== null) {
+                        setSkills(data.data.skills);
+                        setCheckedSkills(data.data.character_skills || []);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }

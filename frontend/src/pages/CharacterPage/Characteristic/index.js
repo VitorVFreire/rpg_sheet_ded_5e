@@ -30,8 +30,10 @@ function Characteristics(props) {
             try {
                 const response = await fetch('/characteristics/' + props.id);
                 const data = await response.json();
-                if (data !== false) {
-                    setCharacteristics(data);
+                if (data.result !== false) {
+                    if (data.data !== null) {
+                        setCharacteristics(data.data);
+                    }
                 } else {
                     console.error('Erro ao buscar dados');
                 }

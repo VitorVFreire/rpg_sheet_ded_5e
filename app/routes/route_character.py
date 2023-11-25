@@ -14,7 +14,7 @@ async def get_characters():
         character = Character(user_id=user_id)
 
         if await character.load_characters():
-            return jsonify(character.characters), 200
+            return jsonify({'result': True,'data': character.characters}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
@@ -27,7 +27,7 @@ async def get_character(character_id):
         character = Character(user_id=user_id, character_id=character_id)
 
         if await character.character_belongs_user() and await character.load_character():
-            return jsonify(character.character), 200
+            return jsonify({'result': True,'data': character.character}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
@@ -87,8 +87,10 @@ async def get_character_characteristics(character_id):
 
         await character.character_belongs_user()
         
-        if await character.load_characteristics():
-            return jsonify(character.characteristic), 200
+        if await character.exists_characteristics() is False:
+            return jsonify({'result': True, 'data': None}), 200
+        elif await character.load_characteristics():
+            return jsonify({'result': True, 'data': character.characteristic}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
@@ -124,9 +126,11 @@ async def get_character_attribute(character_id):
 
         await character.character_belongs_user()
 
-        if await character.exists_attributes():
-            await character.load_attributes()
-        return jsonify(character.attributes)
+        if await character.exists_attributes() is False:
+            return jsonify({'result': True, 'data': None}), 200
+        elif await character.load_attributes():
+            return jsonify({'result': True,'data': character.attributes})
+        return jsonify({'result': False})
     except Exception as e:
         print(e)
         return 404
@@ -174,11 +178,11 @@ async def get_character_saving_throw(character_id):
 
         await character.character_belongs_user()
 
-        if await character.exists_attributes():
-            await character.load_attributes()
-            await character.load_saving_throws()
-
-        return jsonify(character.saving_throws), 200
+        if await character.exists_attributes() is False:
+            return jsonify({'result': True, 'data': None}), 200
+        elif await character.load_attributes() and await character.load_saving_throws():
+            return jsonify({'result': True,'data': character.saving_throws}), 200
+        return jsonify({'result': False})
     except Exception as e:
         print(e)
         return 404
@@ -241,9 +245,10 @@ async def get_character_status_base(character_id):
         character = CharacterStatusBase(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
-
-        if await character.load_status_base():
-            return jsonify(character.status_base), 200
+        if await character.exists_status_base() is False:
+            return jsonify({'result': True, 'data': None}), 200
+        elif await character.load_status_base():
+            return jsonify({'result': True,'data': character.status_base}), 200
         return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
@@ -393,7 +398,7 @@ async def get_character_equipment(character_id):
         await character.character_belongs_user()
 
         if await character.exists_equipment() is False:
-            return jsonify({'result': True, 'data': None}), 200
+            return jsonify({'result': True, 'data': None}), 200, 200
         elif await character.load_equipments():
             return jsonify({'result': True, 'data': character.list_equipments}), 200
         return jsonify({'result': False}), 404
@@ -405,9 +410,9 @@ async def get_character_equipment(character_id):
 async def post_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        e = request.form.get('equipment_id')
-        amount = request.form.get('qtd')
-        character = CharacterEquipment(amount=amount, e=e, user_id=user_id, character_id=character_id)
+        equipment_id = request.form.get('key')
+        amount = request.form.get('amount', default=1)
+        character = CharacterEquipment(amount=amount, equipment_id = equipment_id, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -420,9 +425,9 @@ async def post_character_equipment(character_id):
 async def put_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        e = request.form.get('equipment_id')
-        amount = request.form.get('qtd')
-        character = CharacterEquipment(amount=amount, e=e, user_id=user_id, character_id=character_id)
+        equipment_id = request.form.get('key')
+        amount = request.form.get('amount')
+        character = CharacterEquipment(amount=amount, equipment_id=equipment_id, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -435,8 +440,8 @@ async def put_character_equipment(character_id):
 async def delete_character_equipment(character_id):
     try:
         user_id = session.get('user_id')
-        e = request.form.get('equipment_id')
-        character = CharacterEquipment(e=e, user_id=user_id, character_id=character_id)
+        equipment_id = request.form.get('key')
+        character = CharacterEquipment(equipment_id=equipment_id, user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 

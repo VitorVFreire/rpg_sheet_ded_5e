@@ -147,42 +147,46 @@ async def insert_spell():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/criar_equipamento')
+@app.route('/equipment_register')
 async def new_equipment():
     user = User(user_id=session.get('user_id'))
     
     if await user.valid_admin_user():
-        equipment_type = Equipment()
-        await equipment_type.load_type_equipment()
-        return render_template('admin/add_equipamento.html',titulo='Novo equipamento', tipo_equipamentos = equipment_type.type_equipments)
+        return render_template('index.html', id=session.get('user_id')), 200
     return redirect(url_for('index'))
     
-@app.post('/criar_equipamento')
+@app.post('/equipment_register')
 async def insert_equipment():
     try:
         user = User(user_id=session.get('user_id'))
         
         if await user.valid_admin_user():
-            equipment_id_type = request.form.get("id_tipo_equipamento") 
-            equipment_name = request.form.get('nome_equipamento')
-            description = request.form.get('descricao')
-            price = request.form.get('preco')
-            weight = request.form.get('peso')
-            ca = request.form.get('ca')
-            dice = request.form.get('dado')
-            bonus = request.form.get('bonus')
-            equipment_image = request.files.get('imagem_equipamento')
+            kind_equipment_id = request.form.get("kind_equipment_id", default=None) 
+            equipment_name = request.form.get('equipment_name', default=None)
+            description_equipment = request.form.get('description_equipment', default=None)
+            price = request.form.get('price', default=None)
+            weight = request.form.get('weight', default=None)
+            armor_class = request.form.get('armor_class', default=None)
+            bonus = request.form.get('bonus', default=None)
+            equipment_image = request.files.get('equipment_image', default=None)
+            amount_dice = request.form.get('amount_dice', default=None)
+            side_dice = request.form.get('side_dice', default=None)
+            type_damage_id = request.form.get('type_damage_id', default=None)
+            coin_id = request.form.get('coin_id', default=None)
             
             equipment = Equipment(
-                equipment_id_type=equipment_id_type,
+                kind_equipment_id=kind_equipment_id,
                 equipment_name=equipment_name,
-                description=description,
+                description_equipment=description_equipment,
                 price=price,
                 weight=weight,
-                ca=ca,
-                dice=dice,
+                armor_class=armor_class,
+                amount_dice = amount_dice,
+                side_dice = side_dice,
                 bonus=bonus,
-                equipment_image=equipment_image
+                equipment_image=equipment_image,
+                type_damage_id = type_damage_id, 
+                coin_id = coin_id
             )
             
             return jsonify({'result': await equipment.insert_equipment()})

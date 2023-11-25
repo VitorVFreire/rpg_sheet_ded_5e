@@ -4,7 +4,7 @@ from flask import url_for
 from src import Image, Db
 
 class Equipment(Image):
-    def __init__(self, equipment_id = None, kind_equipment_id = None, kind_equipment_name = None, equipment_name = None, description_equipment = None, price = None, weight = None, armor_class = None, amount_dice = None, side_dice = None, bonus = None, name = None, equipment_image = None, type_damage_name = None, coin_name = None):
+    def __init__(self, equipment_id = None, kind_equipment_id = None, kind_equipment_name = None, equipment_name = None, description_equipment = None, price = None, weight = None, armor_class = None, amount_dice = None, side_dice = None, bonus = None, name = None, equipment_image = None, type_damage_id = None, coin_id = None):
         super().__init__(parameters=equipment_id,name=name)
         self.__kind_equipment_id = [kind_equipment_id]
         self.__kind_equipment_name = [kind_equipment_name]
@@ -18,16 +18,18 @@ class Equipment(Image):
         self.__side_dice = [side_dice]
         self.__bonus = [bonus]
         self.__equipment_image = [equipment_image]
-        self.__coin_name = [coin_name]
-        self.__type_damage_name = [type_damage_name]
+        self.__coin_name = []
+        self.__type_damage_name = []
         self.__character_equipments = []
+        self.__coin_id = coin_id
+        self.__type_damage_id = type_damage_id
     
     @property
     def equipment_image(self):
         return self.__equipment_image
             
     @equipment_image.setter
-    def equipment_image(self, value):
+    def equipment_image_set(self, value):
         self.name = value
         self.__equipment_image.append(self.url_img)
         
@@ -43,7 +45,7 @@ class Equipment(Image):
                 'description_equipment': description_equipment,  
                 'price': price, 
                 'weight': weight, 
-                'armor_clas': armor_clas,
+                'armor_clas': armor_class,
                 'amount_dice': amount_dice,
                 'side_dice': side_dice,
                 'bonus': bonus,
@@ -52,7 +54,8 @@ class Equipment(Image):
                 'type_damage_name': type_damage_name,
                 'character_has': equipment_id in self.__character_equipments
             })
-        return equipments if equipments[0]['equipment_id'] is not None else None
+
+        return equipments if equipments is not None else None
     
     @property
     def equipment(self):
@@ -84,13 +87,13 @@ class Equipment(Image):
             self.__description_equipment.clear()
             self.__price.clear()
             self.__weight.clear()
-            self.__ca.clear()
+            self.__armor_class.clear()
             self.__amount_dice.clear()
             self.__side_dice.clear()
             self.__bonus.clear()
             self.__equipment_image.clear()
-            self.__coin_name.clear()
-            self.__type_damage_name.clear()
+            self.__kind_equipment_name = []
+            self.__coin_name = []
 
     @property
     def type_equipments(self):
@@ -126,10 +129,10 @@ class Equipment(Image):
                 parameters = (character_id,)
                 db = Db()
                 await db.connection_db()
-                result = await db.select(query=query, parameters=parameters, all=False)
+                result = await db.select(query=query, parameters=parameters)
                 if result:
                     for row in result:
-                        self.__character_equipments.append(row[0])              
+                        self.__character_equipments.append(row[0])     
                     return True
             return False
         except Exception as e:
@@ -141,7 +144,7 @@ class Equipment(Image):
             query = """SELECT eq.kind_equipment_id, eq.equipment_name, eq.description_equipment, eq.price, eq.weight, eq.armor_class, eq.amount_dice, eq.side_dice, eq.bonus, eq.equipment_id, te.kind_equipment_name, eq.equipment_image, td.type_damage_name, cn.coin_name 
             FROM equipment eq
             JOIN kind_equipment te ON eq.kind_equipment_id = te.kind_equipment_id
-            JOIN type_damage td ON td.type_damage_id = eq.type_damage_id
+            LEFT JOIN type_damage td ON td.type_damage_id = eq.type_damage_id
             JOIN coin cn ON cn.coin_id = eq.coin_id;"""
             db = Db()
             await db.connection_db()
@@ -160,7 +163,7 @@ class Equipment(Image):
                     self.__bonus.append(row[8])
                     self.__equipment_id.append(row[9])
                     self.__kind_equipment_name.append(row[10])
-                    self.equipment_image = row[11]
+                    self.equipment_image_set = row[11]
                     self.__type_damage_name.append(row[12])
                     self.__coin_name.append(row[13])
                 return True
@@ -174,7 +177,7 @@ class Equipment(Image):
             query = """SELECT eq.kind_equipment_id, eq.equipment_name, eq.description_equipment, eq.price, eq.weight, eq.armor_class, eq.amount_dice, eq.side_dice, eq.bonus, te.kind_equipment_name, eq.equipment_image, td.type_damage_name, cn.coin_name 
             FROM equipment eq
             JOIN kind_equipment te ON eq.kind_equipment_id = te.kind_equipment_id
-            JOIN type_damage td ON td.type_damage_id = eq.type_damage_id
+            LEFT JOIN type_damage td ON td.type_damage_id = eq.type_damage_id
             JOIN coin cn ON cn.coin_id = eq.coin_id
             WHERE eq.equipment_id = %s;"""
             parameters = (self.equipment_id,)
@@ -192,25 +195,26 @@ class Equipment(Image):
                 self.__amount_dice.append(result[6])
                 self.__side_dice.append(result[7])
                 self.__bonus.append(result[8])
-                self.__kind_equipment_name(result[9])
-                self.equipment_image(result[10])
-                self.__type_damage_name(result[11])
-                self.__coin_name(result[12])
+                self.__kind_equipment_name.append(result[9])
+                self.equipment_image_set(result[10])
+                self.__type_damage_name.append(result[11])
+                self.__coin_name.append(result[12])
                 return True
             return False
         except Exception as e:
             print(e)
             return False
 
-    async def insert_equipment(self, type_damage_id, coin_id):
+    async def insert_equipment(self):
         try:
             if self.kind_equipment_id:
                 self.__equipment_image[0] = self.save_equipment_image(self.equipment_image) if self.equipment_image is not None else None
-                query = "INSERT INTO equipment (kind_equipment_id, equipment_name, description_equipment, price, weight, armor_class, amount_dice, side_dice, bonus, equipment_image, type_damage_id, coin_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING equipment_id;"
-                parameters = (self.kind_equipment_id, self.equipment_name, self.description_equipment, self.price, self.weight, self.armor_class, self.amount_dice, self.side_dice, self.bonus, self.equipment_image, type_damage_id, coin_id)
+                query = "INSERT INTO equipment (kind_equipment_id, equipment_name, description_equipment, price, weight, armor_class, amount_dice, side_dice, bonus, equipment_image, type_damage_id, coin_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING equipment_id;"
+                parameters = (self.kind_equipment_id, self.equipment_name, self.description_equipment, self.price, self.weight, self.armor_class, self.amount_dice, self.side_dice, self.bonus, self.equipment_image, self.type_damage_id, self.__coin_id)
                 db = Db()
                 await db.connection_db()
                 self.__equipment_id[0] = await db.insert(query=query, parameters=parameters)   
+                print(self.__equipment_id)
                 return True
             return False
         except Exception as e:
@@ -293,12 +297,6 @@ class Equipment(Image):
         return self.__description_equipment[0]
     
     @property
-    def equipment_image(self):
-        if isinstance(self.__equipment_image, list) and self.__equipment_image[0] == '':
-            return None
-        return self.__equipment_image[0]
-    
-    @property
     def price(self):
         if isinstance(self.__price, list) and self.__price[0] == '':
             return None
@@ -339,4 +337,10 @@ class Equipment(Image):
         if isinstance(self.__coin_name, list) and self.__coin_name[0] == '':
             return None
         return self.__coin_name[0]
+    
+    @property
+    def type_damage_id(self):
+        if isinstance(self.__type_damage_id, list) or self.__type_damage_id == '':
+            return None
+        return self.__type_damage_id[0]
     

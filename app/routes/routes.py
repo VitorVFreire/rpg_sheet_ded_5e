@@ -4,7 +4,7 @@ import asyncio
 
 from main import app
 from src import Skill, Race, Classe, SavingThrow, Spell, Equipment
-from src import Character, User, Room, Image
+from src import Character, User, Room, Image, KindEquipment, TypeDamage, Coin
 
 @app.route('/')
 def index():
@@ -117,6 +117,45 @@ async def get_races():
     except Exception as e:
         print(e)
         abort(404)
+        
+@app.get('/types_damage')
+async def get_type_damage():
+    try:
+        if session.get('user_id') is None:
+            abort(403)
+        
+        type_damage = TypeDamage()
+                
+        return jsonify(await type_damage.types_damage)
+    except Exception as e:
+        print(e)
+        abort(404)
+        
+@app.get('/kind_equipments')
+async def get_kind_equipment():
+    try:
+        if session.get('user_id') is None:
+            abort(403)
+        
+        kind_equipment = KindEquipment()
+        
+        return jsonify(await kind_equipment.kind_equipments)
+    except Exception as e:
+        print(e)
+        abort(404)
+        
+@app.get('/coins')
+async def get_coin():
+    try:
+        if session.get('user_id') is None:
+            abort(403)
+        
+        coin = Coin()
+        
+        return jsonify(await coin.coins)
+    except Exception as e:
+        print(e)
+        abort(404)
             
 @app.route('/characters_page')
 async def characters():
@@ -144,7 +183,7 @@ async def character(character_id):
         print(e)
         abort(403, 'Error: 403\nAcesso Negado')
                  
-@app.route('/character/spell/<character_id>')
+@app.route('/add_spell/<character_id>')
 async def render_character_spell(character_id):
     try:
         spell = Spell()
@@ -157,14 +196,28 @@ async def render_character_spell(character_id):
         print(e)
         abort(404)
         
-@app.route('/personagem/adicionar_equipamento/<character_id>')
+@app.route('/add_equipment/<character_id>')
 async def render_character_equipment(character_id):
+    try:
+        character = Character()
+        
+        #await character.character_belongs_user()
+        
+        return render_template('index.html', id=session.get('user_id')), 200
+    except Exception as e:
+        print(e)
+        abort(404)
+
+@app.route('/get_equipment/<character_id>')
+async def get_character_equipments(character_id):
     try:
         equipments = Equipment()
         
-        await equipments.load_equipments()
-        await equipments.load_character_equipments(character_id=character_id)
-        return render_template('adicionar_equipamento_personagem.html', equipamentos = equipments.equipments, id_personagem = character_id), 200
+        if await equipments.load_equipments():
+            await equipments.load_character_equipments(character_id=character_id)
+
+            return jsonify({'result': True,'data': equipments.equipments})
+        return jsonify({'result': False})
     except Exception as e:
         print(e)
         abort(404)
