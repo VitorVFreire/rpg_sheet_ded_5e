@@ -57,8 +57,8 @@ class CharacterEquipment(Character, Image):
             if self.character_id:
                 query = f"""UPDATE character_equipment
                 SET amount=%s
-                WHERE character_equipment_id=%s;"""
-                parameters = (self.__amount, self.__equipment_id)
+                WHERE equipment_id=%s AND character_id = %s;"""
+                parameters = (self.__amount, self.__equipment_id, self.character_id)
                 db = Db()
                 await db.connection_db()
                 return await db.update(query=query, parameters=parameters)
@@ -71,7 +71,7 @@ class CharacterEquipment(Character, Image):
         try:
             if self.character_id:
                 query = """DELETE from character_equipment
-                WHERE equipment_id=%s and character_id = %s;"""
+                WHERE equipment_id=%s AND character_id = %s;"""
                 parameters = (self.__equipment_id, self.character_id)
                 db = Db()
                 await db.connection_db()

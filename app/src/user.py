@@ -170,7 +170,7 @@ class User:
                 if result:
                     image = Image()
                     for row in result:
-                        image.user_name = row[4]
+                        image.name = row[4]
                         self._characters.append({'character_id':row[0],'character_name':row[1],'race_name':row[2],'race_id':row[3],'img': image.url_img})
                     return True
             return 'Sem Personagens no Banco', False

@@ -56,7 +56,7 @@ class Image:
     @property
     def img_default(self):
         self.directory = pathlib.Path('static/img')
-        arquivo = list(self.directory.glob('personagem.png'))
+        arquivo = list(self.directory.glob('img_default.jpg'))
         return str(arquivo[0])
     
     @property

@@ -3,6 +3,9 @@ from flask import url_for
 
 from src import Image, Db
 
+def bool_id(id, data):
+    return id in data
+
 class Equipment(Image):
     def __init__(self, equipment_id = None, kind_equipment_id = None, kind_equipment_name = None, equipment_name = None, description_equipment = None, price = None, weight = None, armor_class = None, amount_dice = None, side_dice = None, bonus = None, name = None, equipment_image = None, type_damage_id = None, coin_id = None):
         super().__init__(parameters=equipment_id,name=name)
@@ -52,7 +55,8 @@ class Equipment(Image):
                 'equipment_image': equipment_image,
                 'coin_name': coin_name,
                 'type_damage_name': type_damage_name,
-                'character_has': equipment_id in self.__character_equipments
+                'character_has': any(equipment_id == equipment['equipment_id'] for equipment in self.__character_equipments),
+                'amount': [amount['amount'] if equipment_id == amount['equipment_id'] else 0 for amount in self.__character_equipments][0]
             })
 
         return equipments if equipments is not None else None
@@ -74,7 +78,8 @@ class Equipment(Image):
             'coin_name': self.coin_name,
             'type_damage_name': self.type_damage_name,
             'equipment_image': self.equipment_image,
-            'character_has': self.__equipment_id in self.__character_equipments
+            'character_has': self.__equipment_id in self.__character_equipments[0]['equipment_id'],
+            'amount_equipments': self.__character_equipments[0]['amount'] if self.__equipment_id in self.__character_equipments[0]['equipment_id'] else 0
         }
         return equipment if equipment['equipment_id'] is not None else None
     
@@ -125,14 +130,14 @@ class Equipment(Image):
     async def load_character_equipments(self, character_id):
         try:
             if character_id:
-                query = """SELECT equipment_id FROM character_equipment WHERE character_id = %s;"""
+                query = """SELECT equipment_id, amount FROM character_equipment WHERE character_id = %s;"""
                 parameters = (character_id,)
                 db = Db()
                 await db.connection_db()
                 result = await db.select(query=query, parameters=parameters)
                 if result:
                     for row in result:
-                        self.__character_equipments.append(row[0])     
+                        self.__character_equipments.append({'equipment_id': row[0], 'amount': row[1]}) 
                     return True
             return False
         except Exception as e:
