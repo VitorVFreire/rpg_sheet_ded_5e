@@ -186,12 +186,24 @@ async def character(character_id):
 @app.route('/add_spell/<character_id>')
 async def render_character_spell(character_id):
     try:
+        character = Character()
+        
+        #await character.character_belongs_user()
+                
+        return render_template('index.html', id=session.get('user_id')), 200
+    except Exception as e:
+        print(e)
+        abort(404)
+        
+@app.route('/get_spell/<character_id>')
+async def get_character_spells(character_id):
+    try:
         spell = Spell()
         
-        await spell.load_spells()
-        await spell.load_character_spells(character_id)
-                
-        return render_template('adicionar_habilidade_personagem.html', habilidades = await spell.spells, id_personagem = character_id), 200
+        if await spell.load_spells():
+            await spell.load_character_spells(character_id=character_id)
+            return jsonify({'result': True, 'data': await spell.spells})
+        return jsonify({'result': False})
     except Exception as e:
         print(e)
         abort(404)
@@ -201,7 +213,7 @@ async def render_character_equipment(character_id):
     try:
         character = Character()
         
-        #await character.character_belongs_user()
+        await character.character_belongs_user()
         
         return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
@@ -215,8 +227,7 @@ async def get_character_equipments(character_id):
         
         if await equipments.load_equipments():
             await equipments.load_character_equipments(character_id=character_id)
-
-            return jsonify({'result': True,'data': equipments.equipments})
+            return jsonify({'result': True, 'data': equipments.equipments})
         return jsonify({'result': False})
     except Exception as e:
         print(e)

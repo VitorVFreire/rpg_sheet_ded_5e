@@ -32,7 +32,7 @@ function CharacterPage(props) {
                     <StatusBase id={id} />
                 </div>
                 <div className='footer'>
-                    <h3>Spell: </h3> <ButtonLink link={'/character/spell/' + id} text='Adicionar Mágia'/>
+                    <h3>Spell: </h3> <ButtonLink link={'/add_spell/' + id} text='Adicionar Mágia'/>
                     <Spell id={id} />
                 </div>
             </div>

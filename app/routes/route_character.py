@@ -336,7 +336,7 @@ async def delete_character_skill(character_id):
         return 404
 
 @app.get('/spell/<character_id>')
-async def get_character_spells(character_id):
+async def get_character_spell(character_id):
     try:
         user_id = session.get('user_id')
         character = CharacterSpell(user_id=user_id, character_id=character_id)
@@ -364,7 +364,7 @@ async def post_character_spell(character_id):
 
         await character.character_belongs_user()
         
-        spell_id = request.form.get('spell_id')
+        spell_id = request.form.get('key')
         
         return jsonify({'result': await character.insert_spell(spell_id=spell_id)}), 200
     except Exception as e:
@@ -379,8 +379,8 @@ async def delete_character_spell(character_id):
 
         await character.character_belongs_user()
         
-        spell_id = request.form.get('spell_id')
-        
+        spell_id = request.form.get('key')
+
         if await character.exists_specific_spell(spell_id=spell_id):
             return jsonify({'result': await character.delete_spell(character_id_spell=spell_id)}), 200
         return jsonify({'result': False}), 404

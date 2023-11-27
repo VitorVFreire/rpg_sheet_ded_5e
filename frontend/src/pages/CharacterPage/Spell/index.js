@@ -35,13 +35,13 @@ function Spell(props) {
             {spells.map((spell, index) => (
                 <div id='spell' className='spell'>
                     <div>
-                        <DeleteButton url='spell' keyData='spell_id' outherId={spell.spell_id} characterId={props.id} onCharacterDeleted={handleCharacterDeleted} />
+                        <DeleteButton url='spell' keyData='key' outherId={spell.spell_id} characterId={props.id} onCharacterDeleted={handleCharacterDeleted} />
                     </div>
-                    <h4>{spell.nome_habilidade}</h4>
+                    <h4>{spell.spell_name}</h4>
                     <label>Nivel: {spell.spell_level}</label>
                     <label>Dados: {spell.amount_dice}D{spell.side_dice}</label>
                     <label>Bonus: {spell.attribute_use}</label>
-                    <label>Tipo de Dano: {spell.type_damage}</label>
+                    <label>Tipo de Dano: {spell.type_damage_name}</label>
                     <label>Detalhes: {spell.description_spell}</label>
                 </div>
             ))}

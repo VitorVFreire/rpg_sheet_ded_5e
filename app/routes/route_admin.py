@@ -107,38 +107,38 @@ async def insert_saving_throw_name():
         print(e)
         return jsonify({'result':False})
     
-@app.route('/criar_habilidade')
+@app.route('/spell_register')
 async def new_spell():
     user = User(user_id=session.get('user_id'))
     
     if await user.valid_admin_user():
-        return render_template('admin/add_habilidade.html',titulo='Nova habilidade')
+        return render_template('index.html', id=session.get('user_id')), 200
     return redirect(url_for('index'))
     
-@app.post('/criar_habilidade')
+@app.post('/spell_register')
 async def insert_spell():
     try:
         user = User(user_id=session.get('user_id'))
         
         if await user.valid_admin_user():
-            spell_name = request.form.get('nome_habilidade')
-            attribute_name = request.form.get('nome_atributo')
-            sides_dices = request.form.get('lados_dados')
-            link_details = request.form.get('link_detalhes')
-            damege_type = request.form.get('tipo_dano')
-            amount_dices = request.form.get('qtd_dados')
-            level_spell = request.form.get('nivel_habilidade')
-            additional_per_level = request.form.get('adicional_por_nivel')
+            spell_name = request.form.get('spell_name')
+            attribute_use = request.form.get('attribute_use')
+            side_dice = request.form.get('side_dice')
+            description_spell = request.form.get('description_spell')
+            type_damage_id = request.form.get('type_damage_id')
+            amount_dice = request.form.get('amount_dice')
+            spell_level = request.form.get('spell_level')
+            add_per_level = request.form.get('add_per_level')
             
             spell = Spell(
-                attribute_name=attribute_name,
-                sides_dices=sides_dices,
-                link_details=link_details,
+                attribute_use=attribute_use,
+                side_dice=side_dice,
+                description_spell=description_spell,
                 spell_name=spell_name,
-                damege_type=damege_type,
-                amount_dices=amount_dices,
-                level_spell=level_spell,
-                additional_per_level=additional_per_level
+                type_damage_id=type_damage_id,
+                amount_dice=amount_dice,
+                spell_level=spell_level,
+                add_per_level=add_per_level
                 )
             
             return jsonify({'result': await spell.insert_spell()})

@@ -8,12 +8,11 @@
 
 .content div {
     display: flex;
-    max-width: 100px;
     gap: 15%;
 }  
 
 .character {
-    max-width: 500px;
+    max-width: 80%;
     background-color: azure;
     border-radius: 20px;
     padding: 36px 64px;
@@ -25,8 +24,9 @@
 }
 
 .character img {
-    width: 75px;
-    height: 62px;
+    width: 50%;
+    height: 20%;
+    min-width: 50px;
 }
 
 a:visited,

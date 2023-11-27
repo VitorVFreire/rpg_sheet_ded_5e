@@ -84,8 +84,9 @@ class CharacterSpell(Character):
                 query = """SELECT sp.spell_id, sp.spell_name, sp.attribute_use, sp.spell_level, tp.type_damage_name, sp.amount_dice, sp.side_dice, sp.add_per_level, sp.description_spell, cs.character_spell_id
                 FROM character_spell cs
                 JOIN spell sp ON cs.spell_id = sp.spell_id
-                JOIN type_damage tp ON sp.type_damage_id = tp.type_damaga_id
-                WHERE cs.character_id = %s;"""
+                JOIN type_damage tp ON sp.type_damage_id = tp.type_damage_id
+                WHERE cs.character_id = %s;
+                """
                 parameters = (self.character_id,)
                 db = Db()
                 await db.connection_db()
@@ -97,7 +98,7 @@ class CharacterSpell(Character):
                             'spell_name': row[1],
                             'attribute_use': row[2],
                             'spell_level': row[3],
-                            'tipo_dano': row[4],
+                            'type_damage_name': row[4],
                             'amount_dice': row[5],
                             'side_dice': row[6],
                             'add_per_level': row[7],
