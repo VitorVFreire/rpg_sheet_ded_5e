@@ -1,14 +1,34 @@
 import './cartesian_plane.css';
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import io from 'socket.io-client';
 
-function CartesianPlane() {
+const socket = io('http://localhost:8085');
+
+function CartesianPlane(props) {
   const [isDragging, setIsDragging] = useState(false);
   const [draggedSquare, setDraggedSquare] = useState(null);
-  const [squares, setSquares] = useState([
-    { id: 0, x: 0, y: 0 },
-    { id: 1, x: 1, y: 1 }
-  ]);
+  const [squares, setSquares] = useState([]);
   const gridSize = 50;
+
+  useEffect(() => {
+    async function fetchSquares() {
+      try {
+        const response = await fetch('/squares');
+        const data = await response.json();
+        if (data.result !== false) {
+          if (data.data !== null) {
+            setSquares(data.data);
+          }
+        } else {
+          console.error('Erro ao buscar dados');
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+      }
+    }
+
+    fetchSquares();
+  }, []);
 
   const handleMouseDown = (id) => {
     setIsDragging(true);
@@ -49,6 +69,13 @@ function CartesianPlane() {
         )
       );
       console.log(`Movendo: id: ${id} ${x} ${y}`)
+      socket.emit('update_coordinates', {
+        room_id: props.room_id,
+        character_id: props.character_id,
+        square_id: id,
+        x,
+        y
+      });      
     }
   };
 

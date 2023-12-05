@@ -115,10 +115,14 @@ def on_join(data):
         print(e)
         return 403
     
-@socketio.on('updateSquare')
+@socketio.on('update_coordinates')
 def updateSquare(data):
     try:
         print(data)
     except Exception as e:
         print(e)
         return 403
+    
+@app.get('/squares')
+def squares():
+    return jsonify({'result': True,'data': [{'id': 0, 'x': 0, 'y': 0}, {'id': 1, 'x': 6, 'y': 1}, {'id': 3, 'x': 3, 'y': 9}]}), 200

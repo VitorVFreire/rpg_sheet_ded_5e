@@ -8,7 +8,7 @@ function RoomPage(props) {
     return (
         <div>
             <Navbar isLoggedIn={props.idUser} />
-            <CartesianPlane />
+            <CartesianPlane room_id={code_room} character_id={id}/>
         </div>
     );
 }
