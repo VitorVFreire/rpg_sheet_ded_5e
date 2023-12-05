@@ -12,6 +12,7 @@ import EquipmentRegister from './pages/EquipmentRegister';
 import AddEquipment from './pages/AddEquipment';
 import AddSpell from './pages/AddSpell';
 import SpellRegister from './pages/SpellRegister';
+import RoomPage from './pages/RoomPage';
 
 const idUser = window.initialData || false;
 
@@ -29,6 +30,7 @@ root.render(
       <Route path="/spell_register" element={<SpellRegister idUser={idUser} />} />
       <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />
       <Route path='/add_spell/:id' element={<AddSpell idUser={idUser} />} />
+      <Route path='/room/:code_room/:id' element={<RoomPage idUser={idUser} />} />
     </Routes>
   </Router>
 );

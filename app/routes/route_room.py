@@ -58,12 +58,11 @@ async def character_room(code_room, character_id):
     try:
         if session.get('user_id') is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
-        character = Character(user_id=session.get('user_id'), character_id=character_id)
-        room = Room(room_id=code_room, character_id=character_id)
+        #room = Room(room_id=code_room, character_id=character_id)
         
-        room.character_belongs_room()
+        #room.character_belongs_room()
         
-        return render_template('room_game.html', titulo = 'Room', room = code_room, id_personagem = character_id, nome_personagem = await character.character_name)
+        return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
@@ -112,6 +111,14 @@ def on_join(data):
             leave_room(room)
             join_room(room)
             socketio.emit('message', {'message': f'{character_name} join to room'}, room=room)
+    except Exception as e:
+        print(e)
+        return 403
+    
+@socketio.on('updateSquare')
+def updateSquare(data):
+    try:
+        print(data)
     except Exception as e:
         print(e)
         return 403
