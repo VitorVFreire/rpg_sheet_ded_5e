@@ -8,6 +8,7 @@ function CartesianPlane(props) {
   const [isDragging, setIsDragging] = useState(false);
   const [draggedSquare, setDraggedSquare] = useState(null);
   const [squares, setSquares] = useState([]);
+  const [background, setBackground] = useState(null);
   const gridSize = 50;
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function CartesianPlane(props) {
           if (data.data !== null) {
             setSquares(data.data);
           }
+          setBackground(data.background);
         } else {
           console.error('Erro ao buscar dados');
         }
@@ -28,6 +30,22 @@ function CartesianPlane(props) {
     }
 
     fetchSquares();
+
+    socket.emit('join_cartesian', { room_id: props.room_id });
+
+    socket.on('update_square', (updatedSquare) => {
+      setSquares((prevSquares) =>
+        prevSquares.map((square) =>
+          square.id === updatedSquare.id
+            ? { ...square, x: updatedSquare.x, y: updatedSquare.y }
+            : square
+        )
+      );
+    });
+
+    return () => {
+      socket.emit('leave_cartesian', { room_id: props.room_id });
+    };
   }, [props.room_id]);
 
   const handleMouseDown = (id) => {
@@ -50,7 +68,7 @@ function CartesianPlane(props) {
     setSquares((prevSquares) =>
       prevSquares.map((square) => ({ ...square, isDragging: false }))
     );
-    // Imprima o id, x e y do quadrado movido após ser solto
+
     if (movedSquare) {
       socket.emit('new_square_position', {
         room_id: props.room_id,
@@ -84,10 +102,19 @@ function CartesianPlane(props) {
     }
   };
 
+  if (background === null) {
+    return <div>Loading...</div>;
+  }
+  console.log(background)
+
   return (
     <div className="App">
       <div
         className="cartesian-plane"
+        style={{
+          backgroundImage: `url('${background}')`,
+          backgroundSize: 'cover',
+        }}
         onMouseUp={handleMouseUp}
         onMouseMove={(e) => {
           handleMouseMove(e, draggedSquare);

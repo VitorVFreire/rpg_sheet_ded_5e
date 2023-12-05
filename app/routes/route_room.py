@@ -115,10 +115,38 @@ def on_join(data):
         print(e)
         return 403
     
+@socketio.on('join_cartesian')
+def on_join(data):
+    try:
+        #user_id = session.get('user_id')
+        #character_id = data.get('id_personagem')
+        room = data.get('room_id')
+        print('njsndfljsl')
+        leave_room(room)
+        join_room(room)
+    except Exception as e:
+        print(e)
+        return 403
+
+@socketio.on('leave_cartesian')
+def on_leave(data):
+    try:
+        room = data.get('room_id')
+        leave_room(room)
+    except Exception as e:
+        print(e)
+        return 403
+    
 @socketio.on('update_coordinates')
 def updateSquare(data):
     try:
         print(data)
+        square_id = data.get('square_id')
+        x = data.get('x')
+        y = data.get('y')
+        room = data.get('room_id')
+        
+        socketio.emit('update_square', {'id': square_id, 'x': x, 'y': y}, room=room)
     except Exception as e:
         print(e)
         return 403
@@ -129,6 +157,12 @@ def new_square_postion(data):
         print('Final')
         #guardar esse posição no banco
         print(data)
+        square_id = data.get('square_id')
+        x = data.get('x')
+        y = data.get('y')
+        room = data.get('room_id')
+        
+        socketio.emit('update_square', {'id': square_id, 'x': x, 'y': y}, room=room)
     except Exception as e:
         print(e)
         return 403
@@ -136,7 +170,7 @@ def new_square_postion(data):
 @app.get('/squares/<room_id>')
 def squares(room_id):
     try:
-        return jsonify({'result': True,'data': [{'id': 0, 'x': 0, 'y': 0, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}, {'id': 1, 'x': 6, 'y': 1, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}, {'id': 3, 'x': 3, 'y': 9, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}]}), 200    
+        return jsonify({'result': True, 'background': 'http://localhost:8085/openimg/17018030121sddefault.jpg', 'data': [{'id': 0, 'x': 0, 'y': 0, 'url': 'http://localhost:8085/openimg/17018030794imagem_2023-12-05_160439079.png'}, {'id': 1, 'x': 6, 'y': 1, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}, {'id': 3, 'x': 3, 'y': 9, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}]}), 200    
     except Exception as e:  
         print(e)
         return 403
