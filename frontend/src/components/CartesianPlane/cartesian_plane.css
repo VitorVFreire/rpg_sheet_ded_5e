@@ -8,12 +8,8 @@
 .square {
   width: 50px;
   height: 50px;
-  /*background-image: url('http://localhost:8085/openimg/17011131771tumblr_mh6g48bvH41rfzpd7o1_500.gif');
+  /* background-image: url('http://localhost:8085/openimg/17011131771tumblr_mh6g48bvH41rfzpd7o1_500.gif');
   background-size: cover; ou 'contain', dependendo do efeito desejado */
-  background-color: white;
-  color: black;
-  position: absolute;
-  cursor: pointer;
 }
 
 .grid-square {

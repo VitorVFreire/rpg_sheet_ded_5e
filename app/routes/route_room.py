@@ -123,6 +123,19 @@ def updateSquare(data):
         print(e)
         return 403
     
-@app.get('/squares')
-def squares():
-    return jsonify({'result': True,'data': [{'id': 0, 'x': 0, 'y': 0}, {'id': 1, 'x': 6, 'y': 1}, {'id': 3, 'x': 3, 'y': 9}]}), 200
+@socketio.on('new_square_position')
+def new_square_postion(data):
+    try:
+        #guardar esse posição no banco
+        print(data)
+    except Exception as e:
+        print(e)
+        return 403
+    
+@app.get('/squares/<room_id>')
+def squares(room_id):
+    try:
+        return jsonify({'result': True,'data': [{'id': 0, 'x': 0, 'y': 0, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}, {'id': 1, 'x': 6, 'y': 1, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}, {'id': 3, 'x': 3, 'y': 9, 'url': 'http://localhost:8085/openimg/17009380703a24e29fc5ee1ef69ab11777f1d28641a.jpg'}]}), 200    
+    except Exception as e:  
+        print(e)
+        return 403

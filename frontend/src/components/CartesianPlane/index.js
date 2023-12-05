@@ -13,7 +13,7 @@ function CartesianPlane(props) {
   useEffect(() => {
     async function fetchSquares() {
       try {
-        const response = await fetch('/squares');
+        const response = await fetch('/squares/' + props.room_id);
         const data = await response.json();
         if (data.result !== false) {
           if (data.data !== null) {
@@ -28,7 +28,7 @@ function CartesianPlane(props) {
     }
 
     fetchSquares();
-  }, []);
+  }, [props.room_id]);
 
   const handleMouseDown = (id) => {
     setIsDragging(true);
@@ -50,10 +50,15 @@ function CartesianPlane(props) {
     setSquares((prevSquares) =>
       prevSquares.map((square) => ({ ...square, isDragging: false }))
     );
-
     // Imprima o id, x e y do quadrado movido após ser solto
     if (movedSquare) {
-      console.log(`id: ${movedSquare.id} X:${movedSquare.x} Y:${movedSquare.y}`);
+      socket.emit('new_square_position', {
+        room_id: props.room_id,
+        character_id: props.character_id,
+        square_id: movedSquare.id,
+        x: movedSquare.x,
+        y: movedSquare.y
+      });
     }
   };
 
@@ -61,21 +66,21 @@ function CartesianPlane(props) {
     if (isDragging) {
       const x = Math.floor(e.clientX / gridSize);
       const y = Math.floor(e.clientY / gridSize);
-      setSquares((prevSquares) =>
-        prevSquares.map((square) =>
-          square.id === id && square.isDragging
-            ? { ...square, x, y }
-            : square
-        )
-      );
-      console.log(`Movendo: id: ${id} ${x} ${y}`)
+      if (x <= 10 && y <= 10)
+        setSquares((prevSquares) =>
+          prevSquares.map((square) =>
+            square.id === id && square.isDragging
+              ? { ...square, x, y }
+              : square
+          )
+        );
       socket.emit('update_coordinates', {
         room_id: props.room_id,
         character_id: props.character_id,
         square_id: id,
         x,
         y
-      });      
+      });
     }
   };
 
@@ -107,9 +112,15 @@ function CartesianPlane(props) {
             style={{
               left: `${square.x * gridSize}px`,
               top: `${square.y * gridSize}px`,
+              backgroundImage: `url('${square.url}')`,
+              backgroundSize: 'cover', // ou 'contain', dependendo do efeito desejado
+              position: 'absolute',
+              cursor: 'pointer',
             }}
             onMouseDown={() => handleMouseDown(square.id)}
-          >{square.id}</div>
+          >
+            {square.id}
+          </div>
         ))}
       </div>
     </div>
