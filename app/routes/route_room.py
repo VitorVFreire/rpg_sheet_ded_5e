@@ -126,6 +126,7 @@ def updateSquare(data):
 @socketio.on('new_square_position')
 def new_square_postion(data):
     try:
+        print('Final')
         #guardar esse posição no banco
         print(data)
     except Exception as e:
