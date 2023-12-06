@@ -155,9 +155,8 @@ def new_square_postion(data):
         x = data.get('x')
         y = data.get('y')
         room = data.get('room_id')    
-        print(data)
         square = Square(square_id=square_id, x=x, y=y)
-        print(square.update_square_position())    
+        square.update_square_position()   
     except Exception as e:
         print(e)
         return 403
@@ -180,6 +179,39 @@ def post_squares(room_id):
         square = Square(user_room_id=user_room_id)
         square.insert_square()
         return jsonify({'result': True,  'data': square.squares[0]}), 200    
+    except Exception as e:  
+        print(e)
+        return jsonify({'result': False}), 403
+    
+@app.put('/squares/<room_id>')
+def put_squares(room_id):
+    try:
+        image = request.files.get('image')
+        square_id = request.form.get('square_id')
+        square = Square(square_id=square_id, square_image=image)
+        result, url_image = square.update_square_image()
+        return jsonify({'result': result,  'data': {'square_image': url_image, 'square_id': square_id}}), 200    
+    except Exception as e:  
+        print(e)
+        return jsonify({'result': False}), 403
+    
+@app.delete('/squares/<room_id>')
+def delete_squares(room_id):
+    try:
+        square_id = str(request.form.get('key'))
+        square = Square(square_id=square_id)
+        return jsonify({'result': square.delete_square()}), 200    
+    except Exception as e:  
+        print(e)
+        return jsonify({'result': False}), 403
+    
+@app.post('/backgroundsquares/<room_id>')
+def post_backgroundsquares(room_id):
+    try:
+        image = request.files.get('image')
+        square = Square(square_id=square_id, square_image=image)
+        result, url_image = square.update_square_image()
+        return jsonify({'result': result,  'data': {'background_image': url_image}}), 200    
     except Exception as e:  
         print(e)
         return jsonify({'result': False}), 403

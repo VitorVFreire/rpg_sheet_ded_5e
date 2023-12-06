@@ -2,6 +2,8 @@ import './cartesian_plane.css';
 import React, { useState, useEffect } from "react";
 import socket from '../Socket';
 import ButtonAdd from '../ButtonAdd';
+import RoundImageButton from '../RoundImageButton';
+import DeleteButton from '../DeleteButton';
 
 function CartesianPlane(props) {
   const [isDragging, setIsDragging] = useState(false);
@@ -104,6 +106,29 @@ function CartesianPlane(props) {
     console.log(squares)
   };
 
+  const handleImageUpload = (squareImage, squareId) => {
+    const elements = document.querySelectorAll(`.square[data-key="${squareId}"]`);
+
+    if (elements) {
+      elements.forEach((element) => {
+        element.style.backgroundImage = `url('${squareImage}')`;
+      });
+    }
+  };
+
+  const handleBackGroundUpload = (BackGroundImage) => {
+    const element = document.querySelector('.cartesian-plane');
+
+    if (element) {
+      element.style.backgroundImage = `url('${BackGroundImage}')`;
+    }
+  };
+
+  const handleSquareDeleted = (outherId) => {
+    const updatedSquare = squares.filter((square) => square.square_id !== outherId);
+    setSquares(updatedSquare);
+  };
+
   return (
     <div className="App">
       <div className="container">
@@ -134,6 +159,7 @@ function CartesianPlane(props) {
             <div
               key={square.square_id}
               className="square"
+              data-key={square.square_id}
               style={{
                 left: `${square.x * gridSize}px`,
                 top: `${square.y * gridSize}px`,
@@ -148,12 +174,43 @@ function CartesianPlane(props) {
             </div>
           ))}
         </div>
-        <ButtonAdd
-          onAddSquare={addSquare}
-          url={`/squares/${props.room_id}`}
-          value={props.character_id}
-        />
+        <div>
+          <ButtonAdd
+            onAddSquare={addSquare}
+            url={`/squares/${props.room_id}`}
+            value={props.character_id}
+          />
+          <RoundImageButton
+            imageUrl="http://localhost:8085/openimg/ilustracao.png"
+            url={`/backgroundsquares/${props.room_id}`}
+            onImageUpload={handleBackGroundUpload}
+            method={'POST'}
+          />
+        </div>
       </div>
+
+      {squares.map((square) => (
+        <div className='square-list' key={square.square_id}>
+          <div
+            className="square"
+            data-key={square.square_id}
+            style={{
+              backgroundImage: `url('${square.square_image}')`,
+              backgroundSize: 'cover',
+            }}
+          >
+            {square.square_id}
+          </div>
+          <RoundImageButton
+            imageUrl="http://localhost:8085/openimg/img.png"
+            url={`/squares/${props.room_id}`}
+            onImageUpload={handleImageUpload}
+            square_id={square.square_id}
+            method={'PUT'}
+          />
+          <DeleteButton url='squares' keyData='key' outherId={square.square_id} characterId={props.room_id} onCharacterDeleted={handleSquareDeleted} />
+        </div>
+      ))}
     </div>
   );
 }

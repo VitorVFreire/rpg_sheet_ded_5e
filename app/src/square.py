@@ -29,11 +29,16 @@ class Square:
         img = Image(parameters='square')
         if type(self.__square_image) is not list and self.__square_image is not None:
             result, name = img.save_file(self.__square_image)
-            return name
+            img.name = name
+            return img.name
         elif type(self.__square_image) is list and len(self.__square_image) > 0:
-            return self.__square_image
+            square_imgs = []
+            for square_img in self.__square_image:
+                img.name = square_img
+                square_imgs.append(img.url_img)
+            return square_imgs
         img.name = img.img_default_path(index=1)
-        return [img.url_img]
+        return [img.name]
                   
     def load_squares(self):
         try:
@@ -73,6 +78,7 @@ class Square:
                 self.__square_id.append(db.sync_insert(query=query, parameters=parameters))
                 self.__x.append(x)
                 self.__y.append(y)
+                self.__square_image.append(self.square_image[0])
                 return True
             return False
         except Exception as e:
@@ -103,11 +109,14 @@ class Square:
             
     def update_square_image(self):
         try:    
+            image = self.square_image
             query = "UPDATE square SET square_image = %s WHERE square_id = %s"
-            parameters = (self.square_image, self.__square_id,)
+            parameters = (image, self.__square_id,)
             db = Db()
             db.sync_connection_db()
-            return db.sync_update(query=query, parameters=parameters)
+            img = Image()
+            img.name = image
+            return db.sync_update(query=query, parameters=parameters), img.url_img
         except Exception as e:
             print(e)
             abort(500, 'Erro na update da square da imagem')
@@ -115,8 +124,8 @@ class Square:
     def delete_square(self):
         try:
             if self.square_id:    
-                query = "DELETE FROM square WHERE square_id = %s"
-                parameters = (self.__square_id)
+                query = "DELETE FROM square WHERE square_id = %s;"
+                parameters = (self.__square_id,)
                 db = Db()
                 db.sync_connection_db()
                 return db.sync_delete(query=query, parameters=parameters)

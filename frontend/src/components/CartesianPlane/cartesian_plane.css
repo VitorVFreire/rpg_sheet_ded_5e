@@ -19,5 +19,16 @@
 
 .container {
   display: flex;
+  gap: 15px;
 }
 
+.square-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.buttons {
+  gap: 5px;
+}

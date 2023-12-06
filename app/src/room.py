@@ -2,13 +2,14 @@ from flask import abort
 from src import Db
 
 class Room:
-    def __init__(self, room_id=None, character_id=None, user_id=None, room_name=None, user_room_id=None, room_password=None):
+    def __init__(self, room_id=None, character_id=None, user_id=None, room_name=None, user_room_id=None, room_password=None, room_image=None):
         self.__room_id = room_id or []
         self.__room_name = room_name or []
         self.__room_password = room_password or []
         self._character_id = character_id
         self.__user_id = user_id
         self.__user_room_id = user_room_id
+        self.__room_image = room_image
     
     @property    
     def roons(self):
