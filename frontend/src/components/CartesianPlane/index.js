@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import socket from '../Socket';
 import ButtonAdd from '../ButtonAdd';
 import RoundImageButton from '../RoundImageButton';
-import DeleteButton from '../DeleteButton';
 
 function CartesianPlane(props) {
   const [isDragging, setIsDragging] = useState(false);
@@ -41,6 +40,34 @@ function CartesianPlane(props) {
         )
       );
     });
+
+    socket.on('new_background', (new_background) => {
+      setBackground(new_background.background_image);
+    });
+
+    socket.on('new_squares', (new_squares) => {
+      setSquares((prevSquares) => [...prevSquares, new_squares]);
+    });
+
+    socket.on('update_squares', (updated_squares) => {
+      const elements = document.querySelectorAll(`.square[data-key="${updated_squares.square_id}"]`);
+
+      if (elements) {
+        elements.forEach((element) => {
+          element.style.backgroundImage = `url('${updated_squares.square_image}')`;
+        });
+      }
+    });
+
+    socket.on('delete_square', (delete_square) => {
+      const id = delete_square.square_id;
+      console.log('Before deletion:', squares);
+      setSquares((prevSquares) =>
+        prevSquares.filter((square) => square.square_id != id)
+      );
+      console.log('After deletion:', squares);
+    });
+
   }, [props.room_id]);
 
   const handleMouseDown = (id) => {
@@ -101,34 +128,6 @@ function CartesianPlane(props) {
     return <div>Loading...</div>;
   }
 
-  const addSquare = (newSquare) => {
-    setSquares((prevSquares) => [...prevSquares, newSquare]);
-    console.log(squares)
-  };
-
-  const handleImageUpload = (squareImage, squareId) => {
-    const elements = document.querySelectorAll(`.square[data-key="${squareId}"]`);
-
-    if (elements) {
-      elements.forEach((element) => {
-        element.style.backgroundImage = `url('${squareImage}')`;
-      });
-    }
-  };
-
-  const handleBackGroundUpload = (BackGroundImage) => {
-    const element = document.querySelector('.cartesian-plane');
-
-    if (element) {
-      element.style.backgroundImage = `url('${BackGroundImage}')`;
-    }
-  };
-
-  const handleSquareDeleted = (outherId) => {
-    const updatedSquare = squares.filter((square) => square.square_id !== outherId);
-    setSquares(updatedSquare);
-  };
-
   return (
     <div className="App">
       <div className="container">
@@ -174,17 +173,16 @@ function CartesianPlane(props) {
             </div>
           ))}
         </div>
-        <div>
+        <div className='buttons'>
           <ButtonAdd
-            onAddSquare={addSquare}
             url={`/squares/${props.room_id}`}
             value={props.character_id}
+            method={'POST'}
           />
           <RoundImageButton
             imageUrl="http://localhost:8085/openimg/ilustracao.png"
-            url={`/backgroundsquares/${props.room_id}`}
-            onImageUpload={handleBackGroundUpload}
-            method={'POST'}
+            url={`/background_cartesian_plane/${props.room_id}`}
+            method={'PUT'}
           />
         </div>
       </div>
@@ -204,11 +202,14 @@ function CartesianPlane(props) {
           <RoundImageButton
             imageUrl="http://localhost:8085/openimg/img.png"
             url={`/squares/${props.room_id}`}
-            onImageUpload={handleImageUpload}
             square_id={square.square_id}
             method={'PUT'}
           />
-          <DeleteButton url='squares' keyData='key' outherId={square.square_id} characterId={props.room_id} onCharacterDeleted={handleSquareDeleted} />
+          <ButtonAdd
+            url={`/squares/${props.room_id}`}
+            value={square.square_id}
+            method={'DELETE'}
+          />
         </div>
       ))}
     </div>

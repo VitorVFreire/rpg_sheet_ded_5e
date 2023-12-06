@@ -65,7 +65,8 @@ class Image:
     def img_default_path(self, index=0):
         default_imgs = {
             0: 'img_default.jpg',
-            1: 'white.jpg'
+            1: 'white.jpg',
+            2: 'Black.png'
         }
         return str(default_imgs[index])
     

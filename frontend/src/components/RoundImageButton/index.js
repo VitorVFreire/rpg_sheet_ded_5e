@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './RoundImageButton.css';
 
-const RoundImageButton = ({ imageUrl, url, onImageUpload, square_id, method }) => {
+const RoundImageButton = ({ imageUrl, url, square_id, method }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleImageUpload = async (e) => {
@@ -31,11 +31,7 @@ const RoundImageButton = ({ imageUrl, url, onImageUpload, square_id, method }) =
             const responseData = await response.json();
 
             if (responseData.result !== false && responseData.data !== null) {
-                if (responseData.data.square_id){
-                    onImageUpload(responseData.data.square_image, responseData.data.square_id);
-                }else{
-                    onImageUpload(responseData.data.background_image);
-                }
+                console.log('ok')
             } else {
                 console.error('Erro ao fazer upload da imagem');
             }

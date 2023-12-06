@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ButtonAdd.css';
 
-const ButtonAdd = ({ onAddSquare, url, value }) => {
+const ButtonAdd = ({ url, value, method }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleClick = async () => {
@@ -15,17 +15,11 @@ const ButtonAdd = ({ onAddSquare, url, value }) => {
             const formData = new FormData();
             formData.append('key', value);
             const response = await fetch(url, {
-                method: 'POST',
+                method: method,
                 body: formData,
             });
 
             const responseData = await response.json();
-
-            if (responseData.result !== false && responseData.data !== null) {
-                onAddSquare(responseData.data);
-            } else {
-                console.error('Erro ao criar uma nova square');
-            }
         } catch (error) {
             console.error('Erro na solicitação:', error);
         } finally {
@@ -33,9 +27,12 @@ const ButtonAdd = ({ onAddSquare, url, value }) => {
         }
     };
 
+    const className = method == "POST" ? "add-button" : "delete-button"
+    const text = method == "POST" ? "+" : "x"
+
     return (
-        <button className="add-button" onClick={handleClick} disabled={isLoading}>
-            {isLoading ? 'Aguarde...' : '+'}
+        <button className={className} onClick={handleClick} disabled={isLoading}>
+            {isLoading ? 'Aguarde...' : text}
         </button>
     );
 };

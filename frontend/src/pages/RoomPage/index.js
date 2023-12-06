@@ -9,12 +9,14 @@ function RoomPage(props) {
     console.log(code_room, id);
 
     useEffect(() => {
+        document.title = `${code_room}_user_${id}`;
+
         socket.emit('join_cartesian', { room_id: code_room });
 
         return () => {
             socket.emit('leave_cartesian', { room_id: code_room });
         };
-    }, [code_room]);
+    }, [code_room, id]);
 
     return (
         <div>

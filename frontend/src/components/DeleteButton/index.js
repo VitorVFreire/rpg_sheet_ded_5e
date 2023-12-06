@@ -17,7 +17,6 @@ const DeleteButton = ({ characterId, onCharacterDeleted, url, outherId, keyData 
       }
 
       const response = await fetch(deleteURL, json);
-
       if (response.ok) {
         onCharacterDeleted(keyData ? outherId : characterId);
       } else {

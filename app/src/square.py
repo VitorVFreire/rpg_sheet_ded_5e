@@ -29,8 +29,7 @@ class Square:
         img = Image(parameters='square')
         if type(self.__square_image) is not list and self.__square_image is not None:
             result, name = img.save_file(self.__square_image)
-            img.name = name
-            return img.name
+            return name
         elif type(self.__square_image) is list and len(self.__square_image) > 0:
             square_imgs = []
             for square_img in self.__square_image:
@@ -63,6 +62,25 @@ class Square:
         except Exception as e:
             print(e)
             abort(500)
+            
+    def load_square_image(self):
+        try:
+            if self.__square_id: 
+                query = "SELECT square_image FROM square WHERE square_id = %s;"
+                parameters = (self.__square_id,)
+                db = Db()
+                db.sync_connection_db()
+                result = db.sync_select(query=query, parameters=parameters, all=False)
+                if result:
+                    if type(self.__square_image) is not list:
+                        self.__square_image = result[0]
+                    else:
+                        self.__square_image.append(result[0])
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            abort(500)
                                                                                                                                                                                                                                                                                                           
     def insert_square(self):
         try:
@@ -75,11 +93,9 @@ class Square:
                 parameters = (self.__user_room_id, x, y, self.square_image[0])
                 db = Db()
                 db.sync_connection_db()
-                self.__square_id.append(db.sync_insert(query=query, parameters=parameters))
-                self.__x.append(x)
-                self.__y.append(y)
-                self.__square_image.append(self.square_image[0])
-                return True
+                img  = Image()
+                img.name = img.img_default_path(index=1)
+                return True, {'square_id': db.sync_insert(query=query, parameters=parameters), 'x': x, 'y': y, 'square_image': img.url_img}
             return False
         except Exception as e:
             print(e)
@@ -87,11 +103,16 @@ class Square:
                    
     def delete_square(self):
         try:    
-            query = "DELETE FROM square WHERE square_id = %s"
+            self.load_square_image()          
+            query = "DELETE FROM square WHERE square_id = %s;"
             parameters = (self.__square_id,)
             db = Db()
             db.sync_connection_db()
-            return db.sync_delete(query=query, parameters=parameters)
+            result = db.sync_delete(query=query, parameters=parameters)
+            if result and self.__square_image[0]:
+                img = Image(name=self.__square_image[0])  
+                return img.remove_file()
+            return result
         except Exception as e:
             print(e)
             abort(500, 'Erro na exclusão da square')
@@ -110,26 +131,17 @@ class Square:
     def update_square_image(self):
         try:    
             image = self.square_image
+            img = Image()
+            if self.load_square_image() and self.__square_image is not None:
+                img.name = self.__square_image
+                img.remove_file()
             query = "UPDATE square SET square_image = %s WHERE square_id = %s"
             parameters = (image, self.__square_id,)
             db = Db()
             db.sync_connection_db()
-            img = Image()
             img.name = image
             return db.sync_update(query=query, parameters=parameters), img.url_img
         except Exception as e:
             print(e)
             abort(500, 'Erro na update da square da imagem')
             
-    def delete_square(self):
-        try:
-            if self.square_id:    
-                query = "DELETE FROM square WHERE square_id = %s;"
-                parameters = (self.__square_id,)
-                db = Db()
-                db.sync_connection_db()
-                return db.sync_delete(query=query, parameters=parameters)
-            return False
-        except Exception as e:
-            print(e)
-            abort(500, 'Erro na exclusão da square')

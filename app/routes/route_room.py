@@ -143,7 +143,7 @@ def updateSquare(data):
         x = data.get('x')
         y = data.get('y')
         room = data.get('room_id')
-        socketio.emit('update_square', {'id': square_id, 'x': x, 'y': y}, room=room)
+        socketio.emit('update_square', {'square_id': square_id, 'x': x, 'y': y}, room=room)
     except Exception as e:
         print(e)
         return 403
@@ -166,19 +166,21 @@ def get_squares(room_id):
     try:
         squares = Square(room_id=room_id)
         squares.load_squares()
-        return jsonify({'result': True, 'background': 'http://localhost:8085/openimg/17018030121sddefault.jpg', 'data': squares.squares}), 200    
+        room = Room(room_id=room_id)
+        room.load_room()
+        return jsonify({'result': True, 'background': room.background_cartesian_plane_load, 'data': squares.squares}), 200    
     except Exception as e:  
         print(e)
         return jsonify({'result': False, 'error': 'Erro interno do servidor'}), 500
-
     
 @app.post('/squares/<room_id>')
 def post_squares(room_id):
     try:
         user_room_id = request.form.get('key')
         square = Square(user_room_id=user_room_id)
-        square.insert_square()
-        return jsonify({'result': True,  'data': square.squares[0]}), 200    
+        result, squares = square.insert_square()
+        socketio.emit('new_squares', squares, room=room_id)
+        return jsonify({'result': result,  'data': squares}), 200    
     except Exception as e:  
         print(e)
         return jsonify({'result': False}), 403
@@ -190,6 +192,7 @@ def put_squares(room_id):
         square_id = request.form.get('square_id')
         square = Square(square_id=square_id, square_image=image)
         result, url_image = square.update_square_image()
+        socketio.emit('update_squares', {'square_image': url_image, 'square_id': square_id}, room=room_id)
         return jsonify({'result': result,  'data': {'square_image': url_image, 'square_id': square_id}}), 200    
     except Exception as e:  
         print(e)
@@ -198,19 +201,23 @@ def put_squares(room_id):
 @app.delete('/squares/<room_id>')
 def delete_squares(room_id):
     try:
-        square_id = str(request.form.get('key'))
+        square_id = request.form.get('key')
         square = Square(square_id=square_id)
-        return jsonify({'result': square.delete_square()}), 200    
+        result = square.delete_square()
+        print(square_id)
+        socketio.emit('delete_square', {'square_id': square_id}, room=room_id)
+        return jsonify({'result': result}), 200    
     except Exception as e:  
         print(e)
         return jsonify({'result': False}), 403
     
-@app.post('/backgroundsquares/<room_id>')
-def post_backgroundsquares(room_id):
+@app.put('/background_cartesian_plane/<room_id>')
+def put_background_cartesian_plane(room_id):
     try:
         image = request.files.get('image')
-        square = Square(square_id=square_id, square_image=image)
-        result, url_image = square.update_square_image()
+        room = Room(background_cartesian_plane=image, room_id=room_id)
+        result, url_image = room.update_room_image()
+        socketio.emit('new_background', {'background_image': url_image}, room=room_id)
         return jsonify({'result': result,  'data': {'background_image': url_image}}), 200    
     except Exception as e:  
         print(e)
