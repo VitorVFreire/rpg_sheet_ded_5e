@@ -140,7 +140,8 @@ async def create_tables():
                 CREATE TABLE room (
                     room_id SERIAL PRIMARY KEY ,
                     room_name VARCHAR(100) NOT NULL,
-                    room_password VARCHAR(300) NOT NULL
+                    room_password VARCHAR(300) NOT NULL,
+                    room_image VARCHAR(200)
                 );         
                 """)
 
@@ -162,6 +163,16 @@ async def create_tables():
                     user_id SERIAL NOT NULL REFERENCES "user"(user_id) ON DELETE CASCADE,
                     room_id SERIAL NOT NULL REFERENCES room(room_id) ON DELETE CASCADE,
                     user_room_type INT DEFAULT 2 CHECK (user_room_type IN (1, 2))
+                );
+                """)
+                
+                await cursor.execute("""
+                CREATE TABLE square (
+                    square_id SERIAL PRIMARY KEY ,
+                    user_room_id SERIAL NOT NULL REFERENCES user_room(user_room_id) ON DELETE CASCADE,
+                    x FLOAT,
+                    y FLOAT,
+                    square_image VARCHAR(200)
                 );
                 """)
 
@@ -402,7 +413,17 @@ async def insert_default_values():
                 
                 await cursor.execute("""
                 INSERT INTO character(race_id, character_name, date_creation)
-                VALUES (1, 'teste', '11-22-2023')
+                VALUES (1, 'teste', '11-22-2023');
+                """)
+                
+                await cursor.execute("""
+                INSERT INTO room(room_name, room_password)
+                VALUES ('teste', '123');
+                """)
+                
+                await cursor.execute("""
+                INSERT INTO user_room(room_id, user_id)
+                VALUES (1, 1);
                 """)
                 
             finally:

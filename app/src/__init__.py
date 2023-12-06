@@ -21,3 +21,4 @@ from .room import Room
 from .messages import Messages
 from .equipment import Equipment
 from .character_equipment import CharacterEquipment
+from .square import Square

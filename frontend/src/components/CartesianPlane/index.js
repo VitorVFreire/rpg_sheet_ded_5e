@@ -1,8 +1,7 @@
 import './cartesian_plane.css';
 import React, { useState, useEffect } from "react";
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:8085');
+import socket from '../Socket';
+import ButtonAdd from '../ButtonAdd';
 
 function CartesianPlane(props) {
   const [isDragging, setIsDragging] = useState(false);
@@ -31,21 +30,15 @@ function CartesianPlane(props) {
 
     fetchSquares();
 
-    socket.emit('join_cartesian', { room_id: props.room_id });
-
     socket.on('update_square', (updatedSquare) => {
       setSquares((prevSquares) =>
         prevSquares.map((square) =>
-          square.id === updatedSquare.id
+          square.square_id === updatedSquare.square_id
             ? { ...square, x: updatedSquare.x, y: updatedSquare.y }
             : square
         )
       );
     });
-
-    return () => {
-      socket.emit('leave_cartesian', { room_id: props.room_id });
-    };
   }, [props.room_id]);
 
   const handleMouseDown = (id) => {
@@ -54,7 +47,7 @@ function CartesianPlane(props) {
     // Atualize apenas o quadrado que está sendo arrastado
     setSquares((prevSquares) =>
       prevSquares.map((square) =>
-        square.id === id ? { ...square, isDragging: true } : square
+        square.square_id === id ? { ...square, isDragging: true } : square
       )
     );
   };
@@ -62,7 +55,7 @@ function CartesianPlane(props) {
   const handleMouseUp = () => {
     setIsDragging(false);
     // Obtenha o quadrado movido com base no ID
-    const movedSquare = squares.find((square) => square.id === draggedSquare);
+    const movedSquare = squares.find((square) => square.square_id === draggedSquare);
     setDraggedSquare(null);
     // Reinicie o status de arrastar para todos os quadrados
     setSquares((prevSquares) =>
@@ -73,7 +66,7 @@ function CartesianPlane(props) {
       socket.emit('new_square_position', {
         room_id: props.room_id,
         character_id: props.character_id,
-        square_id: movedSquare.id,
+        square_id: movedSquare.square_id,
         x: movedSquare.x,
         y: movedSquare.y
       });
@@ -87,7 +80,7 @@ function CartesianPlane(props) {
       if (x <= 10 && y <= 10)
         setSquares((prevSquares) =>
           prevSquares.map((square) =>
-            square.id === id && square.isDragging
+            square.square_id === id && square.isDragging
               ? { ...square, x, y }
               : square
           )
@@ -105,53 +98,65 @@ function CartesianPlane(props) {
   if (background === null) {
     return <div>Loading...</div>;
   }
-  console.log(background)
+
+  const addSquare = (newSquare) => {
+    setSquares((prevSquares) => [...prevSquares, newSquare]);
+    console.log(squares)
+  };
 
   return (
     <div className="App">
-      <div
-        className="cartesian-plane"
-        style={{
-          backgroundImage: `url('${background}')`,
-          backgroundSize: 'cover',
-        }}
-        onMouseUp={handleMouseUp}
-        onMouseMove={(e) => {
-          handleMouseMove(e, draggedSquare);
-        }}
-      >
-        {Array.from({ length: 10 }, (_, rowIndex) =>
-          Array.from({ length: 10 }, (_, colIndex) => (
+      <div className="container">
+        <div
+          className="cartesian-plane"
+          style={{
+            backgroundImage: `url('${background}')`,
+            backgroundSize: 'cover',
+          }}
+          onMouseUp={handleMouseUp}
+          onMouseMove={(e) => {
+            handleMouseMove(e, draggedSquare);
+          }}
+        >
+          {Array.from({ length: 10 }, (_, rowIndex) =>
+            Array.from({ length: 10 }, (_, colIndex) => (
+              <div
+                key={`${rowIndex}-${colIndex}`}
+                className="grid-square"
+                style={{
+                  left: `${colIndex * gridSize}px`,
+                  top: `${rowIndex * gridSize}px`,
+                }}
+              ></div>
+            ))
+          )}
+          {squares.map((square) => (
             <div
-              key={`${rowIndex}-${colIndex}`}
-              className="grid-square"
+              key={square.square_id}
+              className="square"
               style={{
-                left: `${colIndex * gridSize}px`,
-                top: `${rowIndex * gridSize}px`,
+                left: `${square.x * gridSize}px`,
+                top: `${square.y * gridSize}px`,
+                backgroundImage: `url('${square.square_image}')`,
+                backgroundSize: 'cover',
+                position: 'absolute',
+                cursor: 'pointer',
               }}
-            ></div>
-          ))
-        )}
-        {squares.map((square) => (
-          <div
-            key={square.id}
-            className="square"
-            style={{
-              left: `${square.x * gridSize}px`,
-              top: `${square.y * gridSize}px`,
-              backgroundImage: `url('${square.url}')`,
-              backgroundSize: 'cover', // ou 'contain', dependendo do efeito desejado
-              position: 'absolute',
-              cursor: 'pointer',
-            }}
-            onMouseDown={() => handleMouseDown(square.id)}
-          >
-            {square.id}
-          </div>
-        ))}
+              onMouseDown={() => handleMouseDown(square.square_id)}
+            >
+              {square.square_id}
+            </div>
+          ))}
+        </div>
+        <ButtonAdd
+          onAddSquare={addSquare}
+          url={`/squares/${props.room_id}`}
+          value={props.character_id}
+        />
       </div>
     </div>
   );
 }
 
 export default CartesianPlane;
+

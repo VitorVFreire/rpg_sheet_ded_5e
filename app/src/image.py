@@ -9,6 +9,9 @@ class Image:
         self.__parameter = parameters
         self.__name = name
     
+    def directory(self, value):
+        self.directory = pathlib.Path(value)
+    
     @property
     def name(self):
         return self.__name
@@ -51,13 +54,20 @@ class Image:
     @property
     def file(self):
         arquivo = list(self.directory.glob(self.name))
-        return arquivo[0] if arquivo[0] is not None else self.img_default
+        return str(arquivo[0]) if arquivo else self.img_default
     
     @property
     def img_default(self):
         self.directory = pathlib.Path('static/img')
         arquivo = list(self.directory.glob('img_default.jpg'))
         return str(arquivo[0])
+    
+    def img_default_path(self, index=0):
+        default_imgs = {
+            0: 'img_default.jpg',
+            1: 'white.jpg'
+        }
+        return str(default_imgs[index])
     
     @property
     def url_img(self):

@@ -236,7 +236,10 @@ async def get_character_equipments(character_id):
 @app.get('/openimg/<img>')
 def open_img(img): 
     try:  
-        return send_file(Image(name=img).file)   
+        img = Image(name=img)
+        if img.file is None:
+            img.directory('static/img')
+        return send_file(img.file)   
     except Exception as e:
         print(e)
         return send_file(Image().img_default) 

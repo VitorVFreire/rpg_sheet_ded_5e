@@ -4,6 +4,7 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 from dotenv import load_dotenv
 import os
 import psycopg_pool
+import psycopg2.pool
 
 load_dotenv()
 
@@ -93,76 +94,85 @@ class Db:
     
     def sync_connection_db(self):
         conninfo = f'host={self.host} dbname={self.database} port={self.port} user={self.user_db} password={self.password_db}'
-        self.pool = psycopg_pool.SyncConnectionPool(conninfo=conninfo, open=False)
-        self.pool.open()
-        self.pool.wait()
-            
+        self.pool = psycopg2.pool.SimpleConnectionPool(minconn=1, maxconn=5, dsn=conninfo)
+
     def sync_select(self, query, parameters=(), all=True):
+        connection = None
         try:
-            with self.pool.connection() as conn:
-                conn.set_autocommit(True)
-                with conn.cursor() as cursor:
-                    cursor.execute(query, parameters)
-                    result = cursor.fetchall() if all else cursor.fetchone()
-                    return result
+            connection = self.pool.getconn()
+            connection.autocommit = True
+            with connection.cursor() as cursor:
+                cursor.execute(query, parameters)
+                result = cursor.fetchall() if all else cursor.fetchone()
+                return result
         except Exception as e:
             print(e)
             return None
         finally:
-            self.pool.close()
-    
+            if connection:
+                self.pool.putconn(connection)
+
     def sync_insert(self, query, parameters):
+        connection = None
         try:
-            with self.pool.connection() as conn:
-                conn.set_autocommit(True)
-                with conn.cursor() as cursor:
-                    cursor.execute(query, parameters)
-                    result = cursor.fetchone()
-                    return result[0]
+            connection = self.pool.getconn()
+            connection.autocommit = True
+            with connection.cursor() as cursor:
+                cursor.execute(query, parameters)
+                result = cursor.fetchone()
+                return result[0]
         except Exception as e:
             print(e)
             return None
         finally:
-            self.pool.close()
-            
+            if connection:
+                self.pool.putconn(connection)
+
     def sync_update(self, query, parameters):
+        connection = None
         try:
-            with self.pool.connection() as conn:
-                conn.set_autocommit(True)
-                with conn.cursor() as cursor:
-                    cursor.execute(query, parameters)
-                    return True
+            connection = self.pool.getconn()
+            connection.autocommit = True
+            with connection.cursor() as cursor:
+                cursor.execute(query, parameters)
+            return True
         except Exception as e:
             print(e)
             return False
         finally:
-            self.pool.close()
-            
+            if connection:
+                self.pool.putconn(connection)
+
     def sync_delete(self, query, parameters):
+        connection = None
         try:
-            with self.pool.connection() as conn:
-                conn.set_autocommit(True)
-                with conn.cursor() as cursor:
-                    cursor.execute(query, parameters)
+            connection = self.pool.getconn()
+            connection.autocommit = True
+            with connection.cursor() as cursor:
+                cursor.execute(query, parameters)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+        finally:
+            if connection:
+                self.pool.putconn(connection)
+
+    def sync_exists(self, query, parameters):
+        connection = None
+        try:
+            connection = self.pool.getconn()
+            connection.autocommit = True
+            with connection.cursor() as cursor:
+                cursor.execute(query, parameters)
+                result = cursor.fetchone()
+                if result and result[0] == 1:
                     return True
         except Exception as e:
             print(e)
             return False
         finally:
-            self.pool.close()
-    
-    def sync_exists(self, query, parameters):
-        try:
-            with self.pool.connection() as conn:
-                conn.set_autocommit(True)
-                with conn.cursor() as cursor:
-                    cursor.execute(query, parameters)
-                    result = cursor.fetchone()
-                    if result[0] == 1:
-                        return True
-        except Exception as e:
-            print(e)
-            return False
-        finally:
-            self.pool.close()
+            if connection:
+                self.pool.putconn(connection)
+
         
