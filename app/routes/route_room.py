@@ -68,37 +68,24 @@ async def character_room(code_room, character_id):
         abort(403, "Deve ser Feito Login para acessar essa pagina")
         
 @app.get('/messages/room=<room_id>')
-def get_messages(room_id):
+async def get_messages(room_id):
     try:
-        """user_id = session.get('user_id')
+        user_id = session.get('user_id')
         if user_id is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-        room = Room(room_id=room_id, user_id=user_id)
+        #room = Room(room_id=room_id, user_id=user_id)
         #room.character_belongs_room()
         
-        limit = request.args.get('limit', default=None)
-        offset = request.args.get('offset', default=None)
+        #limit = request.args.get('limit', default=None)
+        #offset = request.args.get('offset', default=None)
         
-        messages = Messages(room_id=room_id, limit=limit, offset=offset)        
-        messages.load_messages()
+        #messages = Messages(room_id=room_id, limit=limit, offset=offset)  
+        messages = Messages(room_id=room_id)     
         
-        return jsonify(messages.messages), 200 """
-        messages = [
-            {
-                'message_id': 1,
-                'message': 'bla bla bla'
-            },
-            {
-                'message_id': 2,
-                'message': 'bla ola bla'    
-            },
-            {
-                'message_id': 3,
-                'message': 'bla bla bllnsdlf'
-            }
-        ]  
-        return jsonify({'messages': messages})
+        result = await messages.load_messages()
+         
+        return jsonify({'result': result, 'data': messages.messages}), 200
     except Exception as e:
         print(e)
         abort(404)
@@ -106,12 +93,10 @@ def get_messages(room_id):
 @socketio.on('message')
 def on_message(data):
     try:
-        """user_id = session.get('user_id')
-        character_id = data.get('character_id')
-        room = data.get('room')
-        if user_id and character_id and room:
-            message = Message(message=data['message'], name_character=data['nome_personagem'], character_id=character_id, room=room)
-            socketio.emit('message', message.message, room=room)""" 
+        user_id = session.get('user_id')
+        if user_id is None:
+            abort(403)
+
         message = data.get('message')
         room = data.get('room_id')
         id = data.get('id')
@@ -120,8 +105,11 @@ def on_message(data):
         character_id_message = id.get('character_id') if id.get('character_id') else None
         
         name = id.get('name')
-        
-        socketio.emit('message', {'name':name, 'message': message}, room=room)
+        #para funcionar a rolangem dos dados com bonus deve ser feito : !r 1d20 +1 ou !r 2d20 +2 (o sinal tendo q ficar grudado ao numero e com 1 espaço do dado)
+        # para rolar varias combinações de dado é o seguinte: !r 1d20 + 1d30 iria retornar a soma total mas so vai mostrar o roll do primeiro
+        msg = Message(message=message, name=name, character_id=character_id_message, user_id=user_id_message, room_id=room)
+
+        socketio.emit('message', msg.message, room=room)
     except Exception as e:
         print(e)
         return 403

@@ -8,7 +8,6 @@ import ChatComponent from '../../components/Chat';
 function RoomPage(props) {
     const [userName, setUserName] = useState('');
     const { code_room, id } = useParams();
-    console.log(code_room, id);
 
     useEffect(() => {
         const fetchUser = async () => {

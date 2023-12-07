@@ -4,12 +4,13 @@ import re
 from src import Db
 
 class Message:
-    def __init__(self, message_id = None, room = None , message = None, name_character = None, character_id = None):
+    def __init__(self, message_id = None, room_id = None , message = None, name = None, character_id = None, user_id=None):
         self.__message_id = message_id
         self.__message = message
-        self.__room = room
-        self.__name_character = name_character
+        self.__room_id = room_id
+        self.__name = name
         self.__character_id = character_id
+        self.__user_id = user_id
         self.__exists_command = self.__message.find('!r')
         self.__parts = []
         self.__amount_dices = []
@@ -58,8 +59,8 @@ class Message:
                 
             self.__message_treated['time'] = datetime.datetime.now().strftime('%d-%m-%Y %H:%M')       
             
-            if self.__name_character is not None:
-                self.__message_treated['name'] = self.__name_character
+            if self.__name is not None:
+                self.__message_treated['name'] = self.__name
             
             if self.__exists_command != -1:
                 self.__message_treated['dices'] = {}
@@ -80,13 +81,16 @@ class Message:
         
     def insert_message(self):
         try:
-            if self.__character_id:    
-                query = """INSERT INTO message
-                    (character_id, message, room_id, messagetime) 
-                    VALUES(%s,%s,%s,%s);"""
+            if self.__room_id:    
+                query = """
+                INSERT INTO message
+                (room_id, character_id, user_id, messagetime, message) 
+                VALUES(%s,%s,%s,%s,%s) RETURNING message_id;
+                """
+                parameters = (self.__room_id, self.__character_id, self.__user_id, datetime.datetime.now(), self.__message)
                 db = Db()
                 db.sync_connection_db()
-                self.__message_id = db.sync_insert(query=query, parameters=(self.__character_id, self.__message, self.__room, datetime.datetime.now()))  
+                self.__message_id = db.sync_insert(query=query, parameters=parameters)  
                 return True
             return False
         except Exception as e:

@@ -6,6 +6,7 @@ import DropdownList from '../DropdownListMethodGet';
 const ChatComponent = (props) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
+  const [offSet, setOffSet] = useState('');
   const [idUserMessage, setIdUserMessage] = useState({ 'user_id': props.user_id, 'name': props.user_name });
   const messagesContainerRef = useRef(null);
 
@@ -14,8 +15,10 @@ const ChatComponent = (props) => {
       try {
         const response = await fetch(`/messages/room=${props.room_id}`);
         const data = await response.json();
-        const newMessages = data.messages || [];
-        setMessages(newMessages);
+        if (data.result) {
+          setMessages(data.data.messages);
+          setOffSet(data.data.offset);
+        }
       } catch (error) {
         console.error('Erro ao buscar mensagens:', error);
       }
@@ -25,7 +28,8 @@ const ChatComponent = (props) => {
 
     socket.on('message', (data) => {
       const message = data.message;
-      setMessages((prevMessages) => [...prevMessages, { message }]);
+      const name = data.name;
+      setMessages((prevMessages) => [...prevMessages, { 'message': message, 'name': name }]);
       // Mover o scroll para a parte inferior ao adicionar uma nova mensagem
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     });
@@ -47,7 +51,6 @@ const ChatComponent = (props) => {
   };
 
   const handleSelectItem = (id, name) => {
-    console.log(id, name)
     if (id !== '') {
       setIdUserMessage({ 'character_id': id, 'name': name });
     } else {
@@ -69,7 +72,7 @@ const ChatComponent = (props) => {
         <div className="chat-container">
           <div className="messages" ref={messagesContainerRef}>
             {messages.map((message, index) => (
-              <div key={index}>{`${message.message}`}</div>
+              <div key={index}>{`${message['name']}`} - {`${message['message']}`}</div>
             ))}
           </div>
 

@@ -244,7 +244,7 @@ async def get_name_user():
         user = User(user_id=user_id)
         
         await user.load_user()
-        print(f'user: {user.user_name}')
+
         return jsonify({'result': True, 'data': {'user_name': user.user_name}})        
     except Exception as e:
         print(e)
