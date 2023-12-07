@@ -23,6 +23,8 @@ class Room:
     @property
     def background_cartesian_plane_load(self):
         img = Image(name=self.__background_cartesian_plane)
+        if self.__background_cartesian_plane is None:
+            img.name = img.img_default_path(index=2)
         return img.url_img
     
     @property    

@@ -100,7 +100,7 @@ async def get_classes():
         
         classes = Classe()
         
-        return jsonify(await classes.classes)
+        return jsonify({'result':True, 'data': await classes.classes})
     except Exception as e:
         print(e)
         abort(404)
@@ -113,7 +113,7 @@ async def get_races():
         
         races = Race()
         
-        return jsonify(await races.races)
+        return jsonify({'result':True, 'data': await races.races})
     except Exception as e:
         print(e)
         abort(404)
@@ -126,7 +126,7 @@ async def get_type_damage():
         
         type_damage = TypeDamage()
                 
-        return jsonify(await type_damage.types_damage)
+        return jsonify({'result':True, 'data': await type_damage.types_damage})
     except Exception as e:
         print(e)
         abort(404)
@@ -139,7 +139,7 @@ async def get_kind_equipment():
         
         kind_equipment = KindEquipment()
         
-        return jsonify(await kind_equipment.kind_equipments)
+        return jsonify({'result':True, 'data': await kind_equipment.kind_equipments})
     except Exception as e:
         print(e)
         abort(404)
@@ -152,7 +152,7 @@ async def get_coin():
         
         coin = Coin()
         
-        return jsonify(await coin.coins)
+        return jsonify({'result':True, 'data': await coin.coins})
     except Exception as e:
         print(e)
         abort(404)
@@ -229,6 +229,23 @@ async def get_character_equipments(character_id):
             await equipments.load_character_equipments(character_id=character_id)
             return jsonify({'result': True, 'data': equipments.equipments})
         return jsonify({'result': False})
+    except Exception as e:
+        print(e)
+        abort(404)
+        
+@app.get('/user')
+async def get_name_user():
+    try:
+        user_id = session.get('user_id')
+        
+        if user_id is None:
+            abort(403)                
+        
+        user = User(user_id=user_id)
+        
+        await user.load_user()
+        print(f'user: {user.user_name}')
+        return jsonify({'result': True, 'data': {'user_name': user.user_name}})        
     except Exception as e:
         print(e)
         abort(404)

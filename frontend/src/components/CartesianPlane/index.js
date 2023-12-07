@@ -95,7 +95,6 @@ function CartesianPlane(props) {
     if (movedSquare) {
       socket.emit('new_square_position', {
         room_id: props.room_id,
-        character_id: props.character_id,
         square_id: movedSquare.square_id,
         x: movedSquare.x,
         y: movedSquare.y
@@ -117,7 +116,6 @@ function CartesianPlane(props) {
         );
         socket.emit('update_coordinates', {
           room_id: props.room_id,
-          character_id: props.character_id,
           square_id: id,
           x,
           y
@@ -178,7 +176,7 @@ function CartesianPlane(props) {
         <div className='buttons'>
           <ButtonSocket
             url={`/squares/${props.room_id}`}
-            value={props.character_id}
+            value={props.user_room_id}
             method={'POST'}
           />
           <RoundImageButton
@@ -188,7 +186,6 @@ function CartesianPlane(props) {
           />
         </div>
       </div>
-
       {squares.map((square) => (
         <div className='square-list' key={square.square_id}>
           <div

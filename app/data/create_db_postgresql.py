@@ -146,15 +146,15 @@ async def create_tables():
                 """)
 
                 await cursor.execute("""
-                    CREATE TABLE "user" (
-                        user_id SERIAL PRIMARY KEY ,
-                        user_name VARCHAR(30) NOT NULL,
-                        password VARCHAR(255) NOT NULL,
-                        email VARCHAR(300) NOT NULL,
-                        birth_date DATE NOT NULL,
-                        user_type INT NOT NULL CHECK (user_type IN (1, 2)) DEFAULT 2,
-                        date_creation DATE NOT NULL
-                    );
+                CREATE TABLE "user" (
+                    user_id SERIAL PRIMARY KEY ,
+                    user_name VARCHAR(30) NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    email VARCHAR(300) NOT NULL,
+                    birth_date DATE NOT NULL,
+                    user_type INT NOT NULL CHECK (user_type IN (1, 2)) DEFAULT 2,
+                    date_creation DATE NOT NULL
+                );
                 """)
 
                 await cursor.execute("""
@@ -198,10 +198,16 @@ async def create_tables():
                 CREATE TABLE message (
                     message_id SERIAL PRIMARY KEY ,
                     room_id SERIAL NOT NULL REFERENCES room(room_id) ON DELETE CASCADE,
-                    character_id SERIAL NOT NULL REFERENCES character(character_id) ON DELETE CASCADE,
+                    character_id SERIAL REFERENCES character(character_id) ON DELETE CASCADE,
+                    user_id SERIAL REFERENCES "user"(user_id) ON DELETE CASCADE,
                     messagetime TIMESTAMP NOT NULL,
                     message VARCHAR(200) NOT NULL
                 );
+                
+                ALTER TABLE message
+                ALTER COLUMN character_id DROP NOT NULL;
+                ALTER TABLE message
+                ALTER COLUMN user_id DROP NOT NULL;
                 """)
 
                 await cursor.execute("""

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import socket from '../Socket';
+import DropdownList from '../DropdownListMethodGet';
 
 const ChatComponent = (props) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
+  const [idUserMessage, setIdUserMessage] = useState({ 'user_id': props.user_id, 'name': props.user_name });
   const messagesContainerRef = useRef(null);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const ChatComponent = (props) => {
 
   const sendMessage = () => {
     if (messageInput.trim() !== '') {
-      socket.emit('message', { room_id: props.room_id, message: messageInput });
+      socket.emit('message', { room_id: props.room_id, id: idUserMessage, message: messageInput });
       setMessageInput('');
     }
   };
@@ -44,25 +46,46 @@ const ChatComponent = (props) => {
     }
   };
 
-  return (
-    <div className="chat-container">
-      <div className="messages" ref={messagesContainerRef}>
-        {messages.map((message, index) => (
-          <div key={index}>{`${message.message}`}</div>
-        ))}
-      </div>
+  const handleSelectItem = (id, name) => {
+    console.log(id, name)
+    if (id !== '') {
+      setIdUserMessage({ 'character_id': id, 'name': name });
+    } else {
+      setIdUserMessage({ 'user_id': props.user_id, 'name': props.user_name });
+    }
+  }
 
-      <div className="input-container">
-        <input
-          type="text"
-          placeholder="Message"
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-          onKeyPress={handleKeyPress}
+  return (
+    <section className='chat'>
+      <div className="chat-dropdown-container">
+        <DropdownList
+          url='/characters'
+          label='Personagem'
+          id='character_id'
+          name='character_name'
+          className='dropdowncartesian'
+          handleSelectItem={handleSelectItem}
         />
-        <button onClick={sendMessage}>Send Message</button>
+        <div className="chat-container">
+          <div className="messages" ref={messagesContainerRef}>
+            {messages.map((message, index) => (
+              <div key={index}>{`${message.message}`}</div>
+            ))}
+          </div>
+
+          <div className="input-container">
+            <input
+              type="text"
+              placeholder="Message"
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+            <button onClick={sendMessage}>Send Message</button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

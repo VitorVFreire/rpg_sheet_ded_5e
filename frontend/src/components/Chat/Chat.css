@@ -53,3 +53,16 @@
 .input-container button {
     cursor: pointer;
 }
+
+
+.dropdowncartesian {
+    width: 200px;
+    font-size: 15px;
+    height: 35px;
+    position: absolute;
+    right: 320px; /* Posição ajustada para estar ao lado do chat */
+    top: 73px;
+    background-color: rgb(71, 71, 71);
+    border: none;
+    color: azure;
+}
