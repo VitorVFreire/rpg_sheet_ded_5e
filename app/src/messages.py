@@ -33,7 +33,7 @@ class Messages:
             with get_connection_without_async() as conn:
                 with conn.cursor() as mycursor:    
                     query = """
-                    SELECT mg.message_id, pr.character_name, mg.time, mg.message FROM message mg, personagem pr WHERE mg.room_id = %s AND mg.id_personagem = pr.id_personagem ORDER BY mg.time DESC, mg.message_id DESC LIMIT %s OFFSET %s;
+                    SELECT mg.message_id, pr.character_name, mg.time, mg.message FROM message mg, personagem pr WHERE mg.room_id = %s AND mg.character_id = pr.character_id ORDER BY mg.time DESC, mg.message_id DESC LIMIT %s OFFSET %s;
                     """
                     mycursor.execute(query, (self.__room_id, self.__limit, self.__offset,))
                     result = mycursor.fetchall()

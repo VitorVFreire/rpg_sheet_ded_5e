@@ -2,12 +2,13 @@
   position: relative;
   width: 500px;
   height: 500px;
-  border: 1px solid white;
+  border: 1px solid rgb(94, 94, 94);
 }
 
 .square {
   width: 50px;
   height: 50px;
+  border-radius: 80%;
 }
 
 .grid-square {

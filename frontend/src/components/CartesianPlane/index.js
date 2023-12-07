@@ -1,7 +1,7 @@
 import './cartesian_plane.css';
 import React, { useState, useEffect } from "react";
 import socket from '../Socket';
-import ButtonAdd from '../ButtonAdd';
+import ButtonSocket from '../ButtonSocket';
 import RoundImageButton from '../RoundImageButton';
 
 function CartesianPlane(props) {
@@ -10,6 +10,7 @@ function CartesianPlane(props) {
   const [squares, setSquares] = useState([]);
   const [background, setBackground] = useState(null);
   const gridSize = 50;
+  const length = 10;
 
   useEffect(() => {
     async function fetchSquares() {
@@ -73,7 +74,7 @@ function CartesianPlane(props) {
   const handleMouseDown = (id) => {
     setIsDragging(true);
     setDraggedSquare(id);
-    // Atualize apenas o quadrado que está sendo arrastado
+
     setSquares((prevSquares) =>
       prevSquares.map((square) =>
         square.square_id === id ? { ...square, isDragging: true } : square
@@ -83,10 +84,10 @@ function CartesianPlane(props) {
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    // Obtenha o quadrado movido com base no ID
+
     const movedSquare = squares.find((square) => square.square_id === draggedSquare);
     setDraggedSquare(null);
-    // Reinicie o status de arrastar para todos os quadrados
+
     setSquares((prevSquares) =>
       prevSquares.map((square) => ({ ...square, isDragging: false }))
     );
@@ -105,8 +106,8 @@ function CartesianPlane(props) {
   const handleMouseMove = (e, id) => {
     if (isDragging) {
       const x = Math.floor(e.clientX / gridSize);
-      const y = Math.floor(e.clientY / gridSize);
-      if (x <= 10 && y <= 10)
+      const y = e.clientY >= 80 ? Math.floor(e.clientY / gridSize) : 0;
+      if (x >= 0 && x < 10 && y >= 0 && y < 10) {
         setSquares((prevSquares) =>
           prevSquares.map((square) =>
             square.square_id === id && square.isDragging
@@ -114,13 +115,14 @@ function CartesianPlane(props) {
               : square
           )
         );
-      socket.emit('update_coordinates', {
-        room_id: props.room_id,
-        character_id: props.character_id,
-        square_id: id,
-        x,
-        y
-      });
+        socket.emit('update_coordinates', {
+          room_id: props.room_id,
+          character_id: props.character_id,
+          square_id: id,
+          x,
+          y
+        });
+      }
     }
   };
 
@@ -142,8 +144,8 @@ function CartesianPlane(props) {
             handleMouseMove(e, draggedSquare);
           }}
         >
-          {Array.from({ length: 10 }, (_, rowIndex) =>
-            Array.from({ length: 10 }, (_, colIndex) => (
+          {Array.from({ length: length }, (_, rowIndex) =>
+            Array.from({ length: length }, (_, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className="grid-square"
@@ -174,7 +176,7 @@ function CartesianPlane(props) {
           ))}
         </div>
         <div className='buttons'>
-          <ButtonAdd
+          <ButtonSocket
             url={`/squares/${props.room_id}`}
             value={props.character_id}
             method={'POST'}
@@ -205,7 +207,7 @@ function CartesianPlane(props) {
             square_id={square.square_id}
             method={'PUT'}
           />
-          <ButtonAdd
+          <ButtonSocket
             url={`/squares/${props.room_id}`}
             value={square.square_id}
             method={'DELETE'}
@@ -217,4 +219,3 @@ function CartesianPlane(props) {
 }
 
 export default CartesianPlane;
-

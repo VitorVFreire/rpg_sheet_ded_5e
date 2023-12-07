@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './ButtonAdd.css';
+import './ButtonSocket.css';
 
-const ButtonAdd = ({ url, value, method }) => {
+const ButtonSocket = ({ url, value, method }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleClick = async () => {
@@ -27,16 +27,16 @@ const ButtonAdd = ({ url, value, method }) => {
         }
     };
 
-    const className = method == "POST" ? "add-button" : "delete-button"
+    const className = method == "POST" ? "add" : "delete"
     const text = method == "POST" ? "+" : "x"
 
     return (
-        <button className={className} onClick={handleClick} disabled={isLoading}>
+        <button className={'button '+ className} onClick={handleClick} disabled={isLoading}>
             {isLoading ? 'Aguarde...' : text}
         </button>
     );
 };
 
-export default ButtonAdd;
+export default ButtonSocket;
 
 

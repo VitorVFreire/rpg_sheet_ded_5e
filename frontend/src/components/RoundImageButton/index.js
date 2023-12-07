@@ -44,7 +44,7 @@ const RoundImageButton = ({ imageUrl, url, square_id, method }) => {
 
     return (
         <label className="round-image-button" id={square_id} style={{ backgroundImage: `url(${imageUrl})` }}>
-            {isLoading ? 'Aguarde...' : <input type="file" onChange={handleImageUpload} />}
+            {isLoading ? 'Aguarde...' : <input type="file" accept='image/*' onChange={handleImageUpload} />}
         </label>
     );
 };

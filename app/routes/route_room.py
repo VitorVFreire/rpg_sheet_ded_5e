@@ -23,7 +23,7 @@ async def roons(character_id):
         
         room.load_character_room()
         
-        return render_template('roons.html', titulo = 'Roons', id_personagem = character_id, roons = room.roons), 200
+        return render_template('roons.html', titulo = 'Roons', character_id = character_id, roons = room.roons), 200
     except Exception as e:
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
@@ -42,13 +42,13 @@ async def room():
 async def insert_room():
     try:
         user_id = session.get('user_id')
-        character_id = request.form.get('id_personagem')
+        character_id = request.form.get('character_id')
         code_room = request.form.get('room_id')
         print(character_id, code_room)
         room = Room(character_id=character_id, user_id=user_id, room_id=code_room)
         
         if room.insert_character_room():
-            return redirect(url_for('room_personagem', code_room=code_room, id_personagem=character_id))
+            return redirect(url_for('room_personagem', code_room=code_room, character_id=character_id))
         return render_template('index.html', msg = 'Erro em adicionar sala'), 500      
     except Exception as e:
         print(e)
@@ -67,14 +67,15 @@ async def character_room(code_room, character_id):
         print(e)
         abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-@app.get('/messages/room=<room_id>&id_personagem=<character_id>')
-def get_messages(room_id,character_id):
+@app.get('/messages/room=<room_id>')
+def get_messages(room_id):
     try:
-        if session.get('user_id') is None:
+        """user_id = session.get('user_id')
+        if user_id is None:
             abort(403, "Deve ser Feito Login para acessar essa pagina")
         
-        room = Room(room_id=room_id, character_id=character_id)
-        room.character_belongs_room()
+        room = Room(room_id=room_id, user_id=user_id)
+        #room.character_belongs_room()
         
         limit = request.args.get('limit', default=None)
         offset = request.args.get('offset', default=None)
@@ -82,7 +83,22 @@ def get_messages(room_id,character_id):
         messages = Messages(room_id=room_id, limit=limit, offset=offset)        
         messages.load_messages()
         
-        return jsonify(messages.messages), 200   
+        return jsonify(messages.messages), 200 """
+        messages = [
+            {
+                'message_id': 1,
+                'message': 'bla bla bla'
+            },
+            {
+                'message_id': 2,
+                'message': 'bla ola bla'    
+            },
+            {
+                'message_id': 3,
+                'message': 'bla bla bllnsdlf'
+            }
+        ]  
+        return jsonify({'messages': messages})
     except Exception as e:
         print(e)
         abort(404)
@@ -90,36 +106,25 @@ def get_messages(room_id,character_id):
 @socketio.on('message')
 def on_message(data):
     try:
-        user_id = session.get('user_id')
-        character_id = data.get('id_personagem')
+        """user_id = session.get('user_id')
+        character_id = data.get('character_id')
         room = data.get('room')
         if user_id and character_id and room:
             message = Message(message=data['message'], name_character=data['nome_personagem'], character_id=character_id, room=room)
-            socketio.emit('message', message.message, room=room)
+            socketio.emit('message', message.message, room=room)""" 
+        message = data.get('message')
+        room = data.get('room_id')
+        print(message)
+        socketio.emit('message', {'message': message}, room=room)
     except Exception as e:
         print(e)
         return 403
-
+   
 @socketio.on('join')
 def on_join(data):
     try:
-        user_id = session.get('user_id')
-        character_id = data.get('id_personagem')
-        room = data.get('room')
-        if user_id and character_id and room:
-            character_name = data['nome_personagem']
-            leave_room(room)
-            join_room(room)
-            socketio.emit('message', {'message': f'{character_name} join to room'}, room=room)
-    except Exception as e:
-        print(e)
-        return 403
-    
-@socketio.on('join_cartesian')
-def on_join(data):
-    try:
         #user_id = session.get('user_id')
-        #character_id = data.get('id_personagem')
+        #character_id = data.get('character_id')
         room = data.get('room_id')
         leave_room(room)
         join_room(room)
@@ -127,7 +132,7 @@ def on_join(data):
         print(e)
         return 403
 
-@socketio.on('leave_cartesian')
+@socketio.on('leave')
 def on_leave(data):
     try:
         room = data.get('room_id')
@@ -140,7 +145,7 @@ def on_leave(data):
 def updateSquare(data):
     try:
         square_id = data.get('square_id')
-        x = data.get('x')
+        x = data.get('x') 
         y = data.get('y')
         room = data.get('room_id')
         socketio.emit('update_square', {'square_id': square_id, 'x': x, 'y': y}, room=room)

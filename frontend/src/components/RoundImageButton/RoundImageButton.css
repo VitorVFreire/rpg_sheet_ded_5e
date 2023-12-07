@@ -4,10 +4,10 @@
     height: 50px;
     background-size: cover;
     background-position: center;
-    border-radius: 15%;
+    border-radius: 80%;
     overflow: hidden;
     cursor: pointer;
-    background-color: green;
+    background-color: rgb(5, 177, 5);
 }
 
 .round-image-button input {

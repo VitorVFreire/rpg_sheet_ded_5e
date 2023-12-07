@@ -119,8 +119,10 @@ class Square:
     
     def update_square_position(self):
         try:    
+            x = self.__x if type(self.__x) is not list else 0
+            y = self.__y if type(self.__y) is not list else 0
             query = "UPDATE square SET x = %s, y = %s WHERE square_id = %s"
-            parameters = (self.__x, self.__y, self.__square_id,)
+            parameters = (x, y, self.__square_id,)
             db = Db()
             db.sync_connection_db()
             return db.sync_update(query=query, parameters=parameters)
