@@ -13,6 +13,7 @@ const Navbar = (props) => {
             <>
               <a className="navbar-brand" href="/logout">Logout</a>
               <a className="navbar-brand" href="/characters_page">Personagens</a>
+              <a className="navbar-brand" href="/roons_page">Salas</a>
             </>
           ) : (
             <>

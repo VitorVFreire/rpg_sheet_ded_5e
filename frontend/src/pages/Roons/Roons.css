@@ -1,0 +1,25 @@
+.roons {
+    margin-top: 12px;
+    width: 80%;
+    gap: 12px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: aliceblue;
+}
+
+.roons div {
+    border-radius: 12px;
+    width: 200px;
+    height: 120px;
+    text-align: center;
+    justify-content: center;
+    background-color: #333;
+}
+
+.error {
+    color: rgb(240, 93, 93);
+    text-align: center;
+}

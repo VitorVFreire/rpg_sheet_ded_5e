@@ -4,68 +4,77 @@ from flask import session, abort, render_template, request, jsonify, redirect, u
 from src import Character, Message, Messages, Room, User, Square
 from main import socketio, app
 
-@app.post('/insert/room/<character_id>/<code_room>')
-async def post_character_room(character_id, code_room):
-    try:
-        room = Room(room_id=code_room ,character_id=character_id)
-
-        return jsonify({'result': room.insert_character_room()}), 200
-    except Exception as e:
-        print(e)
-        return 404
-
-@app.route('/roons/<character_id>')
-async def roons(character_id):
-    try:
-        if session.get('user_id') is None:
-            abort(403, "Deve ser Feito Login para acessar essa pagina")
-        room = Room(character_id=character_id)
-        
-        room.load_character_room()
-        
-        return render_template('roons.html', titulo = 'Roons', character_id = character_id, roons = room.roons), 200
-    except Exception as e:
-        print(e)
-        abort(403, "Deve ser Feito Login para acessar essa pagina")
-        
-@app.route('/room')
-async def room():
-    try:
-        user_id = session.get('user_id')
-        character = User(user_id=user_id)
-        await character.load_characters()
-        return render_template('room.html', titulo = 'Room', personagens = await character.characters), 200
-    except Exception as e:
-        print(e)
-        
 @app.post('/room')
-async def insert_room():
+def insert_room():
     try:
         user_id = session.get('user_id')
-        character_id = request.form.get('character_id')
-        code_room = request.form.get('room_id')
-        print(character_id, code_room)
-        room = Room(character_id=character_id, user_id=user_id, room_id=code_room)
+        room_name = request.form.get('room_name')
+        room_password = request.form.get('room_password')
+
+        room = Room(user_id=user_id, room_name=room_name, room_password=room_password)
+
+        if room.insert_room():
+            return jsonify({'result': True, 'data': {'room_id': room.room_id, 'user_room_id': room.user_room_id, 'room_name': room.room_name}}), 200
+        return jsonify({'result': False, 'error': room.error}), 200
+    except Exception as e:
+        print(e)
+
+@app.route('/roons_page')
+def page_roons():
+    try:
+        user_id = session.get('user_id')
         
-        if room.insert_character_room():
-            return redirect(url_for('room_personagem', code_room=code_room, character_id=character_id))
-        return render_template('index.html', msg = 'Erro em adicionar sala'), 500      
+        if user_id is None:
+            abort(403, "Deve ser Feito Login para acessar essa pagina")
+        
+        return render_template('index.html', id=user_id), 200     
+    except Exception as e:
+        print(e)
+       
+@app.get('/roons')
+def get_roons():
+    try:
+        user_id = session.get('user_id')
+        
+        room = Room(user_id=user_id)
+        
+        result = room.load_user_room()
+        
+        return jsonify({'result': result, 'data': room.roons}), 200     
     except Exception as e:
         print(e)
         
-@app.route('/room/<code_room>/<character_id>')
-async def character_room(code_room, character_id):
+@app.post('/user_room')
+def insert_user_room():
     try:
-        if session.get('user_id') is None:
-            abort(403, "Deve ser Feito Login para acessar essa pagina")
-        #room = Room(room_id=code_room, character_id=character_id)
+        user_id = session.get('user_id')
+        room_name = request.form.get('room_name')
+        room_password = request.form.get('room_password')
+                
+        room = Room(user_id=user_id, room_name=room_name, room_password=room_password)
         
-        #room.character_belongs_room()
+        if room.insert_user_room_with_password():
+            return jsonify({'result': True, 'data': {'room_id': room.room_id, 'user_room_id': room.user_room_id, 'room_name': room.room_name}}), 200
+        return jsonify({'result': False, 'error': room.error}), 200    
+    except Exception as e:
+        print(e)
+               
+@app.route('/room/<room_id>/<user_room_id>')
+def room(room_id, user_room_id):
+    try:
+        user_id = session.get('user_id')
+        if user_id is None:
+            abort(403, "Deve ser Feito Login para acessar essa pagina")
+        
+        room = Room(room_id=room_id, user_room_id=user_room_id, user_id=user_id)
+                
+        room.exists_room()
+        room.user_has_room()
         
         return render_template('index.html', id=session.get('user_id')), 200
     except Exception as e:
         print(e)
-        abort(403, "Deve ser Feito Login para acessar essa pagina")
+        abort(404)
         
 @app.get('/messages/room=<room_id>')
 async def get_messages(room_id):

@@ -139,8 +139,8 @@ async def create_tables():
                 await cursor.execute("""
                 CREATE TABLE room (
                     room_id SERIAL PRIMARY KEY ,
-                    room_name VARCHAR(100) NOT NULL,
-                    room_password VARCHAR(300) NOT NULL,
+                    room_name VARCHAR(100) NOT NULL UNIQUE,
+                    room_password VARCHAR(300),
                     room_image VARCHAR(200)
                 );         
                 """)

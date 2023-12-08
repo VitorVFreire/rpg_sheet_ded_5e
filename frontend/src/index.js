@@ -13,6 +13,7 @@ import AddEquipment from './pages/AddEquipment';
 import AddSpell from './pages/AddSpell';
 import SpellRegister from './pages/SpellRegister';
 import RoomPage from './pages/RoomPage';
+import Roons from './pages/Roons';
 
 const idUser = window.initialData || false;
 
@@ -20,17 +21,23 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
     <Routes> 
-      <Route path="/" element={<HomePage idUser={idUser} />} />
-      <Route path="/user_registration" element={<CreateUser idUser={idUser} />} />
-      <Route path="/login" element={<LoginPage idUser={idUser} />} />
-      <Route path="/create_character" element={<CreateCharacter idUser={idUser} />} />
+      <Route path='/' element={<HomePage idUser={idUser} />} />
+      {/*User*/}
+      <Route path='/user_registration' element={<CreateUser idUser={idUser} />} />
+      <Route path='/login' element={<LoginPage idUser={idUser} />} />
+      {/*Character*/}
+      <Route path='/create_character' element={<CreateCharacter idUser={idUser} />} />
       <Route path='/characters_page' element={<CharactersPage idUser={idUser} />} />
       <Route path='/character_page/:id' element={<CharacterPage idUser={idUser} />} />
-      <Route path="/equipment_register" element={<EquipmentRegister idUser={idUser} />} />
-      <Route path="/spell_register" element={<SpellRegister idUser={idUser} />} />
-      <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />
-      <Route path='/add_spell/:id' element={<AddSpell idUser={idUser} />} />
+      {/*Room*/}
+      <Route path='/roons_page' element={<Roons idUser={idUser} />} />
       <Route path='/room/:code_room/:id' element={<RoomPage idUser={idUser} />} />
+      {/*Equipment*/}
+      <Route path='/equipment_register' element={<EquipmentRegister idUser={idUser} />} /> {/*Admin*/}
+      <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />
+      {/*Spell*/}
+      <Route path='/spell_register' element={<SpellRegister idUser={idUser} />} /> {/*Admin*/}
+      <Route path='/add_spell/:id' element={<AddSpell idUser={idUser} />} />      
     </Routes>
   </Router>
 );
