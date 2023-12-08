@@ -39,7 +39,7 @@ function CharactersSection() {
           <div>{character.race_name}</div>
           <div><a href={`/character_page/${character.character_id}`}>Ficha</a></div>
           <div>
-            <DeleteButton url={'character'} characterId={character.character_id} onCharacterDeleted={handleCharacterDeleted} />
+            <DeleteButton url={'/character/'+character.character_id} attFunction={handleCharacterDeleted} />
           </div>
         </div>
       ))}

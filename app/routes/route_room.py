@@ -14,7 +14,21 @@ def insert_room():
         room = Room(user_id=user_id, room_name=room_name, room_password=room_password)
 
         if room.insert_room():
-            return jsonify({'result': True, 'data': {'room_id': room.room_id, 'user_room_id': room.user_room_id, 'room_name': room.room_name}}), 200
+            return jsonify({'result': True, 'data': {'room_id': room.room_id, 'user_room_id': room.user_room_id, 'room_name': room.room_name, 'can_delete': room.can_delete}}), 200
+        return jsonify({'result': False, 'error': room.error}), 200
+    except Exception as e:
+        print(e)
+        
+@app.delete('/room')
+def delete_room():
+    try:
+        user_id = session.get('user_id')
+        room_id = request.form.get('room_id')
+
+        room = Room(user_id=user_id, room_id=room_id)
+
+        if room.delete_room():
+            return jsonify({'result': True}), 200
         return jsonify({'result': False, 'error': room.error}), 200
     except Exception as e:
         print(e)
@@ -54,7 +68,7 @@ def insert_user_room():
         room = Room(user_id=user_id, room_name=room_name, room_password=room_password)
         
         if room.insert_user_room_with_password():
-            return jsonify({'result': True, 'data': {'room_id': room.room_id, 'user_room_id': room.user_room_id, 'room_name': room.room_name}}), 200
+            return jsonify({'result': True, 'data': {'room_id': room.room_id, 'user_room_id': room.user_room_id, 'room_name': room.room_name, 'can_delete': room.can_delete}}), 200
         return jsonify({'result': False, 'error': room.error}), 200    
     except Exception as e:
         print(e)

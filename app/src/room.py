@@ -11,6 +11,7 @@ class Room:
         self.__background_cartesian_plane = background_cartesian_plane
         self.__roons = []
         self.__error = ''
+        self.__can_delete = False
         
     @property
     def background_cartesian_plane(self):
@@ -24,6 +25,10 @@ class Room:
     @property
     def error(self):
         return self.__error
+    
+    @property
+    def can_delete(self):
+        return self.__can_delete
     
     @property
     def background_cartesian_plane_load(self):
@@ -141,7 +146,7 @@ class Room:
     def load_user_room(self):
         try:
             if self.__user_id: 
-                query = """SELECT rm.room_id, rm.room_name, ur.user_room_id 
+                query = """SELECT rm.room_id, rm.room_name, ur.user_room_id, ur.user_room_type 
                 FROM user_room ur, room rm 
                 WHERE ur.user_id = %s AND ur.room_id = rm.room_id;"""
                 parameters = (self.__user_id,)
@@ -153,7 +158,8 @@ class Room:
                         self.__roons.append({
                             'room_id': row[0],
                             'room_name': row[1],
-                            'user_room_id': row[2]
+                            'user_room_id': row[2],
+                            'can_delete': row[3] == 1
                         })
                 return True
             return False
@@ -222,6 +228,7 @@ class Room:
                 db = Db()
                 db.sync_connection_db()
                 self.__user_room_id.append(db.sync_insert(query=query, parameters=parameters)) 
+                self.__can_delete = user_room_type == 1
                 return True
             return False
         except Exception as e:
@@ -299,14 +306,36 @@ class Room:
             print(e)
             abort(500, 'Error UPDATE!')
             
+    def can_delete_room(self):
+        try:
+            if self.room_id and self.__user_id:   
+                query = "SELECT EXISTS (SELECT room_id FROM user_room WHERE room_id = %s and user_id = %s and user_room_type=1);"
+                parameters = (self.room_id, self.__user_id,)
+                db = Db()
+                db.sync_connection_db()
+                if db.sync_exists(query=query, parameters=parameters):
+                    self.__can_delete = True
+                    return True
+            self.__error = 'Você não tem permissão para deletar essa sala!'
+            self.__can_delete = False
+            return False
+        except Exception as e:
+            print(e)
+            abort(500)
+            
     def delete_room(self):
         try: 
-            if self.room_id:   
+            if self.room_id and self.can_delete_room():  
+                result_image, image = self.load_room_image()
                 query = "DELETE FROM room WHERE room_id = %s;"
                 parameters = (self.room_id,)
                 db = Db()
                 db.sync_connection_db()
-                return db.sync_delete(query=query, parameters=parameters)
+                result = db.sync_delete(query=query, parameters=parameters)
+                if result and result_image:
+                    img = Image(name=image)  
+                    return img.remove_file()
+                return result
             return False
         except Exception as e:
             print(e)

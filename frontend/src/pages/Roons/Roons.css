@@ -1,11 +1,18 @@
+.roons_page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .roons {
     margin-top: 12px;
     width: 80%;
     gap: 12px;
-    align-items: center;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
     color: aliceblue;
 }
@@ -13,13 +20,59 @@
 .roons div {
     border-radius: 12px;
     width: 200px;
-    height: 120px;
-    text-align: center;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     background-color: #333;
 }
 
-.error {
-    color: rgb(240, 93, 93);
+.roons h4 {
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: center;
+    width: 180px;
+}
+
+.error {
+    color: rgb(121, 120, 120);
+    background-color: rgb(218, 33, 33);
+    border-radius: 12px;
+    width: 300px;
+    height: 80px;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room_inputs {
+    margin-top: 20px;
+    border-radius: 12px;
+    width: 50%;
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room_inputs input {
+    width: 300px;
+    height: 30px;
+    margin-right: 12px;
+    color: white;
+    background-color: black;
+    border-radius: 8px;
+}
+
+.room_inputs button {
+    margin-right: 12px;
+}
+
+.room_inputs button:hover {
+    color: black;
+    background-color: #333;
 }

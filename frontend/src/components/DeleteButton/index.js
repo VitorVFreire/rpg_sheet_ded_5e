@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import './DeleteButton.css';
 
-const DeleteButton = ({ characterId, onCharacterDeleted, url, outherId, keyData }) => {
+const DeleteButton = ({ attFunction ,url, outherId, keyData }) => {
   const handleDelete = async () => {
     try {
-      let deleteURL = `/${url}/${characterId}`;
-
       const json = {
         method: 'DELETE',
       };
@@ -16,9 +14,9 @@ const DeleteButton = ({ characterId, onCharacterDeleted, url, outherId, keyData 
         json.body = data;
       }
 
-      const response = await fetch(deleteURL, json);
+      const response = await fetch(url, json);
       if (response.ok) {
-        onCharacterDeleted(keyData ? outherId : characterId);
+        attFunction(outherId);
       } else {
         console.error('Erro ao excluir:', response.status);
       }

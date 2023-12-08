@@ -53,7 +53,7 @@ const RoomEnter = (props) => {
     }
 
     return (
-        <div>
+        <div className="room_inputs">
             <TextInput
                 name="room_name"
                 required={true}
@@ -69,7 +69,7 @@ const RoomEnter = (props) => {
                 value={roomPassword}
                 onChange={handleInputPassword}
             />
-            <Button id='register' onClick={handleClick}>Registrar</Button>
+            <Button id='register' onClick={handleClick}>Criar</Button>
             <Button id='enter' onClick={handleClick}>Entrar</Button>
         </div>
     );

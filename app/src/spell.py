@@ -125,7 +125,6 @@ class Spell:
             db = Db()
             await db.connection_db()
             self.character_spell_id = await db.insert(query=query, parameters=parameters)  
-            await conn.commit()
             return True
         except Exception as e:
             print(e)

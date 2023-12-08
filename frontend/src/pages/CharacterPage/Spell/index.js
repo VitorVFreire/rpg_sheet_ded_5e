@@ -35,7 +35,7 @@ function Spell(props) {
             {spells.map((spell, index) => (
                 <div id='spell' className='spell'>
                     <div>
-                        <DeleteButton url='spell' keyData='key' outherId={spell.spell_id} characterId={props.id} onCharacterDeleted={handleCharacterDeleted} />
+                        <DeleteButton url={'/spell/'+props.id} keyData='key' outherId={spell.spell_id} attFunction={handleCharacterDeleted} />
                     </div>
                     <h4>{spell.spell_name}</h4>
                     <label>Nivel: {spell.spell_level}</label>

@@ -15,7 +15,6 @@ function CharactersPage(props) {
             <div className='content'>
                 <div>
                     <ButtonLink link='/create_character' text='Criar Personagem'/>
-                    <ButtonLink link='/room' text='Entrar Sala'/>
                 </div>
                 <CharactersSection />
             </div>
