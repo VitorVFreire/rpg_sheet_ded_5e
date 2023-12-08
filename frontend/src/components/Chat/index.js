@@ -30,7 +30,6 @@ const ChatComponent = (props) => {
       const message = data.message;
       const name = data.name;
       setMessages((prevMessages) => [...prevMessages, { 'message': message, 'name': name }]);
-      // Mover o scroll para a parte inferior ao adicionar uma nova mensagem
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     });
 
@@ -63,7 +62,7 @@ const ChatComponent = (props) => {
       <div className="chat-dropdown-container">
         <DropdownList
           url='/characters'
-          label='Personagem'
+          label={props.user_name}
           id='character_id'
           name='character_name'
           className='dropdowncartesian'

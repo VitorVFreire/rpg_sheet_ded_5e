@@ -25,7 +25,6 @@ function CharactersSection() {
   }, []);
 
   const handleCharacterDeleted = (characterId) => {
-    // Remove o personagem da lista com base no characterId
     const updatedCharacters = characters.filter((character) => character.character_id !== characterId);
     setCharacters(updatedCharacters);
   };

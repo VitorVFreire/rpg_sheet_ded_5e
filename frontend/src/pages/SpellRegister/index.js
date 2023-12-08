@@ -50,6 +50,14 @@ function SpellRegister(props) {
                         type="text"
                     />
                     <TextInput
+                        name="amount_dice"
+                        label="Quantidade de Dados"
+                        id="amount_dice"
+                        required={false}
+                        placeholder="Insira a quantidade de dados da magia"
+                        type="number"
+                    />
+                    <TextInput
                         name="side_dice"
                         label="Quantidade de Lados"
                         id="side_dice"
@@ -67,17 +75,9 @@ function SpellRegister(props) {
                     />
                     <DropdownList
                         url="/types_damage"
-                        label="Tipo de Dano"
+                        label="Selecione o tipo de dano"
                         id="type_damage_id"
                         name="type_damage_name"
-                    />
-                    <TextInput
-                        name="amount_dice"
-                        label="Quantidade de Dados"
-                        id="amount_dice"
-                        required={false}
-                        placeholder="Insira a quantidade de dados da magia"
-                        type="number"
                     />
                     <TextInput
                         name="spell_level"

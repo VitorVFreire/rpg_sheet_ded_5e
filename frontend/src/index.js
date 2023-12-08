@@ -31,7 +31,7 @@ root.render(
       <Route path='/character_page/:id' element={<CharacterPage idUser={idUser} />} />
       {/*Room*/}
       <Route path='/roons_page' element={<Roons idUser={idUser} />} />
-      <Route path='/room/:code_room/:id' element={<RoomPage idUser={idUser} />} />
+      <Route path='/room/:room_id/:user_room_id' element={<RoomPage idUser={idUser} />} />
       {/*Equipment*/}
       <Route path='/equipment_register' element={<EquipmentRegister idUser={idUser} />} /> {/*Admin*/}
       <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />

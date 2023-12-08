@@ -32,6 +32,19 @@ def delete_room():
         return jsonify({'result': False, 'error': room.error}), 200
     except Exception as e:
         print(e)
+        
+@app.get('/get_room/<room_id>')
+def get_room(room_id):
+    try:
+        user_id = session.get('user_id')
+
+        room = Room(user_id=user_id, room_id=room_id)
+
+        if room.load_room():
+            return jsonify({'result': True, 'data': room.room}), 200
+        return jsonify({'result': False, 'error': room.error}), 200
+    except Exception as e:
+        print(e)
 
 @app.route('/roons_page')
 def page_roons():
@@ -72,6 +85,20 @@ def insert_user_room():
         return jsonify({'result': False, 'error': room.error}), 200    
     except Exception as e:
         print(e)
+
+@app.delete('/user_room')
+def delete_user_room():
+    try:
+        user_id = session.get('user_id')
+        room_id = request.form.get('room_id')
+
+        room = Room(user_id=user_id, room_id=room_id)
+
+        if room.delete_user_room():
+            return jsonify({'result': True}), 200
+        return jsonify({'result': False, 'error': room.error}), 200
+    except Exception as e:
+        print(e)  
                
 @app.route('/room/<room_id>/<user_room_id>')
 def room(room_id, user_room_id):

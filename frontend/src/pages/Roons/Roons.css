@@ -8,10 +8,10 @@
 .roons {
     margin-top: 12px;
     width: 80%;
+    min-width: 500px;
     gap: 12px;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: row; 
     align-items: center;
     justify-content: center;
     color: aliceblue;
@@ -20,13 +20,38 @@
 .roons div {
     border-radius: 12px;
     width: 200px;
-    height: 160px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: #333;
+    margin-bottom: 12px; 
 }
+
+.roons_buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.roons_buttons button {
+    background-color: azure;
+    color: black;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.roons_buttons button:hover {
+    background-color: antiquewhite;
+}
+
 
 .roons h4 {
     overflow: hidden;
@@ -60,7 +85,8 @@
 }
 
 .room_inputs input {
-    width: 300px;
+    font-size: 12px;
+    width: 280px;
     height: 30px;
     margin-right: 12px;
     color: white;

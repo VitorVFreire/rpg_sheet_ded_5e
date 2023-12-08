@@ -41,7 +41,7 @@ function EquipmentRegister(props) {
                     />
                     <DropdownList
                         url='/coins'
-                        label='Moeda'
+                        label='Selecione a moeda'
                         id='coin_id'
                         name='coin_name'
                     />
@@ -94,13 +94,13 @@ function EquipmentRegister(props) {
                     />
                     <DropdownList
                         url='/types_damage'
-                        label='Tipo de Dano'
+                        label='Selecione o tipo de dano'
                         id='type_damage_id'
                         name='type_damage_name'
                     />
                     <DropdownList
                         url='/kind_equipments'
-                        label='Tipo de Equipamento'
+                        label='Selecione o tipo de equipamento'
                         id='kind_equipment_id'
                         name='kind_equipment_name'
                     />

@@ -8,7 +8,7 @@ function CartesianPlane(props) {
   const [isDragging, setIsDragging] = useState(false);
   const [draggedSquare, setDraggedSquare] = useState(null);
   const [squares, setSquares] = useState([]);
-  const [background, setBackground] = useState(null);
+  const [background, setBackground] = useState(props.background);
   const gridSize = 50;
   const length = 10;
 
@@ -21,7 +21,6 @@ function CartesianPlane(props) {
           if (data.data !== null) {
             setSquares(data.data);
           }
-          setBackground(data.background);
         } else {
           console.error('Erro ao buscar dados');
         }
@@ -62,14 +61,16 @@ function CartesianPlane(props) {
 
     socket.on('delete_square', (delete_square) => {
       const id = delete_square.square_id;
-      console.log('Before deletion:', squares);
       setSquares((prevSquares) =>
         prevSquares.filter((square) => square.square_id != id)
       );
-      console.log('After deletion:', squares);
     });
 
   }, [props.room_id]);
+
+  if (background === null) {
+    return <div>Loading...</div>;
+  }
 
   const handleMouseDown = (id) => {
     setIsDragging(true);
@@ -124,10 +125,6 @@ function CartesianPlane(props) {
     }
   };
 
-  if (background === null) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="App">
       <div className="container">
@@ -169,7 +166,6 @@ function CartesianPlane(props) {
               }}
               onMouseDown={() => handleMouseDown(square.square_id)}
             >
-              {square.square_id}
             </div>
           ))}
         </div>
@@ -180,7 +176,7 @@ function CartesianPlane(props) {
             method={'POST'}
           />
           <RoundImageButton
-            imageUrl="http://localhost:8085/openimg/ilustracao.png"
+            imageUrl="/openimg/ilustracao.png"
             url={`/background_cartesian_plane/${props.room_id}`}
             method={'PUT'}
           />
@@ -196,10 +192,9 @@ function CartesianPlane(props) {
               backgroundSize: 'cover',
             }}
           >
-            {square.square_id}
           </div>
           <RoundImageButton
-            imageUrl="http://localhost:8085/openimg/img.png"
+            imageUrl="/openimg/img.png"
             url={`/squares/${props.room_id}`}
             square_id={square.square_id}
             method={'PUT'}

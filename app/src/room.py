@@ -47,8 +47,9 @@ class Room:
     @property
     def room(self):
         room = {
-            'room_name': self.__room_name[0],
-            'room_image': self.__background_cartesian_plane[0]
+            'room_name': self.room_name,
+            'room_password': self.room_password if self.room_password is not None else '',
+            'background': self.background_cartesian_plane_load
         }     
         return room
     
@@ -344,7 +345,7 @@ class Room:
     def update_room_name(self):
         try:    
             if self.room_id:
-                query = "UPDATE room SET room_name = %s WHERE room_id = %s"
+                query = "UPDATE room SET room_name = %s WHERE room_id = %s;"
                 parameters = (self.room_name,self.room_id,)
                 db = Db()
                 db.sync_connection_db()
@@ -356,12 +357,13 @@ class Room:
             
     def delete_user_room(self):
         try:
-            if self.__user_id:    
-                query = "DELETE FROM user_room WHERE room_id = %s and user_id = %s"
+            if self.__user_id and self.room_id:    
+                query = "DELETE FROM user_room WHERE room_id = %s and user_id = %s;"
                 parameters = (self.room_id, self.__user_id)
                 db = Db()
                 db.sync_connection_db()
                 return db.sync_delete(query=query, parameters=parameters)
+            self.__error = 'Não foi possivel sair dessa sala!'
             return False
         except Exception as e:
             print(e)

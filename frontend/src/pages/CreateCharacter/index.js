@@ -25,13 +25,13 @@ function CreateCharacter(props) {
                     />
                     <DropdownList
                         url='/races'
-                        label='Raça'
+                        label='Selecione a raça'
                         id='race_id'
                         name='race_name'
                     />
                     <DropdownList
                         url='/classes'
-                        label='Classe'
+                        label='Selecione a classe'
                         id='class_id'
                         name='class_name'
                     />

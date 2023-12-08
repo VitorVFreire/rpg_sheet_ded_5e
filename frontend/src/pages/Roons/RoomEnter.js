@@ -16,11 +16,9 @@ const RoomEnter = (props) => {
             if (responseData.result) {
                 if (responseData.data) {
                     props.newRoons(responseData.data);
-                    // Limpar o estado de erro ao obter dados com sucesso
                     props.setErrorReturn('');
                 }
             } else {
-                // Definir o estado de erro se houver um erro
                 props.setErrorReturn(responseData.error);
             }
         } catch (error) {
