@@ -7,8 +7,8 @@ const ChatComponent = (props) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [offSet, setOffSet] = useState('');
-  const [idUserMessage, setIdUserMessage] = useState({ 'user_id': props.user_id, 'name': props.user_name });
   const messagesContainerRef = useRef(null);
+  const [idUserMessage, setIdUserMessage] = useState({ 'user_id': props.user_id, 'name': props.user_name });
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -50,10 +50,11 @@ const ChatComponent = (props) => {
   };
 
   const handleSelectItem = (id, name) => {
+    console.log(idUserMessage)
     if (id !== '') {
       setIdUserMessage({ 'character_id': id, 'name': name });
     } else {
-      setIdUserMessage({ 'user_id': props.user_id, 'name': props.user_name });
+      setIdUserMessage({ 'user_id': props.user_id, 'name': name });
     }
   }
 

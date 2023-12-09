@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import CartesianPlane from '../../components/CartesianPlane';
-import { useEffect, useRef, useState } from 'react';
 import socket from '../../components/Socket';
 import ChatComponent from '../../components/Chat';
 import './RoomPage.css'
@@ -37,7 +37,7 @@ function RoomPage(props) {
                 const response = await fetch(`/user`);
                 const data = await response.json();
                 if (data.result) {
-                    setUserName(data.data.user_name);
+                    setUserName(data.data['user_name']);
                 }
             } catch (error) {
                 console.error('Erro ao buscar mensagens:', error);
@@ -61,20 +61,26 @@ function RoomPage(props) {
             window.removeEventListener('resize', handleResize);
             socket.emit('leave', { room_id: room_id });
         };
-    }, [room_id, user_room_id, userName]);
+    }, [room_id, user_room_id]);
 
     const handleTogglePassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
-        ToggleButton.current.style.backgroundImage = `url(${showPassword ? '/openimg/eye-open.png' : '/openimg/eye-close.png'})`    
+        ToggleButton.current.style.backgroundImage = `url(${showPassword ? '/openimg/eye-open.png' : '/openimg/eye-close.png'})`
     };
 
     if (room.background === null) {
         return <div>Loading...</div>
     }
-    if (room.background != null) {
+
+    if (room.room_name != null){
+        document.title = room.room_name;
+    }
+
+    if (room.background != null && userName != '') {
         return (
             <div>
                 <Navbar isLoggedIn={props.idUser} />
+                <CartesianPlane room_id={room_id} user_room_id={user_room_id} background={room.background} />
                 <div className='infos'>
                     <h5>Sala: {room.room_name}</h5>
                     <h5 className='password'>
@@ -83,7 +89,6 @@ function RoomPage(props) {
                         </button>
                     </h5>
                 </div>
-                <CartesianPlane room_id={room_id} user_room_id={user_room_id} background={room.background} />
                 <ChatComponent room_id={room_id} user_room_id={user_room_id} user_id={props.idUser} user_name={userName} />
             </div>
         );

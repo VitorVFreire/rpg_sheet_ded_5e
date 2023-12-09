@@ -8,7 +8,6 @@
 .roons {
     margin-top: 12px;
     width: 80%;
-    min-width: 500px;
     gap: 12px;
     display: flex;
     flex-direction: row; 
@@ -78,6 +77,7 @@
     margin-top: 20px;
     border-radius: 12px;
     width: 50%;
+    min-width: 850px;
     background-color: aliceblue;
     display: flex;
     align-items: center;
@@ -95,7 +95,7 @@
 }
 
 .room_inputs button {
-    margin-right: 12px;
+    margin-left: 12px;
 }
 
 .room_inputs button:hover {
