@@ -2,11 +2,18 @@
     color: aliceblue;
     border: 2px solid aliceblue;
     border-radius: 10px;
-    padding: 10px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.saving_throw div {
+    margin-bottom: 2px;
 }
 
 .saving_throw label {
     white-space: pre-line;
     display: block; 
-} 
+}

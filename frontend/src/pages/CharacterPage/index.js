@@ -14,29 +14,24 @@ function CharacterPage(props) {
     const { id } = useParams();
 
     return (
-        <div>
+        <div className='character-page'>
             <Navbar isLoggedIn={props.idUser} />
-            <div className='layout'>
-                <div className='header'>
-                    <Character id={id} />
-                    <Characteristics id={id} />
-                </div>
-                <div className='body'>
+            <Character id={id} />
+            <div className='main'>
+                <Attribute id={id} />
+                <div className='div1'>
                     <SavingThrow id={id} />
                     <Skill id={id} />
                 </div>
-                <div className='leftSide'>
-                    <Attribute id={id} />
-                </div>
-                <div className='rightSide'>
+                <div className='div2'>
                     <StatusBase id={id} />
                 </div>
-                <div className='footer'>
-                    <h3>Spell: </h3> <ButtonLink link={'/add_spell/' + id} text='Adicionar Mágia'/>
-                    <Spell id={id} />
-                </div>
+                <Characteristics id={id} />
             </div>
-
+            <div className='additional-components'>
+                <h3>Spell: </h3> <ButtonLink link={'/add_spell/' + id} text='Adicionar Mágia' />
+                <Spell id={id} />
+            </div>
         </div>
     );
 }

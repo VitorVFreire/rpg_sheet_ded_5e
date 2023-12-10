@@ -6,8 +6,8 @@
 
 .skills {
     display: flex;
-    flex-direction: column; /* Alteração para empilhar as skills verticalmente */
-    align-items: center; /* Centraliza as skills horizontalmente */
+    flex-direction: column; 
+    align-items: center; 
     color: aliceblue;
     font-size: 12px;
     border: 2px solid aliceblue;
@@ -18,7 +18,7 @@
 .skill-container {
     display: flex;
     align-items: center;
-    margin-bottom: 10px; /* Espaço entre as skills */
+    margin-bottom: 10px; 
 }
 
 .skill-container .skill_bonus {
@@ -28,5 +28,5 @@
 .skill-container input[type="checkbox"] {
     width: auto;
     height: auto;
-    margin-right: 5px; /* Espaço entre o input e a label */
+    margin-right: 5px; 
 }

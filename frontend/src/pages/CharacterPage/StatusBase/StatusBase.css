@@ -1,16 +1,16 @@
 .status_base {
     color: aliceblue;
-    max-width: 80%;
-    margin: 12px auto; 
+    display: inline-block;
+    flex-wrap: wrap;
+    justify-items: center;
+    align-items: center;
+    justify-content: space-between;
     text-align: center;
 }
 
 .status_base div {
-    margin-right: 20px;
     display: inline-block;
+    margin-right: 25px;
+    margin-bottom: 5px;
     box-sizing: border-box;
-}
-
-.status_base label {
-    margin-right: 10px;
 }

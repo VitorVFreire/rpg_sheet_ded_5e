@@ -7,18 +7,18 @@ function StatusBase(props) {
     const [statusBase, setStatusBase] = useState([]);
 
     list = {
+        'inspiration': 'Inspiração',
+        'armor_class': 'ca',
+        'initiative': 'Iniciativa',
         'level': 'Nivel',
         'alignment': 'Alinhamento',
         'faction': 'Facção',
         'background': 'Antecedente',
-        'experience_points': 'xp',
+        'experience_points': 'XP',
         'movement': 'Deslocamento',
-        'initiative': 'Iniciativa',
         'hit_points': 'Vida',
         'current_hit_points': 'Vida Atual',
-        'temporary_hit_points': 'Vida Temporaria',
-        'inspiration': 'Inpiração',
-        'armor_class': 'ca'
+        'temporary_hit_points': 'Vida Temporaria'
     }
 
     const types = {

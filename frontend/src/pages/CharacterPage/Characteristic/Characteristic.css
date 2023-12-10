@@ -1,18 +1,11 @@
 .characteristics {
     color: aliceblue;
-    max-width: 80%;
-    margin: 12px auto; 
-    text-align: center;
 }
 
 .characteristics div {
-    margin-right: 20px;
     display: inline-block;
     box-sizing: border-box;
-}
-
-.characteristics label {
-    margin-right: 10px;
+    margin-bottom: 12px;
 }
 
 .characterImage {
