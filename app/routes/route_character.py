@@ -5,7 +5,7 @@ import asyncio
 from main import app
 from src import User, Skill, Race, Classe, SavingThrow, Spell, Room, Image, Equipment
 from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell
-from src import CharacterSkills, CharacterSavingThrowTest, CharacterStatusBase, CharacterEquipment
+from src import CharacterSkills, CharacterSavingThrow, CharacterStatusBase, CharacterEquipment
 
 @app.get('/characters')
 async def get_characters():
@@ -137,33 +137,66 @@ async def get_character_attribute(character_id):
 async def put_character_attribute(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterAttribute(user_id=user_id, character_id=character_id)
+        character = CharacterSkills(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
         key = request.form.get('key')
-        value = request.form.get('value')
+        value = request.form.get('value', default=0, type=int)
 
-        if await character.exists_attributes() and key != 'bonus_proficiencia':
+        if await character.exists_attributes() and key != 'proficiency_bonus':
             update_result = await character.update_attributes(key=key, value=value)
-            update_value_bonus = await character.get_bonus(key=key)
-            return jsonify({'result': update_result,
-                            'data': {
-                                f'{key}_bonus': update_value_bonus,
-                                f'{key}_resistance': update_value_bonus
-                            }
-                            }), 200
-        elif await character.exists_attributes():
-            return jsonify({'result': await character.update_attributes(key=key, value=value)}), 200
+            await character.load_skills_attributes(usage_status=key)
+            
+            update_attribute_value = {
+                'result': update_result,
+                'data': {
+                    f'{key}_bonus': await character.get_bonus(key=key),
+                    f'{key}_resistance': await character.get_saving_throws(key=f'{key}_resistance'),                
+                }
+            }
+                        
+            for skill in character.skills_from_attribute:
+                skill_value = getattr(character, skill['skill_name'])
+                update_attribute_value['data'][skill['skill_name']] = skill_value
+                        
+            return jsonify(update_attribute_value), 200
+        elif await character.exists_attributes() and key == 'proficiency_bonus':
+            update_result = await character.update_attributes(key=key, value=value)
+            await character.load_attributes()
+            await character.load_skills()
+            await character.load_saving_throws()
+            
+            update_proficiency_value = {
+                'result': update_result,
+                'data': {}
+            }
+            
+            for saving_throw in character.saving_throw_name_list:
+                saving_throw_value = getattr(character, saving_throw)
+                update_proficiency_value['data'][saving_throw] = saving_throw_value
+                        
+            for skill in character.skills:
+                skill_value = getattr(character, skill['skill_name'])
+                update_proficiency_value['data'][skill['skill_name']] = skill_value
+                
+            return jsonify(update_proficiency_value), 200
+        elif key == 'proficiency_bonus':
+            return jsonify({'result': await character.insert_attribute(key=key, value=value)})
 
-        addition_result = await character.insert_attribute(key=key, value=value)
-        addition_value_bonus = await character.get_bonus(key=key)
-        return jsonify({'result': addition_result,
-                        'data': {
-                            f'{key}_bonus': addition_value_bonus,
-                            f'{key}_resistance': addition_value_bonus
-                        }
-                        }), 200
+        addition_result = await character.insert_attribute(key=key, value=value) 
+        await character.load_skills_attributes(usage_status=key)
+        addition_attribute_value = {
+            'result': addition_result,
+            'data': {
+                f'{key}_bonus': await character.get_bonus(key=key),
+                f'{key}_resistance': await character.get_saving_throws(key=f'{key}_resistance'),                
+            }
+        }
+        for skill in character.skills_from_attribute:
+            skill_value = getattr(character, skill['skill_name'])
+            addition_attribute_value['data'][skill['skill_name']] = skill_value
+        return jsonify(addition_attribute_value), 200
     except Exception as e:
         print(e)
         return 404
@@ -172,7 +205,7 @@ async def put_character_attribute(character_id):
 async def get_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSavingThrowTest(user_id=user_id, character_id=character_id)
+        character = CharacterSavingThrow(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -189,7 +222,7 @@ async def get_character_saving_throw(character_id):
 async def post_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSavingThrowTest(user_id=user_id, character_id=character_id)
+        character = CharacterSavingThrow(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 
@@ -214,7 +247,7 @@ async def post_character_saving_throw(character_id):
 async def delete_character_saving_throw(character_id):
     try:
         user_id = session.get('user_id')
-        character = CharacterSavingThrowTest(user_id=user_id, character_id=character_id)
+        character = CharacterSavingThrow(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
 

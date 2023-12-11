@@ -2,12 +2,13 @@ from data import attributes
 import pandas
 import asyncio
 
-from src import CharacterAttribute, Db
+from src import CharacterAttribute, Db, CharacterSavingThrow
 
-class CharacterSkills(CharacterAttribute):
+class CharacterSkills(CharacterSavingThrow):
     def __init__(self, user_id=None,character_id=None):
         super().__init__(user_id=user_id, character_id=character_id)
         self._skills = [] 
+        self._skills_from_attribute = []
         
     async def exists_skill(self, skill_id):
         try:
@@ -41,8 +42,8 @@ class CharacterSkills(CharacterAttribute):
         try:
             if self.character_id:
                 query = """DELETE from character_skill
-                WHERE skill_id=%s;"""
-                parameters = (skill_id,)
+                WHERE skill_id=%s AND character_id=%s;"""
+                parameters = (skill_id,self.character_id,)
                 db = Db()
                 await db.connection_db()
                 return await db.delete(query=query, parameters=parameters)
@@ -66,6 +67,32 @@ class CharacterSkills(CharacterAttribute):
                     self._skills.clear()
                     for row in result:
                         self._skills.append({'character_skill_id': row[3], 'skill_id': row[0], 'skill_name': row[1], 'usage_status': row[2]})
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
+    
+    async def load_skills_attributes(self, usage_status):
+        try:
+            if self.character_id:
+                query = """
+                SELECT sk.skill_id, sk.skill_name, sk.usage_status, cs.character_skill_id AS id
+                FROM skill sk
+                LEFT JOIN character_skill cs ON cs.skill_id = sk.skill_id AND cs.character_id = %s
+                WHERE sk.usage_status = %s;
+                """
+                parameters = (self.character_id, usage_status)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters)
+                if result:
+                    self._skills_from_attribute.clear()
+                    self._skills.clear()
+                    for row in result:
+                        self._skills_from_attribute.append({'skill_id': row[0], 'skill_name': row[1], 'usage_status': row[2]})
+                        if row[3] is not None:
+                            self._skills.append({'skill_name': row[1]})
                 return True
             return False
         except Exception as e:
@@ -96,6 +123,10 @@ class CharacterSkills(CharacterAttribute):
     def skills_name_list(self):
         lista = [d.get('skill_name') for d in self._skills]
         return lista if len(lista) > 0 else ''
+    
+    @property
+    def skills_from_attribute(self):
+        return self._skills_from_attribute
 
     @property
     def skill(self):

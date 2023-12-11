@@ -128,13 +128,13 @@ async def get_messages(room_id):
         #room.character_belongs_room()
         
         #limit = request.args.get('limit', default=None)
-        #offset = request.args.get('offset', default=None)
+        offset = int(request.args.get('offset', default=0))
         
-        #messages = Messages(room_id=room_id, limit=limit, offset=offset)  
-        messages = Messages(room_id=room_id)     
+        messages = Messages(room_id=room_id, offset=offset)  
+        #messages = Messages(room_id=room_id)     
         
         result = await messages.load_messages()
-         
+                 
         return jsonify({'result': result, 'data': messages.messages}), 200
     except Exception as e:
         print(e)

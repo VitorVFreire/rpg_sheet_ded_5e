@@ -3,7 +3,7 @@ import asyncio
 
 from src import CharacterAttribute, Db
 
-class CharacterSavingThrowTest(CharacterAttribute):
+class CharacterSavingThrow(CharacterAttribute):
     def __init__(self, user_id=None,character_id=None):
         super().__init__(user_id=user_id, character_id=character_id)
         self._saving_throws = []

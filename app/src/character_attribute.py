@@ -168,14 +168,14 @@ class CharacterAttribute(Character):
 
     @property
     def constitution(self):
-        return int(self._attributes['contituition']) if self._attributes['contituition'] is not None else None
+        return int(self._attributes['constitution']) if self._attributes['constitution'] is not None else None
 
     @property
     def constitution_bonus(self):
-        return int(attributes.loc[self.constitution]) if self._attributes['contituition'] is not None else None
+        return int(attributes.loc[self.constitution]) if self._attributes['constitution'] is not None else None
 
     def set_constitution(self, value):
-        self._attributes['contituition'] = value
+        self._attributes['constitution'] = value
 
     @property
     def intelligence(self):

@@ -11,10 +11,10 @@ from .spell import Spell
 from .saving_throw import SavingThrow
 from .character import Character
 from .character_attribute import CharacterAttribute
+from .character_saving_throw import CharacterSavingThrow
 from .character_characteristics import CharacterCharacteristics
 from .character_spell import CharacterSpell
 from .character_skill import CharacterSkills
-from .character_saving_throw import CharacterSavingThrowTest
 from .character_status_base import CharacterStatusBase
 from .message import Message
 from .room import Room
