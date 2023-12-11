@@ -7,6 +7,7 @@ const ChatComponent = (props) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [offSet, setOffSet] = useState('');
+  const [isUserMessageSender, setIsUserMessageSender] = useState(false);
   const messagesContainerRef = useRef(null);
   const [idUserMessage, setIdUserMessage] = useState({ 'user_id': props.user_id, 'name': props.user_name });
 
@@ -30,10 +31,24 @@ const ChatComponent = (props) => {
       const message = data.message;
       const name = data.name;
       setMessages((prevMessages) => [...prevMessages, { 'message': message, 'name': name }]);
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     });
 
+    if (messagesContainerRef.current) {
+      mutationObserver.observe(messagesContainerRef.current, {
+        childList: true,
+        subtree: true,
+      });
+
+      return () => {
+        mutationObserver.disconnect();
+      };
+    }
+
   }, [props.room]);
+
+  function calculeteScroll() {
+    messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - messagesContainerRef.current.clientHeight;
+  }
 
   const sendMessage = () => {
     if (messageInput.trim() !== '') {
@@ -45,9 +60,16 @@ const ChatComponent = (props) => {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
+      setIsUserMessageSender(true);
       sendMessage();
     }
   };
+
+  const mutationObserver = new MutationObserver(async () => {
+    if (messagesContainerRef.current.scrollHeight > 0){
+      calculeteScroll()
+    }
+  });
 
   const handleSelectItem = (id, name) => {
     console.log(idUserMessage)
