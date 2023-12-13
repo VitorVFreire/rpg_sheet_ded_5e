@@ -28,13 +28,9 @@ function Spell({ characterId }) {
   }, [characterId]);
 
   return (
-    <section className='spells'>
+    <section className='spells-add'>
       {spellList.map((spell) => (
         <div className='spell-container' key={spell.spell_id}>
-          <label htmlFor={`spell_${spell.spell_id}`}>
-            <h3>{spell.spell_name}</h3>
-          </label>
-          <div className='spell_bonus'>{spell.description_spell}</div>
           <CustomInput
             characterID={characterId}
             type='checkbox'
@@ -42,6 +38,13 @@ function Spell({ characterId }) {
             name={spell.spell_id}
             checked={checkedSpells.includes(spell.spell_id)}
           />
+          <label htmlFor={`spell_${spell.spell_id}`}>
+            <h3>{spell.spell_name}</h3>
+          </label>
+          <h4>level:</h4> {spell.spell_level}
+          <h4>Dados:</h4> {spell.amount_dice}d{spell.side_dice}
+          <h4>Tipo de dano:</h4> {spell.type_damage_name}
+          {spell.description_spell}
         </div>
       ))}
     </section>
