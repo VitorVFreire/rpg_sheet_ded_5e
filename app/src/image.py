@@ -5,7 +5,7 @@ from flask import url_for
 
 class Image:
     def __init__(self, parameters = None, name = None):
-        self.directory = pathlib.Path('data/img')
+        self.directory = pathlib.Path('database/img')
         self.__parameter = parameters
         self.__name = name
     

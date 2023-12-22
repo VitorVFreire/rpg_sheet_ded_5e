@@ -1,4 +1,4 @@
-from data import attributes
+from database import attributes
 import pandas
 import asyncio
 

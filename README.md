@@ -4,6 +4,8 @@
 ![GitHub Repo Size](https://img.shields.io/github/repo-size/VIVF0/rpg_sheet_ded_5e)
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/VIVF0/rpg_sheet_ded_5e)
 
+[![Watch the video](https://github.com/VIVF0/rpg_sheet_ded_5e/blob/main/app/static/react/images/BannerSiteRPGSheet.png)](https://youtu.be/T_FA0dJuQ9A)
+
 ## Ficha Online de RPG D&D 5e
 Este é um projeto de uma ficha online para o jogo de RPG Dungeons & Dragons 5ª Edição (D&D 5e) desenvolvida em Python. A ficha online permite que os jogadores criem e gerenciem as fichas de seus personagens de forma digital, facilitando o acesso e a atualização das informações durante as sessões de jogo.
 

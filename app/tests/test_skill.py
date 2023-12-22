@@ -1,6 +1,6 @@
 import unittest
 import asyncio
-from data import get_connection
+from database import get_connection
 from src import Skill
 
 class SkillTest(unittest.TestCase):
