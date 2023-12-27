@@ -1,5 +1,4 @@
-// Spell.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CustomInput from '../../components/CustomInput';
 import './Spell.css';
 
@@ -29,26 +28,50 @@ function Spell({ characterId }) {
 
   return (
     <section className='spells-add'>
-      {spellList.map((spell) => (
-        <div className='spell-container' key={spell.spell_id}>
-          <CustomInput
-            characterID={characterId}
-            type='checkbox'
-            id='spell'
-            name={spell.spell_id}
-            checked={checkedSpells.includes(spell.spell_id)}
-          />
-          <label htmlFor={`spell_${spell.spell_id}`}>
-            <h3>{spell.spell_name}</h3>
-          </label>
-          <h4>level:</h4> {spell.spell_level}
-          <h4>Dados:</h4> {spell.amount_dice}d{spell.side_dice}
-          <h4>Tipo de dano:</h4> {spell.type_damage_name}
-          {spell.description_spell}
-        </div>
-      ))}
+      <table>
+        <thead>
+          <tr>
+            <th>Selecionar</th>
+            <th>Nome</th>
+            <th>Nível</th>
+            <th>Dados</th>
+            <th>Tipo de Dano</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          {spellList.map((spell) => (
+            <tr key={spell.spell_id} className='spell-container'>
+              <td>
+                <CustomInput
+                  characterID={characterId}
+                  type='checkbox'
+                  id='spell'
+                  name={spell.spell_id}
+                  checked={checkedSpells.includes(spell.spell_id)}
+                />
+              </td>
+              <td>
+                {spell.spell_name}
+              </td>
+              <td>
+                {spell.spell_level}
+              </td>
+              <td>
+                {`${spell.amount_dice}d${spell.side_dice}`}
+              </td>
+              <td>
+                {spell.type_damage_name}
+              </td>
+              <td>{spell.description_spell}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 }
 
 export default Spell;
+
+

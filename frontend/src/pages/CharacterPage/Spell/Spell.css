@@ -24,7 +24,7 @@
 .spell h3,
 .spell label {
     display: block;
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
     text-align: left;
 }
 
@@ -36,4 +36,18 @@
 
 .spell a:hover {
     color: rgb(0, 0, 0);
+}
+
+.title_spell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title_spell button {
+    margin-right: 10px;
+    background-color: #99969B;
+    border: none;
+    border-radius: 15px;
+    padding: 16px 32px;
 }

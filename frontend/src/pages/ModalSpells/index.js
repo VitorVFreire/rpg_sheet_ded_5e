@@ -1,5 +1,6 @@
 import Spell from './Spell';
 import Modal from 'react-modal';
+import './Spell.css'
 
 const customStyles = {
   content: {
@@ -9,33 +10,27 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
+    backgroundColor: 'antiquewhite',
+    MaxWidth: '800px',
+    maxHeight: '200px',
+    overflow: 'auto'
   },
 };
 
 function ModalSpells(props) {
   return (
-    <div>
+    <div className='modal_spell'>
       <Modal
         isOpen={props.modalSpellsIsOpen}
         onRequestClose={props.closeModalSpells}
         style={customStyles}
         contentLabel="Spells"
       >
-        <button onClick={props.closeModalSpells}>close</button>
+        <button className='button_close_modal' onClick={props.closeModalSpells}>X</button>
         <Spell characterId={props.id} />
       </Modal>
     </div>
   );
 }
-
-/*function ModalSpells(props) {
-    const { id } = useParams();
-
-    return (
-        <div>
-            
-    </div>
-  );
-}*/
 
 export default ModalSpells;

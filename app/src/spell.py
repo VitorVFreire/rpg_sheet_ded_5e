@@ -12,20 +12,32 @@ class Spell:
         self._side_dice = side_dice or []
         self._add_per_level = add_per_level or [] 
         self._description_spell = description_spell or []
-        self.__character_spell = []
+        self.__character_has_spell = []
         self.__type_damage_id = type_damage_id
         
     async def load_character_spells(self, character_id):
         try:
             if character_id:
-                query = "SELECT spell_id FROM character_spell WHERE character_id = %s;"
+                query = """SELECT sp.spell_id, sp.attribute_use, sp.spell_name, sp.spell_level, td.type_damage_name, sp.amount_dice, sp.side_dice, sp.add_per_level, sp.description_spell, CASE WHEN cs.character_spell_id IS NOT NULL THEN TRUE ELSE FALSE END AS has
+                FROM spell sp
+                INNER JOIN type_damage td ON sp.type_damage_id = td.type_damage_id
+                LEFT JOIN character_spell cs ON sp.spell_id = cs.spell_id AND cs.character_id = %s;"""
                 parameters = (character_id,)
                 db = Db()
                 await db.connection_db()
                 result = await db.select(query=query, parameters=parameters)
                 if result:
                     for row in result:
-                        self.__character_spell.append(row[0])              
+                        self._spell_id.append(row[0])
+                        self._attribute_use.append(row[1])
+                        self._spell_name.append(row[2])
+                        self._spell_level.append(row[3])
+                        self._type_damage_name.append(row[4])
+                        self._amount_dice.append(row[5])
+                        self._side_dice.append(row[6])
+                        self._add_per_level.append(row[7])
+                        self._description_spell.append(row[8])
+                        self.__character_has_spell.append(row[9])              
                     return True
             return False
         except Exception as e:
@@ -37,7 +49,7 @@ class Spell:
         if (type(self._spell_id) is list and len(self._spell_id)<=0) or (self._spell_id is None):
             await self.load_spells()
         spells = []
-        for spell_id, attribute_use, spell_name, spell_level, type_damage_name, amount_dice, side_dice, add_per_level, description_spell in zip(self._spell_id, self._attribute_use, self._spell_name, self._spell_level, self._type_damage_name, self._amount_dice, self._side_dice, self._add_per_level, self._description_spell):
+        for spell_id, attribute_use, spell_name, spell_level, type_damage_name, amount_dice, side_dice, add_per_level, description_spell, character_has_spell in zip(self._spell_id, self._attribute_use, self._spell_name, self._spell_level, self._type_damage_name, self._amount_dice, self._side_dice, self._add_per_level, self._description_spell, self.__character_has_spell):
             spells.append({
                 'spell_id': spell_id, 
                 'attribute_use': attribute_use, 
@@ -48,7 +60,7 @@ class Spell:
                 'side_dice': side_dice, 
                 'add_per_level': add_per_level, 
                 'description_spell': description_spell,
-                'character_has': spell_id in self.__character_spell
+                'character_has': character_has_spell 
             })
         return spells
     

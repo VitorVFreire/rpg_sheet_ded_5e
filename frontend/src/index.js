@@ -37,7 +37,6 @@ root.render(
       <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />
       {/*Spell*/}
       <Route path='/spell_register' element={<SpellRegister idUser={idUser} />} /> {/*Admin*/}
-      {/*<Route path='/add_spell/:id' element={<AddSpell idUser={idUser} />} /> */}     
     </Routes>
   </Router>
 );

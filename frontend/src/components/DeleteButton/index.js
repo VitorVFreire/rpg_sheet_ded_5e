@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import './DeleteButton.css';
+import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 
-const DeleteButton = ({ attFunction ,url, outherId, keyData }) => {
+const DeleteButton = ({ attFunction, url, outherId, keyData }) => {
+  const [loading, setLoading] = useState(false);
+
   const handleDelete = async () => {
     try {
+      setLoading(true);
       const json = {
         method: 'DELETE',
       };
@@ -22,13 +26,18 @@ const DeleteButton = ({ attFunction ,url, outherId, keyData }) => {
       }
     } catch (error) {
       console.error('Erro na requisição:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <button className="delete-button" onClick={handleDelete}>
-      <span className="delete-icon">X</span>
-    </button>
+    <div>
+      <LoadingIndicator loading={loading} />
+      <button className="delete-button" onClick={handleDelete}>
+        <span className="delete-icon">X</span>
+      </button>
+    </div>
   );
 };
 

@@ -9,39 +9,23 @@ import SavingThrow from './SavingThrow';
 import StatusBase from './StatusBase';
 import Skill from './Skill';
 import Spell from './Spell';
-import ButtonLink from '../../components/ButtonLink';
-import ModalSpells from '../ModalSpells';
 
 function CharacterPage(props) {
     const { id } = useParams();
-    const [modalSpellsIsOpen, setModalSpellsIsOpen] = useState(false);
-
-    function openModalSpells() {
-        setModalSpellsIsOpen(true);
-    }
-
-    function closeModalSpells() {
-        setModalSpellsIsOpen(false);
-    }
     return (
         <div className='character-page'>
             <Navbar isLoggedIn={props.idUser} />
             <Character id={id} />
+            <StatusBase id={id} />
             <div className='main'>
                 <Attribute id={id} />
                 <div className='div1'>
                     <SavingThrow id={id} />
-                    <Skill id={id} />
-                </div>
-                <div className='div2'>
-                    <StatusBase id={id} />
                 </div>
                 <Characteristics id={id} />
+                <Skill id={id} />
             </div>
             <div className='additional-components'>
-                <button onClick={openModalSpells}>click</button>
-                <ModalSpells id={id} modalSpellsIsOpen={modalSpellsIsOpen} closeModalSpells={closeModalSpells} />
-                <h3>Spell: </h3>
                 <Spell id={id} />
             </div>
         </div>
