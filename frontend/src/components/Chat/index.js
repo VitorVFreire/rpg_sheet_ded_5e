@@ -38,6 +38,9 @@ const ChatComponent = (props) => {
       const message = data.message;
       const name = data.name;
       setMessages((prevMessages) => [...prevMessages, { 'message': message, 'name': name }]);
+      if (offSet === totalNumberMessages) {
+        setTotalNumberMessages((prevTotalNumberMessages) => prevTotalNumberMessages + 1);
+      }
       setOffSet((prevOffSet) => prevOffSet + 1);
     });
 
@@ -56,7 +59,7 @@ const ChatComponent = (props) => {
   useEffect(() => {
     const fetchOldMessages = async () => {
       try {
-        setLoadingOldMessages(true); 
+        setLoadingOldMessages(true);
         setGetOldMessages((prevGetOldMessages) => prevGetOldMessages + 1);
         const response = await fetch(`/messages/room=${props.room_id}?offset=${offSet}`);
         const responseData = await response.json();
@@ -68,7 +71,7 @@ const ChatComponent = (props) => {
       } catch (error) {
         console.error('Erro ao buscar mensagens:', error);
       } finally {
-        setLoadingOldMessages(false); 
+        setLoadingOldMessages(false);
       }
     };
 

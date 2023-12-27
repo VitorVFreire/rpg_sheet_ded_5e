@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './CharacterPage.css'
 import Navbar from '../../components/Navbar';
@@ -9,10 +10,19 @@ import StatusBase from './StatusBase';
 import Skill from './Skill';
 import Spell from './Spell';
 import ButtonLink from '../../components/ButtonLink';
+import ModalSpells from '../ModalSpells';
 
 function CharacterPage(props) {
     const { id } = useParams();
+    const [modalSpellsIsOpen, setModalSpellsIsOpen] = useState(false);
 
+    function openModalSpells() {
+        setModalSpellsIsOpen(true);
+    }
+
+    function closeModalSpells() {
+        setModalSpellsIsOpen(false);
+    }
     return (
         <div className='character-page'>
             <Navbar isLoggedIn={props.idUser} />
@@ -29,7 +39,9 @@ function CharacterPage(props) {
                 <Characteristics id={id} />
             </div>
             <div className='additional-components'>
-                <h3>Spell: </h3> <ButtonLink link={'/add_spell/' + id} text='Adicionar Mágia' />
+                <button onClick={openModalSpells}>click</button>
+                <ModalSpells id={id} modalSpellsIsOpen={modalSpellsIsOpen} closeModalSpells={closeModalSpells} />
+                <h3>Spell: </h3>
                 <Spell id={id} />
             </div>
         </div>

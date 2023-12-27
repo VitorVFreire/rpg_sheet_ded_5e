@@ -373,7 +373,7 @@ async def post_character_spell(character_id):
         character = CharacterSpell(user_id=user_id, character_id=character_id)
 
         await character.character_belongs_user()
-        
+                
         spell_id = request.form.get('key')
         
         return jsonify({'result': await character.insert_spell(spell_id=spell_id)}), 200

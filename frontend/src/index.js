@@ -10,7 +10,7 @@ import CreateCharacter from './pages/CreateCharacter'
 import CreateUser from './pages/CreateUser';
 import EquipmentRegister from './pages/EquipmentRegister';
 import AddEquipment from './pages/AddEquipment';
-import AddSpell from './pages/AddSpell';
+import AddSpell from './pages/ModalSpells';
 import SpellRegister from './pages/SpellRegister';
 import RoomPage from './pages/RoomPage';
 import Roons from './pages/Roons';
@@ -37,7 +37,7 @@ root.render(
       <Route path='/add_equipment/:id' element={<AddEquipment idUser={idUser} />} />
       {/*Spell*/}
       <Route path='/spell_register' element={<SpellRegister idUser={idUser} />} /> {/*Admin*/}
-      <Route path='/add_spell/:id' element={<AddSpell idUser={idUser} />} />      
+      {/*<Route path='/add_spell/:id' element={<AddSpell idUser={idUser} />} /> */}     
     </Routes>
   </Router>
 );
