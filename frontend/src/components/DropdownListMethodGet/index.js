@@ -34,9 +34,9 @@ function DropdownList({ url, label, id, name, className = 'dropdownlist', handle
     };
 
     return (
-        <div>
+        <div className={className}>
             <label>{label}</label>
-            <select className={className} name={id} id={id} onChange={(e) => handleSelect(e)}>
+            <select name={id} id={id} onChange={(e) => handleSelect(e)}>
                 <option value="">{label}</option>
                 {data.map((item) => (
                     <option key={item[id]} value={item[id]}>

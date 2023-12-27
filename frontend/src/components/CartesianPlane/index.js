@@ -194,7 +194,7 @@ function CartesianPlane(props) {
           >
           </div>
           <RoundImageButton
-            imageUrl="/openimg/img.png"
+            imageUrl="/openimg/ilustracao.png"
             url={`/squares/${props.room_id}`}
             square_id={square.square_id}
             method={'PUT'}

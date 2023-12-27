@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import './ButtonSocket.css';
+import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 
 const ButtonSocket = ({ url, value, method }) => {
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     const handleClick = async () => {
-        if (isLoading) {
-            return;
-        }
-
-        setIsLoading(true);
-
+        setLoading(true);
         try {
             const formData = new FormData();
             formData.append('key', value);
@@ -23,7 +18,7 @@ const ButtonSocket = ({ url, value, method }) => {
         } catch (error) {
             console.error('Erro na solicitação:', error);
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
@@ -31,9 +26,12 @@ const ButtonSocket = ({ url, value, method }) => {
     const text = method == "POST" ? "+" : "x"
 
     return (
-        <button className={'button '+ className} onClick={handleClick} disabled={isLoading}>
-            {isLoading ? 'Aguarde...' : text}
-        </button>
+        <div>
+            <LoadingIndicator loading={loading} />
+            <button className={'button ' + className} onClick={handleClick}>
+                {text}
+            </button>
+        </div>
     );
 };
 

@@ -16,6 +16,7 @@ const TextInput = (props) => {
                 onChange={whenTyped}
                 required={props.required}
                 placeholder={props.placeholder}
+                maxLength={props.maxLength}
             />
         </div>
     );

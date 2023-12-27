@@ -3,7 +3,7 @@
     display: inline-block;
     width: 25px;
     height: 25px;
-    background-color: rgb(65, 65, 65);
+    background-color: #99969B;
     border: none;
     cursor: pointer;
     display: flex;
@@ -11,6 +11,11 @@
     justify-content: center;
     border-radius: 20%;
     margin: 0 auto; 
+}
+
+.customInput input[type="number"], .customInput input[type="text"]{
+    background-color: #99969B;
+    color: black;
 }
 
 input[type="checkbox"] {
@@ -30,8 +35,8 @@ input[type="checkbox"] {
     height: 100%;
     border-radius: 20%;
     font-size: 20px;
-    color: white;
-    background-color: rgb(43, 42, 42);
+    color: black;
+    background-color: #99969B;
     display: none;
 }
 

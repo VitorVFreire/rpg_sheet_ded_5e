@@ -38,7 +38,7 @@ function SavingThrow(props) {
     }, [props.id]);
 
     return (
-        <section className='saving_throw'>
+        <section className='saving_throw' style={{border: '30px solid transparent', borderImage: `url("/openimg/borda.png") 100 round`}}>
             {Object.entries(list).map(([key, value]) => (
                 <div key={key}>
                     <CustomInput

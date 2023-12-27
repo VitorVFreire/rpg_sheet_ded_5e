@@ -9,6 +9,50 @@ class CharacterSkills(CharacterSavingThrow):
         super().__init__(user_id=user_id, character_id=character_id)
         self._skills = [] 
         self._skills_from_attribute = []
+    
+    async def load_attribute_skills_saving_throw(self):
+        try:
+            if self.character_id:
+                query = """SELECT strength, dexterity, constitution, intelligence, wisdom, charisma,proficiency_bonus 
+                FROM character_attribute WHERE character_id = %s"""
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters, all=False)
+                if result:
+                    self.set_strength(result[0])
+                    self.set_dexterity(result[1])
+                    self.set_constitution(result[2])
+                    self.set_intelligence(result[3])
+                    self.set_wisdom(result[4])
+                    self.set_charisma(result[5])
+                    self._proficiency_bonus = result[6]
+                    
+                query = """SELECT cs.skill_id, sk.skill_name
+                FROM character_skill cs 
+                JOIN skill sk ON cs.skill_id = sk.skill_id 
+                WHERE cs.character_id = %s;"""
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters)
+                if result:
+                    self._skills.clear()
+                    for row in result:
+                        self._skills.append({'skill_id': row[0], 'skill_name': row[1]})
+                
+                query = """SELECT st.saving_throw_id, st.saving_throw_name
+                FROM character_saving_throw cs, saving_throw st 
+                WHERE cs.character_id = %s and st.saving_throw_id=cs.saving_throw_id"""
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters)
+                if result:
+                    self._saving_throws.clear()
+                    for row in result:
+                        self._saving_throws.append({'saving_throw_id': row[0],'saving_throw_name': row[1]})
+                return True
+            return False
+        except Exception as e:
+            print(e)
+            return False
         
     async def exists_skill(self, skill_id):
         try:
@@ -156,6 +200,8 @@ class CharacterSkills(CharacterSavingThrow):
     
     @property
     def skills(self):
+        if len(self._skills_from_attribute) > 0:
+            return self._skills_from_attribute
         return self._skills
         
     @property

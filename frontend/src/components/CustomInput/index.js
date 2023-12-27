@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { uploadImage } from '../../server/uploadImage'; 
+import { uploadImage } from '../../server/uploadImage';
 import requestInput from '../../server/requestInput';
 import './CustomInput.css'
+import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 
 function CustomInput({ type, name, id, required, placeholder, checked, InputValue, min, max, accept, label, characterID, src }) {
   const [inputValue, setInputValue] = useState('');
   const [isChecked, setCheck] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setInputValue(InputValue);
@@ -20,7 +22,7 @@ function CustomInput({ type, name, id, required, placeholder, checked, InputValu
 
   const handleBlur = (e) => {
     if (type === 'number' || type === 'text') {
-      requestInput(name, inputValue, id, characterID, 'PUT');
+      requestInput(name, inputValue, id, characterID, 'PUT', setLoading);
     }
   };
 
@@ -31,9 +33,9 @@ function CustomInput({ type, name, id, required, placeholder, checked, InputValu
       setCheck(newInputValue);
 
       if (newInputValue) {
-        requestInput(name, null, id, characterID, 'POST');
+        requestInput(name, null, id, characterID, 'POST', setLoading);
       } else {
-        requestInput(name, null, id, characterID, 'DELETE');
+        requestInput(name, null, id, characterID, 'DELETE', setLoading);
       }
     }
   };
@@ -41,7 +43,7 @@ function CustomInput({ type, name, id, required, placeholder, checked, InputValu
   const handleChange = async (e) => {
     if (type === 'file') {
       const selectedFile = e.target.files[0];
-      const imageData = await uploadImage(selectedFile, characterID);
+      const imageData = await uploadImage(selectedFile, characterID, setLoading);
       if (imageData) {
         setImageUrl(imageData.url);
       }
@@ -63,7 +65,8 @@ function CustomInput({ type, name, id, required, placeholder, checked, InputValu
   const displayInputDefault = src ? { display: 'none' } : undefined;
 
   return (
-    <div>
+    <div className='customInput'>
+      <LoadingIndicator loading={loading} />
       <label>{label}</label>
       <input
         type={type}

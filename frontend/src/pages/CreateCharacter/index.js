@@ -22,6 +22,7 @@ function CreateCharacter(props) {
                         required={true}
                         placeholder="Insira um nome para o personagem"
                         type="text"
+                        maxLength={30}
                     />
                     <DropdownList
                         url='/races'

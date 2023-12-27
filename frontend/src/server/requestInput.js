@@ -1,5 +1,7 @@
-const requestInput = async (key, value, url, characterID, method) => {
+const requestInput = async (key, value, url, characterID, method, setLoading) => {
   try {
+    setLoading(true);
+
     const data = new FormData();
     data.append('key', key);
     data.append('value', value);
@@ -13,16 +15,14 @@ const requestInput = async (key, value, url, characterID, method) => {
       const responseData = await response.json();
       if (responseData.data) {
         Object.entries(responseData.data).forEach(([key, value]) => {
-          console.log(`document.querySelector('#${key}')`)
           const element = document.querySelector('#' + key);
           if (element) {
             element.innerText = value;
           }
         });
       }
-    } else {
-      return undefined;
     }
+    setLoading(false);
   } catch (error) {
     console.error('Erro na requisição:', error);
     return undefined;
@@ -30,3 +30,5 @@ const requestInput = async (key, value, url, characterID, method) => {
 };
 
 export default requestInput;
+
+

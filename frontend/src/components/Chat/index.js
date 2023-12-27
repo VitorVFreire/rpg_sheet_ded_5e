@@ -7,6 +7,7 @@ const ChatComponent = (props) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [offSet, setOffSet] = useState(0);
+  const [totalNumberMessages, setTotalNumberMessages] = useState(0);
   const [getOldMessages, setGetOldMessages] = useState(0);
   const [loadAllScroll, setLoadAllScroll] = useState(0);
   const [loadingOldMessages, setLoadingOldMessages] = useState(false);
@@ -23,6 +24,7 @@ const ChatComponent = (props) => {
         if (data.result) {
           setMessages(data.data.messages);
           setOffSet(data.data.offset);
+          setTotalNumberMessages(data.data.total_number_messages);
           setStartScrollMessages((prevStartScrollMessages) => prevStartScrollMessages + 1);
         }
       } catch (error) {
@@ -54,18 +56,19 @@ const ChatComponent = (props) => {
   useEffect(() => {
     const fetchOldMessages = async () => {
       try {
-        setLoadingOldMessages(true); // Define como true ao começar a carregar mensagens antigas
+        setLoadingOldMessages(true); 
         setGetOldMessages((prevGetOldMessages) => prevGetOldMessages + 1);
         const response = await fetch(`/messages/room=${props.room_id}?offset=${offSet}`);
         const responseData = await response.json();
         if (responseData.result) {
           setMessages((prevMessages) => [...responseData.data.messages, ...prevMessages]);
           setOffSet(responseData.data.offset);
+          setTotalNumberMessages(responseData.data.total_number_messages);
         }
       } catch (error) {
         console.error('Erro ao buscar mensagens:', error);
       } finally {
-        setLoadingOldMessages(false); // Define como false quando terminar o carregamento
+        setLoadingOldMessages(false); 
       }
     };
 
@@ -88,7 +91,7 @@ const ChatComponent = (props) => {
           setGetOldMessages(0);
         }
       }
-      if ((messagesContainerRef.current.scrollTop < 40 && messagesContainerRef.current.scrollTop > 30) && startScrollMessages > 1 && loadAllScroll > 0 && getOldMessages === 0) {
+      if ((messagesContainerRef.current.scrollTop < 40 && messagesContainerRef.current.scrollTop > 30) && startScrollMessages > 1 && loadAllScroll > 0 && getOldMessages === 0 && offSet != totalNumberMessages) {
         fetchOldMessages();
       }
     };

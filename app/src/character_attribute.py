@@ -4,7 +4,6 @@ import asyncio
 
 from src import Character, Db
 
-
 class CharacterAttribute(Character):
     def __init__(self, user_id=None, character_id=None):
         super().__init__(user_id=user_id, character_id=character_id)
@@ -21,7 +20,7 @@ class CharacterAttribute(Character):
     def check_value(self, value, key):
         value = int(value)
         key_possibility = ['strength', 'dexterity', 'intelligence', 'constitution', 'wisdom', 'charisma', 'proficiency_bonus']
-        condition = 0 < value <= 30 if key != 'proficiency_bonus' else value > 0
+        condition = 0 < value <= 30 if key != 'proficiency_bonus' else value >= 0
         return condition and key in key_possibility, key
 
     @property
@@ -125,7 +124,7 @@ class CharacterAttribute(Character):
             return False
 
     async def get_bonus(self, key):
-        await self.load_attributes()
+        #await self.load_attributes()
         if key == 'proficiency_bonus':
             key = 'external_proficiency_bonus'
         else:

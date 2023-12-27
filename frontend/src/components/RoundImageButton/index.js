@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import './RoundImageButton.css';
+import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 
 const RoundImageButton = ({ imageUrl, url, square_id, method }) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleImageUpload = async (e) => {
-        if (isLoading) {
-            return;
-        }
+        setLoading(true);
 
         const file = e.target.files[0];
         if (!file) {
             return;
         }
 
-        setIsLoading(true);
-
         try {
             const formData = new FormData();
             formData.append('image', file);
-            if (square_id){
+            if (square_id) {
                 formData.append('square_id', square_id);
             }
 
@@ -38,14 +35,18 @@ const RoundImageButton = ({ imageUrl, url, square_id, method }) => {
         } catch (error) {
             console.error('Erro na solicitação:', error);
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
     return (
-        <label className="round-image-button" id={square_id} style={{ backgroundImage: `url(${imageUrl})` }}>
-            {isLoading ? 'Aguarde...' : <input type="file" accept='image/*' onChange={handleImageUpload} />}
-        </label>
+        <div>
+            <LoadingIndicator loading={loading} />
+            <label className="round-image-button" id={square_id} style={{ backgroundImage: `url(${imageUrl})` }}>
+                <input type="file" accept='image/*' onChange={handleImageUpload} />
+            </label>
+        </div>
+
     );
 };
 

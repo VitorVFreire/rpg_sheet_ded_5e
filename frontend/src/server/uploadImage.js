@@ -1,6 +1,7 @@
-export async function uploadImage(file, characterID) {
+export async function uploadImage(file, characterID, setLoading) {
     try {
       if (file) {
+        setLoading(true);
         const formData = new FormData();
         formData.append('character_image', file);
 
@@ -20,5 +21,7 @@ export async function uploadImage(file, characterID) {
     } catch (error) {
       console.error('Erro na requisição:', error);
       return undefined;
+    } finally {
+      setLoading(false);
     }
 };

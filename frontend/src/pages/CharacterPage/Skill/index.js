@@ -50,7 +50,7 @@ function Skill(props) {
     }, [props.id]);
 
     return (
-        <section className='skills'>
+        <section className='skills' style={{border: '30px solid transparent', borderImage: `url("/openimg/borda.png") 100 round`}}>
             {Object.entries(list).map(([key, value]) => (
                 <div className='skill-container' key={key}>
                     <label htmlFor={key}>{value}</label>

@@ -34,7 +34,7 @@ function CharactersSection() {
       {characters.map((character) => (
         <div key={character.character_id} className='character'>
           <div><img src={character.img} alt={character.character_name} /></div>
-          <div>{character.character_name}</div>
+          <div className='name'>{character.character_name}</div>
           <div>{character.race_name}</div>
           <div><a href={`/character_page/${character.character_id}`}>Ficha</a></div>
           <div>

@@ -1,7 +1,5 @@
 .saving_throw {
     color: aliceblue;
-    border: 2px solid aliceblue;
-    border-radius: 10px;
     text-align: center;
     display: flex;
     flex-direction: column;

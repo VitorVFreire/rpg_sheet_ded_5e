@@ -44,7 +44,7 @@ function Attribute(props) {
     }, [props.id]);
 
     return (
-        <section className='attributes'>
+        <section className='attributes' style={{border: '30px solid transparent', borderImage: `url("/openimg/borda.png") 100 round`}}>
             {Object.entries(list).map(([key, value]) => (
                 <div key={key}>
                     <CustomInput
