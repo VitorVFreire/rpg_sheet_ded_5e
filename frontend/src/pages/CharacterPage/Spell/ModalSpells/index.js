@@ -1,4 +1,4 @@
-import Spell from './Spell';
+import SpellsListModal from './SpellsListModal';
 import Modal from 'react-modal';
 import './Spell.css'
 
@@ -27,7 +27,7 @@ function ModalSpells(props) {
         contentLabel="Spells"
       >
         <button className='button_close_modal' onClick={props.closeModalSpells}>X</button>
-        <Spell characterId={props.id} />
+        <SpellsListModal characterId={props.id} />
       </Modal>
     </div>
   );

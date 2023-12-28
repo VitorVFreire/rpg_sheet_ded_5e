@@ -77,7 +77,7 @@ function Roons(props) {
                                     <DeleteButton url='/room' keyData='room_id' outherId={room.room_id} attFunction={handleRoomDeleted} />
                                 </>
                             )}
-                            <h4>{room.room_name}</h4>
+                            <h3>{room.room_name}</h3>
                             <section className='roons_buttons'>
                                 <ButtonLink link={`/room/${room.room_id}/${room.user_room_id}`} text='Entrar Sala' />
                                 <Button children='Sair' id={room.room_id} onClick={() => leaveRoom(room.room_id)} />

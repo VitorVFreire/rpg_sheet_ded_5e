@@ -1,3 +1,21 @@
 .character_inputs {
     color: aliceblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+.dropDawnListCharacterRaces label {
+    display: none;
+}
+
+.dropDawnListCharacterRaces select {
+    width: 200px;
+    font-size: 15px;
+    height: 35px;
+    background-color: #99969B;
+    border: none;
+    color: black;
 }

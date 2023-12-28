@@ -32,6 +32,21 @@ async def get_character(character_id):
     except Exception as e:
         print(e)
         return 404
+    
+@app.get('/character_race/<character_id>')
+async def get_character_race(character_id):
+    try:
+        user_id = session.get('user_id')
+        character = Character(user_id=user_id, character_id=character_id)
+
+        await character.character_belongs_user()
+        
+        if await character.load_character_races():
+            return jsonify({'result': True,'data': character.races}), 200
+        return jsonify({'result': False}), 404
+    except Exception as e:
+        print(e)
+        return 404
 
 @app.post('/character')
 async def post_character():

@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import CustomInput from '../../../components/CustomInput';
 import './Character.css';
+import DropdownList from '../../../components/DropdownListMethodGet';
+import LoadingIndicator from '../../../components/LoadingIndicator/LoadingIndicator';
+import requestInput from '../../../server/requestInput';
 
 function Character(props) {
     const [character, setCharacter] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchCharacter() {
@@ -31,16 +35,30 @@ function Character(props) {
         document.title = namePage;
     }, [namePage]);
 
+    const handleSelectItem = (race_id, text) => {
+        requestInput('race_id', race_id, 'character', props.id, 'PUT', setLoading);
+    }
+
     return (
         <section className='character_inputs'>
+            <CustomInput
+                characterID={props.id}
+                label='Nome'
+                type={'text'}
+                id={'character'}
+                name='character_name'
+                InputValue={character['character_name']}
+            />
             <div>
-                <CustomInput
-                    characterID={props.id}
-                    label='Nome'
-                    type={'text'}
-                    id={'character'}
-                    name='character_name'
-                    InputValue={character['character_name']}
+                <label>Raça</label>
+                <DropdownList
+                    url={`/character_race/${props.id}`}
+                    label={character['race_name']}
+                    valueLabel={character['race_id']}
+                    id='race_id'
+                    name='race_name'
+                    className='dropDawnListCharacterRaces'
+                    handleSelectItem={handleSelectItem}
                 />
             </div>
         </section>

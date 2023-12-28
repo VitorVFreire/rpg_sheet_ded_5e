@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './DropdownList.css';
 
-function DropdownList({ url, label, id, name, className = 'dropdownlist', handleSelectItem = () => {} }) {
+function DropdownList({ url, label, valueLabel='', id, name, className = 'dropdownlist', handleSelectItem = () => {} }) {
     const [data, setData] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
     const [error, setError] = useState(null);
@@ -37,7 +37,7 @@ function DropdownList({ url, label, id, name, className = 'dropdownlist', handle
         <div className={className}>
             <label>{label}</label>
             <select name={id} id={id} onChange={(e) => handleSelect(e)}>
-                <option value="">{label}</option>
+                <option value={valueLabel}>{label}</option>
                 {data.map((item) => (
                     <option key={item[id]} value={item[id]}>
                         {item[name]}

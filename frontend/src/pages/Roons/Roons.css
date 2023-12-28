@@ -8,7 +8,6 @@
 .roons {
     margin-top: 12px;
     width: 80%;
-    gap: 12px;
     display: flex;
     flex-direction: row; 
     align-items: center;
@@ -25,7 +24,6 @@
     align-items: center;
     justify-content: center;
     background-color: #333;
-    margin-bottom: 12px; 
 }
 
 .roons_buttons {
@@ -33,7 +31,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
 }
 
 .roons_buttons button {
@@ -51,12 +48,13 @@
     background-color: antiquewhite;
 }
 
-
-.roons h4 {
-    overflow: hidden;
-    text-overflow: ellipsis;
+.roons h3 {
     text-align: center;
     width: 180px;
+}
+
+.roons div .delete-button {
+    margin-bottom: -50px;
 }
 
 .error {

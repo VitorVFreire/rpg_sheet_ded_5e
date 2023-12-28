@@ -8,8 +8,9 @@ class Character(User):
         super().__init__(user_id=user_id)
         self._character_id = character_id
         self._character_name = None
+        self._character = {}
         self._classes = []
-        self._race = None
+        self._races = []
     
     @property
     def character_id(self):
@@ -36,22 +37,12 @@ class Character(User):
         self._character_name=value 
         
     @property
-    def race(self):
-        return self._race
-    
-    @race.setter
-    def race(self,value):
-        self._race=value   
+    def races(self):
+        return self._races
         
     @property
     def character(self):
-        character = {
-            'character_id': self.character_id,
-            'character_name': self.character_name,
-            'race': self.race,
-            'classes': self.classes
-        }
-        return character
+        return self._character
         
     async def character_belongs_user(self):
         try:
@@ -168,7 +159,7 @@ class Character(User):
     async def load_character(self):
         try:
             if self.character_id:
-                query = """SELECT ch.character_name,rc.race_name
+                query = """SELECT ch.character_name, rc.race_name, ch.race_id
                 FROM character ch,race rc
                 WHERE ch.character_id = %s and ch.race_id=rc.race_id;"""
                 parameters = (self.character_id,)
@@ -176,8 +167,10 @@ class Character(User):
                 await db.connection_db()
                 result = await db.select(query=query, parameters=parameters, all=False)
                 if result:
+                    self._character['character_name'] = result[0]
+                    self._character['race_name'] = result[1]
+                    self._character['race_id'] = result[2]
                     self.character_name=result[0]
-                    self.race=result[1]
                     return True
             return False
         except Exception as e:
@@ -199,57 +192,25 @@ class Character(User):
         except Exception as e:
             print(e)
             return False
-     
-"""    async def exists_moeda_banco(self, moeda):
+    
+    async def load_character_races(self):
         try:
-            if self._character_id:
-                async with await get_connection() as conn:
-                    async with conn.cursor() as mycursor:
-                        query = "SELECT EXISTS (SELECT id_moedas_character FROM moeda WHERE character_id = %s AND moeda = %s)"
-                        await mycursor.execute(query, (self._character_id, moeda,))
-                        result = await mycursor.fetchone()
-                        if result[0] == 1:
-                            return True
-            return False
-        except Exception as e:
-            print(e)
-            return False    
-        
-    async def banco_moeda_character(self, moeda):
-        try:
-            if self._character_id and self.verifica_moeda(moeda):
-                async with await get_connection() as conn:
-                        async with conn.cursor() as mycursor:
-                            if await self.exists_moeda_banco(moeda):
-                                query = f"UPDATE moedas_character SET qtd=%s WHERE character_id=%s AND moeda=%s;"
-                                parametros = (self.value, self.character_id, moeda,)
-                            else:
-                                query = f"INSERT INTO moedas_character(character_id,moeda,qtd) VALUES(%s,%s,%s);"
-                                parametros = (self._character_id, moeda, self.value)
-                            await mycursor.execute(query, parametros)
-                            await conn.commit()
-                            return True
+            if self.character_id:
+                query = """SELECT rc.race_id, rc.race_name 
+                FROM race rc
+                INNER JOIN character ch ON ch.race_id != rc.race_id AND ch.character_id = %s;"""
+                parameters = (self.character_id,)
+                db = Db()
+                await db.connection_db()
+                result = await db.select(query=query, parameters=parameters)
+                if result:
+                    for row in result:
+                        self._races.append({
+                            'race_id': row[0],
+                            'race_name': row[1]
+                        })
+                    return True
             return False
         except Exception as e:
             print(e)
             return False
-        
-    async def gasto_moeda(self):
-        try:
-            if self._character_id:
-                async with await get_connection() as conn:
-                        async with conn.cursor() as mycursor:
-                            deposito, saque = self.converter_moedas()
-                            if self.exists_moeda_banco(self.destino):
-                                query = "UPDATE moedas_character SET qtd=%s WHERE moeda=%s AND character_id=%s;"
-                            else:
-                                query = "INSERT INTO moedas_character (qtd_moeda, moeda, character_id) VALUES(%s,%s,%s);"                            
-                            query += "UPDATE moedas_character SET qtd=%s WHERE character_id=%s AND moeda=%s;"
-                            parametros = (deposito, self.destino, self.character_id, saque, self.character_id, self.origem,)
-                            await mycursor.execute(query, parametros)
-                            await conn.commit()
-                            return True
-            return False
-        except Exception as e:
-            print(e)
-            return False"""

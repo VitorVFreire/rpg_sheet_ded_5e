@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import CustomInput from '../../components/CustomInput';
+import CustomInput from '../../../../components/CustomInput';
 import './Spell.css';
 
-function Spell({ characterId }) {
+function SpellsListModal({ characterId }) {
   const [spellList, setSpellList] = useState([]);
   const [checkedSpells, setCheckedSpells] = useState([]);
 
@@ -72,6 +72,6 @@ function Spell({ characterId }) {
   );
 }
 
-export default Spell;
+export default SpellsListModal;
 
 

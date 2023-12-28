@@ -10,7 +10,6 @@ import CreateCharacter from './pages/CreateCharacter'
 import CreateUser from './pages/CreateUser';
 import EquipmentRegister from './pages/EquipmentRegister';
 import AddEquipment from './pages/AddEquipment';
-import AddSpell from './pages/ModalSpells';
 import SpellRegister from './pages/SpellRegister';
 import RoomPage from './pages/RoomPage';
 import Roons from './pages/Roons';

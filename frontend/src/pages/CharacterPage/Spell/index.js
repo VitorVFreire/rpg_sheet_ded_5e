@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Spell.css';
 import DeleteButton from '../../../components/DeleteButton';
-import ModalSpells from '../../ModalSpells';
+import ModalSpells from './ModalSpells';
 
 function Spell(props) {
     const [spells, setSpells] = useState([]);
