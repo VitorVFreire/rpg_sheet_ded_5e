@@ -359,7 +359,7 @@ async def insert_default_values():
                 """)
                 
                 await cursor.execute("""
-                INSERT INTO coin(coin_name) VALUES('po'),('pp'),('pc'),('pl'),('da'),('pe');
+                INSERT INTO coin(coin_name) VALUES('pc'),('pp'),('pe'),('po'),('pl'),('da');
                 """)
                 
                 await cursor.execute("""

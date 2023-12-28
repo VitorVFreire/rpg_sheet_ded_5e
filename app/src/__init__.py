@@ -10,6 +10,7 @@ from .classe import Classe
 from .spell import Spell
 from .saving_throw import SavingThrow
 from .character import Character
+from .character_coin import CharacterCoin
 from .character_attribute import CharacterAttribute
 from .character_saving_throw import CharacterSavingThrow
 from .character_characteristics import CharacterCharacteristics

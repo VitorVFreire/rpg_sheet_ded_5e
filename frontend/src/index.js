@@ -15,7 +15,7 @@ import SpellRegister from './pages/SpellRegister';
 import RoomPage from './pages/RoomPage';
 import Roons from './pages/Roons';
 
-const idUser = window.initialData || false;
+const idUser = window.initialData;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

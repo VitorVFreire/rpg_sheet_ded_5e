@@ -9,6 +9,7 @@ import SavingThrow from './SavingThrow';
 import StatusBase from './StatusBase';
 import Skill from './Skill';
 import Spell from './Spell';
+import Coin from './Coin';
 
 function CharacterPage(props) {
     const { id } = useParams();
@@ -21,6 +22,7 @@ function CharacterPage(props) {
                 <Attribute id={id} />
                 <div className='div1'>
                     <SavingThrow id={id} />
+                    <Coin id={id} />
                 </div>
                 <Characteristics id={id} />
                 <Skill id={id} />

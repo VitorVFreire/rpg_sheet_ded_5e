@@ -4,7 +4,7 @@ import asyncio
 
 from main import app
 from src import User, Skill, Race, Classe, SavingThrow, Spell, Room, Image, Equipment
-from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell
+from src import Character, CharacterAttribute, CharacterCharacteristics, CharacterSpell, CharacterCoin
 from src import CharacterSkills, CharacterSavingThrow, CharacterStatusBase, CharacterEquipment
 
 @app.get('/characters')
@@ -464,21 +464,35 @@ async def delete_character_equipment(character_id):
         print(e)
         return 404
 
-"""@app.post('/compra_equipments/<id_personagem>')
-async def compra_equipments_personagem_post(id_personagem):
+@app.get('/coins/<character_id>')
+async def get_character_coin(character_id):
     try:
-        id_usuario = session.get('user_id')
-        equipment_id = request.form.get('equipment_id')
-        personagem = PersonagemEquipamento(equipment_id=equipment_id,id_usuario=id_usuario, id_personagem=id_personagem)
-        equipamento = Equipamento(equipment_id=equipment_id)
+        user_id = session.get('user_id')
+        character = CharacterCoin(user_id=user_id, character_id=character_id)
+
+        await character.character_belongs_user()
         
-        await personagem.personagem_pertence_usuario()
-        await equipamento.carregar_equipamento()
-        personagem.value = equipamento.preco
-        #personagem.
-        await personagem.gasto_moeda()
-                    
-        return jsonify({'result': await personagem.adicionar_equipamento_banco()}), 200
+        if await character.load_character_coins():
+            return jsonify({'result': True, 'data': character.coins}), 200
+        return jsonify({'result': False}), 404
     except Exception as e:
         print(e)
-        return 404"""
+        return 404
+
+@app.put('/coins/<character_id>')
+async def put_character_coin(character_id):
+    try:
+        user_id = session.get('user_id')
+        coin_id = request.form.get('key')
+        amount_coin = request.form.get('value')
+                
+        character = CharacterCoin(user_id=user_id, character_id=character_id, coin_id=coin_id, amount_coin=amount_coin)
+
+        await character.character_belongs_user()
+
+        if await character.character_has_this_coin():
+            return jsonify({'result': await character.update_character_coin()}), 200
+        return jsonify({'result': await character.insert_character_coin()}), 200
+    except Exception as e:
+        print(e)
+        return 404
