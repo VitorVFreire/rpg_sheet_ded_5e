@@ -438,7 +438,7 @@ async def insert_default_values():
 
 
 async def main():
-    #await create_database()
+    await create_database()
     await create_tables()
     await insert_default_values()
 
